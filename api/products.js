@@ -22,24 +22,32 @@ module.exports = async function handler(req, res) {
       'Content-Type': 'application/json'
     };
 
-    // 1) 슈즈 카테고리 제품만 조회
+    // 1) 슈즈 + 최근 N년 제품만 조회
+    //    제품 DB에 1000+개 누적돼서 timeout 방지 — 아래 년도만 수정하면 범위 조정 가능
+    const TARGET_YEARS = ['2025', '2026', '2027'];
     const products = await queryAll(PRODUCT_DS_ID, headers, {
-      filter: { property: '의류/슈즈/잡화', select: { equals: '슈즈' } }
+      filter: {
+        and: [
+          { property: '의류/슈즈/잡화', select: { equals: '슈즈' } },
+          { or: TARGET_YEARS.map(y => ({ property: '개발년도', select: { equals: y } })) }
+        ]
+      }
     });
 
-    // 2) 슈즈 제품 ID로 발주만 필터링해서 받기 (전체 1700+개 안 받음)
+    // 2) 슈즈 제품 ID로 발주만 필터링 — 청크들을 병렬 호출해서 빠르게
     const productIds = products.map(p => p.id);
-    const orders = [];
     const CHUNK = 50;  // 노션 OR filter는 100개까지 — 안전하게 50개씩
+    const chunks = [];
     for (let i = 0; i < productIds.length; i += CHUNK) {
-      const chunk = productIds.slice(i, i + CHUNK);
-      if (chunk.length === 0) continue;
+      chunks.push(productIds.slice(i, i + CHUNK));
+    }
+    const chunkResults = await Promise.all(chunks.map(chunk => {
       const filter = chunk.length === 1
         ? { property: '관계형 title', relation: { contains: chunk[0] } }
         : { or: chunk.map(id => ({ property: '관계형 title', relation: { contains: id } })) };
-      const chunkOrders = await queryAll(ORDER_DS_ID, headers, { filter });
-      orders.push(...chunkOrders);
-    }
+      return queryAll(ORDER_DS_ID, headers, { filter });
+    }));
+    const orders = chunkResults.flat();
 
     // 3) 제품별 발주 그룹화
     const ordersByProduct = {};
