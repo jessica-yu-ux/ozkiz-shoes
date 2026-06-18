@@ -1,5 +1,10 @@
 {
   "rewrites": [
     { "source": "/", "destination": "/ozkiz-shoes-v3.html" }
-  ]
+  ],
+  "functions": {
+    "api/products.js": {
+      "maxDuration": 60
+    }
+  }
 }

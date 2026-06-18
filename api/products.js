@@ -27,8 +27,21 @@ module.exports = async function handler(req, res) {
       filter: { property: '의류/슈즈/잡화', select: { equals: '슈즈' } }
     });
 
-    // 2) 전체 발주 조회 → 제품별로 그룹화
-    const orders = await queryAll(ORDER_DS_ID, headers, {});
+    // 2) 슈즈 제품 ID로 발주만 필터링해서 받기 (전체 1700+개 안 받음)
+    const productIds = products.map(p => p.id);
+    const orders = [];
+    const CHUNK = 50;  // 노션 OR filter는 100개까지 — 안전하게 50개씩
+    for (let i = 0; i < productIds.length; i += CHUNK) {
+      const chunk = productIds.slice(i, i + CHUNK);
+      if (chunk.length === 0) continue;
+      const filter = chunk.length === 1
+        ? { property: '관계형 title', relation: { contains: chunk[0] } }
+        : { or: chunk.map(id => ({ property: '관계형 title', relation: { contains: id } })) };
+      const chunkOrders = await queryAll(ORDER_DS_ID, headers, { filter });
+      orders.push(...chunkOrders);
+    }
+
+    // 3) 제품별 발주 그룹화
     const ordersByProduct = {};
     for (const o of orders) {
       const rels = (o.properties['관계형 title']?.relation) || [];
@@ -38,13 +51,14 @@ module.exports = async function handler(req, res) {
       }
     }
 
-    // 3) HTML의 PRODS 형식으로 변환
+    // 4) HTML의 PRODS 형식으로 변환
     const result = products.map((p, i) =>
       mapProduct(p, ordersByProduct[p.id] || [], i + 1)
     );
 
-    // 짧은 캐시 (노션 이미지 URL이 1시간 만료라서)
-    res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
+    // CDN 캐시: 5분간 신선, 55분간 stale-while-revalidate
+    // (노션 이미지 URL이 1시간 만료라서 그 안에 갱신)
+    res.setHeader('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=3300');
     res.status(200).json(result);
   } catch (err) {
     console.error('API error:', err);
