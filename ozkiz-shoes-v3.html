@@ -950,20 +950,43 @@ function render(){
   const list=filt();renderStats(list);renderGrid(list);
   if(selId){const p=PRODS.find(x=>x.id===selId);if(p&&list.includes(p))renderWO(p);else $('wo-wrap').innerHTML='';}
 }
+const OZK_CACHE_KEY='ozkiz-shoes-data-v1';
+const OZK_CACHE_TTL=5*60*1000;
 async function loadData(){
   const grid=$('prod-grid');
   const ttl=$('grid-ttl');
-  if(ttl)ttl.textContent='노션에서 불러오는 중...';
-  if(grid)grid.innerHTML='<div class="empty"><p>노션에서 데이터 불러오는 중...</p></div>';
+  // 1) localStorage 캐시가 신선하면 즉시 표시
+  let usedCache=false;
+  try{
+    const raw=localStorage.getItem(OZK_CACHE_KEY);
+    if(raw){
+      const {data,ts}=JSON.parse(raw);
+      if(Array.isArray(data)&&data.length&&(Date.now()-ts)<OZK_CACHE_TTL){
+        PRODS.length=0;PRODS.push(...data);
+        renderFilters();render();
+        usedCache=true;
+        if(ttl)ttl.textContent='저장된 데이터 (백그라운드 갱신중...)';
+      }
+    }
+  }catch(e){}
+  // 캐시 없으면 로딩 표시
+  if(!usedCache){
+    if(ttl)ttl.textContent='노션에서 불러오는 중...';
+    if(grid)grid.innerHTML='<div class="empty"><p>노션에서 데이터 불러오는 중...</p></div>';
+  }
+  // 2) 백그라운드에서 최신 데이터 가져오기
   try{
     const r=await fetch('/api/products');
     if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.error||('HTTP '+r.status));}
     const data=await r.json();
     PRODS.length=0;PRODS.push(...data);
     renderFilters();render();
+    try{localStorage.setItem(OZK_CACHE_KEY,JSON.stringify({data,ts:Date.now()}));}catch(e){}
   }catch(e){
-    if(grid)grid.innerHTML='<div class="empty"><p style="color:var(--red)">데이터 불러오기 실패</p><p style="font-size:11px;margin-top:8px">'+e.message+'</p></div>';
-    if(ttl)ttl.textContent='오류';
+    if(!usedCache){
+      if(grid)grid.innerHTML='<div class="empty"><p style="color:var(--red)">데이터 불러오기 실패</p><p style="font-size:11px;margin-top:8px">'+e.message+'</p></div>';
+      if(ttl)ttl.textContent='오류';
+    }
     console.error('Load error:',e);
   }
 }
