@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>오즈키즈 슈즈 작업지시서</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* ── TOKENS ── */
+:root,[data-theme="dark"]{
+  --bg:#0E0E10;--surface:#18181C;--card:#1F1F25;--card-hover:#26262E;
+  --border:rgba(255,255,255,0.07);--border-md:rgba(255,255,255,0.13);--border-hi:rgba(255,255,255,0.22);
+  --txt:#F0EFF4;--txt-2:#9A99A8;--txt-3:#5C5B6B;
+  --accent:#7C6EFA;--accent-dim:#2D2850;
+  --green:#34D399;--green-dim:#0D2F22;
+  --amber:#FBBF24;--amber-dim:#2D2208;
+  --red:#F87171;--red-dim:#2D1010;
+  --blue:#60A5FA;--blue-dim:#0D1F3A;
+  --cost-bg:#0A0A0C;--mtx-head:rgba(255,255,255,0.04);--rem-bg:rgba(251,191,36,0.04);
+}
+[data-theme="light"]{
+  --bg:#F3F2EF;--surface:#FFFFFF;--card:#FFFFFF;--card-hover:#F9F8F6;
+  --border:rgba(0,0,0,0.08);--border-md:rgba(0,0,0,0.14);--border-hi:rgba(0,0,0,0.24);
+  --txt:#111110;--txt-2:#5A5956;--txt-3:#9A9895;
+  --accent:#5B4EE8;--accent-dim:#EDEAFF;
+  --green:#15803D;--green-dim:#F0FDF4;
+  --amber:#B45309;--amber-dim:#FFFBEB;
+  --red:#DC2626;--red-dim:#FEF2F2;
+  --blue:#1D4ED8;--blue-dim:#EFF6FF;
+  --cost-bg:#F3F2EF;--mtx-head:rgba(0,0,0,0.04);--rem-bg:rgba(180,83,9,0.04);
+}
+
+/* light pill overrides */
+[data-theme="light"] .s계속판매{background:#F0FDF4;color:#15803D;border-color:rgba(21,128,61,.2)}
+[data-theme="light"] .s생산중{background:#EDEAFF;color:#5B4EE8;border-color:rgba(91,78,232,.2)}
+[data-theme="light"] .s생산요청{background:#FFFBEB;color:#B45309;border-color:rgba(180,83,9,.2)}
+[data-theme="light"] .s대기{background:#F3F2EF;color:#9A9895;border-color:rgba(0,0,0,.1)}
+[data-theme="light"] .s완료{background:#F5F3FF;color:#6D28D9;border-color:rgba(109,40,217,.2)}
+[data-theme="light"] .s진행취소{background:#FEF2F2;color:#DC2626;border-color:rgba(220,38,38,.2)}
+[data-theme="light"] .chip.on{background:#EDEAFF;border-color:#5B4EE8;color:#3730A3}
+[data-theme="light"] .chip.on.sp{background:#FDF4FF;border-color:#D946EF;color:#86198F}
+[data-theme="light"] .chip.on.su{background:#F0FDF4;border-color:#22C55E;color:#166534}
+[data-theme="light"] .chip.on.fa{background:#FFFBEB;border-color:#F59E0B;color:#92400E}
+[data-theme="light"] .chip.on.wi{background:#EFF6FF;border-color:#3B82F6;color:#1E40AF}
+[data-theme="light"] .tag{background:rgba(0,0,0,.04);color:var(--txt-2);border-color:var(--border)}
+[data-theme="light"] .cdot{border-color:rgba(0,0,0,.15)}
+[data-theme="light"] .mtx tr:hover td{background:rgba(0,0,0,.02)}
+[data-theme="light"] .mtx td.tot,[data-theme="light"] .mtx tr.tr td{color:var(--accent)}
+[data-theme="light"] .mtx tr.tr{background:rgba(91,78,232,.05)}
+[data-theme="light"] .cost-retail{color:var(--green)}
+[data-theme="light"] .wo-head{background:linear-gradient(135deg,rgba(91,78,232,.05) 0%,transparent 60%)}
+[data-theme="light"] .img-expand{background:rgba(0,0,0,.35)}
+[data-theme="light"] .wo-btn:hover{background:#EDEAFF;border-color:#5B4EE8;color:#3730A3}
+[data-theme="light"] .logo-mark{background:var(--accent)}
+[data-theme="light"] .fgroup-head:hover{background:rgba(0,0,0,.03)}
+[data-theme="light"] .pcard-img-placeholder svg,[data-theme="light"] .img-placeholder-lg svg{stroke:var(--txt-3)}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--txt);font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased;transition:background .2s,color .2s}
+
+/* Layout */
+.shell{display:flex;height:100vh;overflow:hidden}
+.sidebar{width:216px;min-width:216px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:background .2s,border-color .2s}
+.content{flex:1;overflow-y:auto;display:flex;flex-direction:column}
+
+/* Sidebar top */
+.sb-top{padding:15px 13px 13px;border-bottom:1px solid var(--border)}
+.logo-row{display:flex;align-items:center;gap:9px;margin-bottom:12px}
+.logo-mark{width:30px;height:30px;border-radius:7px;background:var(--accent);display:grid;place-items:center;flex-shrink:0}
+.logo-mark svg{width:16px;height:16px;fill:white}
+.logo-text{font-size:12px;font-weight:600;color:var(--txt)}
+.logo-sub{font-size:10px;color:var(--txt-3);margin-top:1px}
+.sb-ctrl-row{display:flex;align-items:center;gap:7px}
+.notion-tag{display:flex;align-items:center;gap:5px;background:var(--card);border:1px solid var(--border);border-radius:999px;padding:5px 9px;font-size:10px;color:var(--txt-3);flex:1;min-width:0}
+.notion-dot{width:5px;height:5px;border-radius:50%;background:var(--amber);flex-shrink:0;animation:pulse 2.2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* Theme toggle */
+.theme-btn{width:28px;height:28px;border-radius:7px;border:1px solid var(--border);background:var(--card);display:grid;place-items:center;cursor:pointer;flex-shrink:0;color:var(--txt-3);transition:.15s}
+.theme-btn:hover{border-color:var(--border-md);color:var(--txt)}
+.theme-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+.icon-moon{display:block}
+.icon-sun{display:none}
+[data-theme="light"] .icon-moon{display:none}
+[data-theme="light"] .icon-sun{display:block}
+
+/* Search */
+.sb-search{padding:9px 11px;border-bottom:1px solid var(--border)}
+.s-wrap{position:relative}
+.s-wrap svg{position:absolute;left:9px;top:50%;transform:translateY(-50%);width:13px;height:13px;stroke:var(--txt-3);fill:none;stroke-width:2}
+.s-wrap input{width:100%;padding:7px 9px 7px 28px;font-size:12px;background:var(--card);border:1px solid var(--border);border-radius:7px;color:var(--txt);outline:none;transition:.15s}
+.s-wrap input::placeholder{color:var(--txt-3)}
+.s-wrap input:focus{border-color:var(--accent)}
+
+/* ── ACCORDION FILTERS ── */
+.sb-filters{overflow-y:auto;flex:1;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.fg{border-bottom:1px solid var(--border)}
+.fg-head{display:flex;align-items:center;justify-content:space-between;padding:9px 13px;cursor:pointer;user-select:none;transition:.12s}
+.fg-head:hover{background:var(--card-hover)}
+.fg-lbl{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:500;color:var(--txt-2)}
+.fg-ico{width:13px;height:13px;stroke:var(--txt-3);fill:none;stroke-width:2;flex-shrink:0}
+.fg-badge{font-size:10px;background:var(--accent-dim);color:var(--accent);border-radius:999px;padding:1px 7px;font-weight:600;display:none}
+.fg-badge.show{display:inline}
+.fg-arr{width:13px;height:13px;stroke:var(--txt-3);fill:none;stroke-width:2;transition:transform .2s;flex-shrink:0}
+.fg.open .fg-arr{transform:rotate(180deg)}
+.fg-body{max-height:0;overflow:hidden;transition:max-height .25s ease}
+.fg.open .fg-body{max-height:220px}
+.fg-inner{padding:0 11px 11px}
+.chips{display:flex;flex-wrap:wrap;gap:4px}
+.chip{padding:3px 9px;border-radius:999px;font-size:11px;cursor:pointer;border:1px solid var(--border);color:var(--txt-3);background:transparent;transition:.12s;white-space:nowrap}
+.chip:hover{border-color:var(--border-md);color:var(--txt)}
+.chip.on{background:var(--accent-dim);border-color:var(--accent);color:#C4BDFF;font-weight:500}
+.chip.on.sp{background:#1E0E2A;border-color:#C084FC;color:#E9D5FF}
+.chip.on.su{background:var(--green-dim);border-color:var(--green);color:#A7F3D0}
+.chip.on.fa{background:var(--amber-dim);border-color:var(--amber);color:#FDE68A}
+.chip.on.wi{background:var(--blue-dim);border-color:var(--blue);color:#BFDBFE}
+.sb-reset{margin:9px 11px;padding:7px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--txt-3);font-size:11px;cursor:pointer;width:calc(100% - 22px);transition:.12s;text-align:center}
+.sb-reset:hover{border-color:var(--border-md);color:var(--txt);background:var(--card-hover)}
+.sb-reset.on{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+
+/* Topbar hidden */
+
+/* Grid */
+.grid-wrap{padding:16px 20px;flex:1}
+.grid-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
+.grid-ttl{font-size:12px;color:var(--txt-3)}
+.prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+
+/* Product card — 정사각형 */
+.pc{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:border-color .15s,background .15s;display:flex;flex-direction:column}
+.pc:hover{border-color:var(--border-md);background:var(--card-hover)}
+.pc.act{border-color:var(--accent);border-width:1.5px}
+.pc-img{width:100%;aspect-ratio:1/1;background:var(--bg);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pc-img img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
+.pc:hover .pc-img img{transform:scale(1.04)}
+.pc-ph{display:flex;flex-direction:column;align-items:center;gap:7px;color:var(--txt-3)}
+.pc-ph svg{width:34px;height:34px;stroke:var(--txt-3);fill:none;opacity:.3}
+.pc-ph span{font-size:10px;opacity:.45}
+.pc-expand{position:absolute;top:8px;right:8px;width:26px;height:26px;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.18);border-radius:6px;display:grid;place-items:center;opacity:0;transition:.15s;cursor:pointer}
+.pc:hover .pc-expand{opacity:1}
+.pc-expand svg{width:13px;height:13px;stroke:white;fill:none;stroke-width:2}
+.pc-status{position:absolute;top:9px;left:9px}
+.pc-body{padding:11px 13px;display:flex;flex-direction:column;gap:7px}
+.pc-top{display:flex;flex-direction:column;gap:3px}
+.pc-name{font-size:13px;font-weight:600;color:var(--txt);letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pc-style{font-size:10px;color:var(--txt-3)}
+.pc-tags{display:flex;flex-wrap:wrap;gap:3px}
+.tag{font-size:10px;padding:2px 7px;border-radius:999px;background:rgba(255,255,255,.05);color:var(--txt-3);border:1px solid var(--border)}
+.pc-cols{display:flex;align-items:center;gap:5px}
+.cdot{width:12px;height:12px;border-radius:50%;border:1.5px solid rgba(255,255,255,.2);flex-shrink:0}
+.cnames{font-size:10px;color:var(--txt-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pc-meta-list{display:flex;flex-direction:column;gap:0;flex:1}
+.pc-meta-row{display:flex;justify-content:space-between;align-items:baseline;padding:3px 0;border-bottom:1px solid var(--border)}
+.pc-meta-row:last-child{border-bottom:none}
+.pc-mk{font-size:10px;color:var(--txt-3);flex-shrink:0}
+.pc-mv{font-size:10px;font-weight:500;color:var(--txt);text-align:right}
+.pc-foot{display:flex;justify-content:space-between;align-items:center;padding-top:8px;border-top:1px solid var(--border)}
+.pc-qty b{color:var(--txt);font-weight:600}
+.wo-btn{display:flex;align-items:center;gap:4px;padding:5px 10px;border-radius:6px;font-size:11px;font-weight:500;border:1px solid var(--border-md);background:transparent;color:var(--txt-2);cursor:pointer;transition:.12s}
+.wo-btn:hover{background:var(--accent-dim);border-color:var(--accent);color:#C4BDFF}
+.wo-btn svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2}
+
+/* Status pills */
+.sp{font-size:10px;font-weight:600;padding:3px 9px;border-radius:999px;letter-spacing:.02em;border:1px solid transparent}
+.s계속판매{background:var(--green-dim);color:var(--green);border-color:rgba(52,211,153,.25)}
+.s생산중{background:var(--accent-dim);color:#C4BDFF;border-color:rgba(124,110,250,.3)}
+.s생산요청{background:var(--amber-dim);color:var(--amber);border-color:rgba(251,191,36,.25)}
+.s대기{background:rgba(255,255,255,.04);color:var(--txt-3);border-color:var(--border)}
+.s완료{background:#1A0D2E;color:#C084FC;border-color:rgba(192,132,252,.25)}
+.s진행취소{background:var(--red-dim);color:var(--red);border-color:rgba(248,113,113,.25)}
+
+.empty{padding:72px 20px;text-align:center;color:var(--txt-3)}
+.empty svg{width:38px;height:38px;stroke:var(--txt-3);fill:none;display:block;margin:0 auto 11px;opacity:.3}
+
+/* Work Order — 한 화면 2단 레이아웃 */
+.wo{margin:0 20px 20px;background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.wo-head{padding:13px 18px 11px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,rgba(124,110,250,.06) 0%,transparent 60%)}
+.wo-htop{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.wo-name{font-size:16px;font-weight:700;color:var(--txt);letter-spacing:-.02em}
+.wo-meta{font-size:10px;color:var(--txt-3);margin-top:3px;display:flex;flex-wrap:wrap;gap:8px}
+.wo-meta span{display:flex;align-items:center;gap:3px}
+.wo-meta svg{width:10px;height:10px;stroke:var(--txt-3);fill:none}
+.wo-acts{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap}
+.abtn{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:7px;font-size:11px;font-weight:500;cursor:pointer;transition:.12s;border:1px solid var(--border-md);background:transparent;color:var(--txt-2)}
+.abtn:hover{background:var(--card-hover);color:var(--txt)}
+.abtn svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0}
+.abtn.pri{background:var(--accent);border-color:var(--accent);color:white}
+.abtn.pri:hover{opacity:.88}
+/* 2단: 왼쪽(사진+발주정보+원가) | 오른쪽(수량표+특이사항+히스토리) */
+.wo-cols{display:grid;grid-template-columns:300px 1fr}
+.wo-left{border-right:1px solid var(--border);display:flex;flex-direction:column}
+.wo-imgmain{height:210px;background:var(--bg);position:relative;overflow:hidden;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.wo-imgmain img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
+.wo-imgmain:hover img{transform:scale(1.03)}
+.wo-zoom{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.15);border-radius:6px;padding:4px 9px;font-size:10px;color:white;display:flex;align-items:center;gap:4px;opacity:0;transition:.15s;cursor:pointer}
+.wo-imgmain:hover .wo-zoom{opacity:1}
+.wo-zoom svg{width:11px;height:11px;stroke:white;fill:none;stroke-width:2}
+.wo-ph{display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--txt-3)}
+.wo-ph svg{width:36px;height:36px;stroke:var(--txt-3);fill:none;opacity:.3}
+.wo-ph p{font-size:10px;opacity:.5;text-align:center;line-height:1.6}
+.wo-info{padding:12px 14px;border-top:1px solid var(--border)}
+.wo-info-2col{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.wo-info-sec{padding:12px 14px;border-top:1px solid var(--border)}
+.wo-info-sec+.wo-info-sec{border-left:1px solid var(--border)}
+.sec-t{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:7px}
+.ir{display:flex;justify-content:space-between;align-items:baseline;padding:4px 0;border-bottom:1px solid var(--border)}
+.ir:last-child{border-bottom:none}
+.ik{font-size:11px;color:var(--txt-3)}
+.iv{font-size:11px;font-weight:500;color:var(--txt)}
+.cost-box{background:var(--cost-bg);border:1px solid var(--border);border-radius:6px;padding:8px 10px;margin-top:6px;font-size:11px;color:var(--txt-3);line-height:1.9}
+.cost-row{display:flex;justify-content:space-between}
+.cost-total{border-top:1px solid var(--border-md);margin-top:4px;padding-top:4px;display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:var(--txt)}
+.cost-retail{display:flex;justify-content:space-between;font-size:11px;color:var(--green);font-weight:600;margin-top:3px}
+/* 오른쪽 — flex column, 전체 높이 자동 확장 */
+.wo-right{display:flex;flex-direction:column}
+.wo-matrix{padding:12px 16px 10px;display:flex;flex-direction:column;border-bottom:1px solid var(--border)}
+.mtx-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;flex-shrink:0}
+.mtx-lbl{font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.mtx-chips{display:flex;gap:5px}
+.mtx-chip{padding:2px 9px;border-radius:999px;background:var(--accent-dim);color:var(--accent);border:1px solid rgba(124,110,250,.3);font-size:10px;font-weight:600}
+[data-theme="light"] .mtx-chip{background:#EDEAFF;color:#3730A3;border-color:rgba(91,78,232,.25)}
+.mtx-wrap{overflow-x:auto;border-radius:7px;border:1px solid var(--border-md)}
+.mtx{width:100%;border-collapse:collapse;font-size:11px}
+.mtx th{padding:7px 9px;background:rgba(124,110,250,.1);color:var(--accent);font-weight:700;text-align:center;border-bottom:2px solid rgba(124,110,250,.25);font-size:10px;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
+[data-theme="light"] .mtx th{background:rgba(91,78,232,.07);color:#3730A3;border-bottom-color:rgba(91,78,232,.2)}
+.mtx th.lh{text-align:left;min-width:82px;padding-left:11px}
+.mtx td{padding:7px 9px;text-align:center;border-bottom:1px solid var(--border);color:var(--txt);font-size:11px;font-weight:500;white-space:nowrap}
+.mtx td.rh{text-align:left;font-weight:600;background:rgba(255,255,255,.03);padding-left:11px;border-right:1px solid var(--border)}
+[data-theme="light"] .mtx td.rh{background:rgba(0,0,0,.02)}
+.mtx td.rh .dw{display:flex;align-items:center;gap:7px}
+.mtx td.rh .clr-bar{width:3px;height:18px;border-radius:3px;flex-shrink:0}
+.mtx tr:last-child td{border-bottom:none}
+.mtx tbody tr:hover td{background:rgba(124,110,250,.06)}
+[data-theme="light"] .mtx tbody tr:hover td{background:rgba(91,78,232,.04)}
+.mtx td.tot{font-weight:700;color:var(--accent);background:rgba(124,110,250,.1);border-left:1px solid rgba(124,110,250,.2)}
+[data-theme="light"] .mtx td.tot{background:rgba(91,78,232,.07);color:#3730A3;border-left-color:rgba(91,78,232,.2)}
+.mtx tr.trow td{background:rgba(124,110,250,.12);font-weight:700;color:var(--accent);border-top:2px solid rgba(124,110,250,.3)}
+[data-theme="light"] .mtx tr.trow td{background:rgba(91,78,232,.08);color:#3730A3;border-top-color:rgba(91,78,232,.25)}
+.mtx tr.trow td.tot{background:rgba(124,110,250,.22)}
+[data-theme="light"] .mtx tr.trow td.tot{background:rgba(91,78,232,.15)}
+.wo-rem{padding:10px 16px;border-bottom:1px solid var(--border);background:var(--rem-bg)}
+.rem-t{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);margin-bottom:5px}
+.rem-list{list-style:none;display:flex;flex-direction:column;gap:3px}
+.rem-list li{display:flex;gap:8px;font-size:11px;color:var(--txt-2);line-height:1.5}
+.rem-list li::before{content:'—';color:var(--amber);flex-shrink:0;font-weight:700}
+.wo-hist{padding:9px 16px}
+.hist-t{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--txt-3);margin-bottom:6px}
+.hrow{display:flex;align-items:flex-start;gap:10px;padding:4px 0;border-bottom:1px solid var(--border)}
+.hrow:last-child{border-bottom:none}
+.hd{font-size:10px;color:var(--txt-3);min-width:68px;flex-shrink:0}
+.ht{font-size:11px;color:var(--txt-2);flex:1}
+.hb{font-size:9px;padding:1px 7px;border-radius:999px;background:var(--mtx-head);color:var(--txt-3);border:1px solid var(--border);flex-shrink:0}
+
+/* ── 인쇄 전용 스타일 ── */
+@media print {
+  @page { size: A4 landscape; margin: 0; }
+
+  /* ① 화면 UI 전부 숨기기 */
+  .sidebar, .topbar, .grid-wrap, .lb,
+  .wo-acts, .wo-zoom, .pc-expand { display: none !important; }
+
+  /* ② 기본 리셋 */
+  html, body {
+    width: 297mm; height: 210mm;
+    overflow: hidden;
+    background: #fff !important; color: #111;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .shell { display: block; width: 297mm; height: 210mm; overflow: hidden; }
+  .content { overflow: hidden; padding: 0; }
+
+  /* ③ 작업지시서 전체를 8mm 여백 안에서 scale로 꽉 맞춤 */
+  #wo-wrap {
+    position: fixed;
+    top: 8mm; left: 8mm;
+    width: 281mm;           /* 297 - 16 */
+    max-height: 194mm;      /* 210 - 16 */
+    overflow: hidden;
+    transform-origin: top left;
+  }
+  .wo {
+    margin: 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #fff !important;
+    font-size: 10px;
+    width: 100%;
+  }
+
+  /* ④ 헤더 */
+  .wo-head {
+    padding: 7px 14px 6px;
+    background: #f4f0ff !important;
+  }
+  .wo-name { font-size: 13px !important; color: #111; }
+  .wo-meta { font-size: 9px !important; color: #555; margin-top: 2px; }
+  .wo-htop > div:last-child button { display: none !important; }
+  .wo-meta svg { display: none; }
+
+  /* ⑤ 2단 레이아웃 */
+  .wo-cols { display: grid !important; grid-template-columns: 200mm 1fr; }
+  .wo-left { border-right: 1px solid #e0e0e0; }
+
+  /* ⑥ 이미지 */
+  .wo-imgmain { height: 120px !important; cursor: default; }
+  .wo-imgmain img { object-fit: cover; }
+
+  /* ⑦ 발주 정보 */
+  .wo-info { padding: 6px 10px !important; border-top: 1px solid #eee; }
+  .sec-t { font-size: 7px !important; color: #7C6EFA !important; margin-bottom: 4px; }
+  .ir { padding: 2px 0 !important; border-bottom: 1px solid #f0f0f0; }
+  .ik { font-size: 9px !important; color: #666; }
+  .iv { font-size: 9px !important; color: #111; font-weight: 600; }
+
+  /* ⑧ 원가 계산 완전 숨기기 */
+  .wo-info-sec { display: none !important; }
+
+  /* ⑨ 수량표 */
+  .wo-matrix { padding: 6px 10px 4px !important; border-bottom: 1px solid #eee; }
+  .mtx-hdr { margin-bottom: 5px !important; }
+  .mtx-lbl { font-size: 7px !important; }
+  .mtx-chip {
+    font-size: 8px !important; padding: 1px 7px !important;
+    background: #f0eeff !important; color: #3730A3 !important;
+    border-color: #c4b5fd !important;
+  }
+  .mtx th {
+    font-size: 8px !important; padding: 4px 6px !important;
+    background: #f0eeff !important; color: #3730A3 !important;
+  }
+  .mtx td { font-size: 9px !important; padding: 4px 6px !important; color: #111; }
+  .mtx td.rh { font-weight: 600 !important; background: #fafafa !important; }
+  .mtx td.tot {
+    font-weight: 700 !important;
+    background: #f0eeff !important; color: #3730A3 !important;
+  }
+  .mtx tr.trow td { background: #e8e4ff !important; color: #3730A3 !important; }
+  .mtx tr.trow td.tot { background: #d4caff !important; }
+  .mtx td.rh .clr-bar { width: 3px !important; height: 14px !important; }
+  .mtx-wrap { border: 1px solid #ddd; border-radius: 5px; overflow: hidden; }
+
+  /* ⑩ 특이사항 */
+  .wo-rem {
+    padding: 5px 10px !important;
+    border-bottom: 1px solid #eee;
+    background: #fffbeb !important;
+  }
+  .rem-t { font-size: 7px !important; color: #92400E !important; margin-bottom: 3px; }
+  .rem-list li { font-size: 9px !important; gap: 6px; line-height: 1.4; }
+  .rem-list li::before { color: #D97706 !important; }
+
+  /* ⑪ 히스토리 */
+  .wo-hist { padding: 5px 10px !important; }
+  .hist-t { font-size: 7px !important; color: #888; margin-bottom: 3px; }
+  .hrow { padding: 2px 0 !important; gap: 8px; }
+  .hd { font-size: 8px !important; min-width: 58px; }
+  .ht { font-size: 9px !important; }
+  .hb { font-size: 8px !important; padding: 1px 6px !important; border: 1px solid #ddd !important; }
+}
+
+/* Lightbox */
+.lb{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:1000;display:none;align-items:center;justify-content:center;padding:24px}
+.lb.open{display:flex}
+.lb-box{position:relative;max-width:760px;width:100%;background:var(--surface);border:1px solid var(--border-md);border-radius:12px;overflow:hidden}
+.lb-img{width:100%;max-height:68vh;object-fit:contain;background:var(--bg);display:block}
+.lb-ph{height:360px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;background:var(--bg);color:var(--txt-3)}
+.lb-ph svg{width:52px;height:52px;stroke:var(--txt-3);fill:none;opacity:.3}
+.lb-ph p{font-size:12px;opacity:.5}
+.lb-info{padding:13px 17px;border-top:1px solid var(--border)}
+.lb-name{font-size:14px;font-weight:600;color:var(--txt)}
+.lb-sub{font-size:11px;color:var(--txt-3);margin-top:3px}
+.lb-close{position:absolute;top:10px;right:10px;width:29px;height:29px;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.15);border-radius:7px;display:grid;place-items:center;cursor:pointer;color:white;font-size:16px;transition:.12s}
+.lb-close:hover{background:rgba(255,255,255,.12)}
+
+/* ── 작업지시서 모달 ── */
+.wo-modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:2000;display:none;align-items:center;justify-content:center;padding:20px}
+.wo-modal-bg.open{display:flex}
+.wo-modal{background:var(--card);border:1px solid var(--border-md);border-radius:16px;width:min(98vw,1280px);height:92vh;display:flex;flex-direction:column;position:relative;overflow:hidden}
+.wo-modal-head{padding:16px 24px 14px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,rgba(124,110,250,.07)0%,transparent 60%);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;position:sticky;top:0;z-index:1;backdrop-filter:blur(6px)}
+.wo-modal-title{font-size:18px;font-weight:700;color:var(--txt);letter-spacing:-.01em}
+.wo-modal-sub{font-size:12px;color:var(--txt-3);margin-top:4px;display:flex;gap:12px;flex-wrap:wrap}
+.wo-modal-sub span{display:flex;align-items:center;gap:3px}
+.wo-modal-actions{display:flex;gap:8px;align-items:center}
+.wo-modal-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border-md);background:transparent;color:var(--txt-3);cursor:pointer;display:grid;place-items:center;transition:.12s;flex-shrink:0}
+.wo-modal-close:hover{background:var(--red-dim);color:var(--red);border-color:rgba(248,113,113,.3)}
+.wo-modal-body{display:grid;grid-template-columns:380px 1fr;flex:1;overflow:hidden}
+.wo-modal-left{border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto}
+.wo-modal-imgbox{height:360px;background:var(--bg);position:relative;overflow:hidden;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.wo-modal-imgbox img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
+.wo-modal-imgbox:hover img{transform:scale(1.03)}
+.wo-modal-imgzoom{position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.2);border-radius:7px;padding:5px 11px;font-size:11px;color:white;display:flex;align-items:center;gap:5px;opacity:0;transition:.15s}
+.wo-modal-imgbox:hover .wo-modal-imgzoom{opacity:1}
+.wo-modal-imgzoom svg{width:12px;height:12px;stroke:white;fill:none;stroke-width:2}
+.wo-modal-info{padding:16px 18px}
+.wo-modal-right{display:flex;flex-direction:column;overflow-y:auto}
+.wo-modal-mtx{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;flex-direction:column}
+.wo-modal-rem{padding:14px 20px;border-bottom:1px solid var(--border);background:var(--rem-bg)}
+.wo-modal-hist{padding:14px 20px}
+
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border-md);border-radius:3px}
+</style>
+</head>
+<body>
+
+
+<!-- 작업지시서 모달 -->
+<div class="wo-modal-bg" id="wo-modal-bg" onclick="closeWOModal(event)">
+  <div class="wo-modal" id="wo-modal">
+    <div class="wo-modal-head">
+      <div>
+        <div class="wo-modal-title" id="wm-title"></div>
+        <div class="wo-modal-sub" id="wm-sub"></div>
+      </div>
+      <div class="wo-modal-actions">
+        <span id="wm-status"></span>
+        <button class="abtn pri" onclick="printWO()">
+          <svg viewBox="0 0 24 24" width="13" height="13" stroke="white" fill="none" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          PDF 저장
+        </button>
+        <button class="wo-modal-close" onclick="closeWOModal()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="wo-modal-body">
+      <div class="wo-modal-left">
+        <div class="wo-modal-imgbox" id="wm-img" onclick="openLBfromModal()">
+          <div class="wo-modal-imgzoom"><svg viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>크게 보기</div>
+        </div>
+        <div class="wo-modal-info" id="wm-info"></div>
+      </div>
+      <div class="wo-modal-right">
+        <div class="wo-modal-mtx" id="wm-mtx"></div>
+        <div class="wo-modal-rem" id="wm-rem"></div>
+        <div class="wo-modal-hist" id="wm-hist"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Lightbox -->
+<div class="lb" id="lb" onclick="closeLB(event)">
+  <div class="lb-box">
+    <div class="lb-close" onclick="closeLB()">✕</div>
+    <div id="lb-img"></div>
+    <div class="lb-info"><div class="lb-name" id="lb-nm"></div><div class="lb-sub" id="lb-sb"></div></div>
+  </div>
+</div>
+
+<div class="shell">
+  <aside class="sidebar">
+    <div class="sb-top">
+      <div class="logo-row">
+        <div class="logo-mark"><svg viewBox="0 0 24 24"><path d="M3 17.5C3 15.57 4.57 14 6.5 14h11c1.93 0 3.5 1.57 3.5 3.5S19.43 21 17.5 21h-11C4.57 21 3 19.43 3 17.5z"/><path d="M2 11l4-7h12l4 7"/></svg></div>
+        <div><div class="logo-text">OZKIZ Shoes</div><div class="logo-sub">작업지시서 관리</div></div>
+      </div>
+      <div class="sb-ctrl-row">
+        <div class="notion-tag"><span class="notion-dot"></span>노션 연동 준비중</div>
+        <button class="theme-btn" onclick="toggleTheme()" title="라이트 / 다크 전환">
+          <svg class="icon-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg class="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="sb-search">
+      <div class="s-wrap">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input id="srch" type="text" placeholder="스타일명 검색..." oninput="render()">
+      </div>
+    </div>
+    <div class="sb-filters" id="sb-filters"></div>
+    <button class="sb-reset" id="reset-btn" onclick="resetAll()">필터 초기화</button>
+  </aside>
+
+  <div class="content">
+    <div class="grid-wrap">
+      <div class="grid-hdr"><div class="grid-ttl" id="grid-ttl"></div></div>
+      <div class="prod-grid" id="prod-grid"></div>
+    </div>
+    <div id="wo-wrap"></div>
+  </div>
+</div>
+
+<script>
+const CHX={'퍼플':'#A78BFA','핑크':'#F9A8D4','화이트':'#D1D5DB','블랙':'#4B5563','아이보리':'#FDE68A','네이비':'#3B82F6','민트':'#6EE7B7','코랄':'#FCA5A5','스카이블루':'#BAE6FD','브라운':'#A16207','카키':'#84CC16','라벤더':'#DDD6FE'};
+const SC={봄:'sp',여름:'su',가을:'fa',겨울:'wi'};
+const FDEFS=[
+  {k:'vendor',lbl:'업체',ico:'<circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/>'},
+  {k:'region',lbl:'생산지역',ico:'<path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/>'},
+  {k:'year',lbl:'개발년도',ico:'<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>'},
+  {k:'cat',lbl:'카테고리',ico:'<path d="M3 17.5C3 15.57 4.57 14 6.5 14h11c1.93 0 3.5 1.57 3.5 3.5S19.43 21 17.5 21h-11C4.57 21 3 19.43 3 17.5z"/><path d="M2 11l4-7h12l4 7"/>'},
+  {k:'season',lbl:'시즌',ico:'<path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>'},
+  {k:'status',lbl:'진행상태',ico:'<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>'},
+];
+let PRODS=[];
+
+let F={vendor:'전체',region:'전체',year:'전체',cat:'전체',season:'전체',status:'전체'};
+let selId=null;
+const $=id=>document.getElementById(id);
+const N=n=>n.toLocaleString('ko-KR');
+const D=d=>d?d.replace(/-/g,'.'):'-';
+const tQ=ord=>ord.reduce((s,r)=>s+r.q,0);
+function mtx(ord){
+  const cs=[...new Set(ord.map(r=>r.c))];
+  const sz=[...new Set(ord.map(r=>r.s))].sort((a,b)=>a-b);
+  const m={};ord.forEach(r=>{if(!m[r.c])m[r.c]={};m[r.c][r.s]=(m[r.c][r.s]||0)+r.q});
+  return{cs,sz,m};
+}
+
+window.toggleTheme=()=>{
+  const h=document.documentElement;
+  const n=h.dataset.theme==='dark'?'light':'dark';
+  h.dataset.theme=n;localStorage.setItem('oz-theme',n);
+};
+(()=>{const s=localStorage.getItem('oz-theme');if(s)document.documentElement.dataset.theme=s;})();
+
+function renderFilters(){
+  const uq=k=>['전체',...new Set(PRODS.map(p=>String(p[k])))];
+  const any=Object.values(F).some(v=>v!=='전체');
+  $('sb-filters').innerHTML=FDEFS.map(({k,lbl,ico})=>{
+    const vals=uq(k);const isOn=F[k]!=='전체';
+    return`<div class="fg${isOn?' open':''}" id="fg-${k}">
+      <div class="fg-head" onclick="togFG('${k}')">
+        <span class="fg-lbl"><svg class="fg-ico" viewBox="0 0 24 24" stroke-width="2" fill="none">${ico}</svg>${lbl}<span class="fg-badge${isOn?' show':''}">${isOn?F[k]:''}</span></span>
+        <svg class="fg-arr" viewBox="0 0 24 24" fill="none"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="fg-body"><div class="fg-inner"><div class="chips">${vals.map(v=>{
+        const on=F[k]===String(v);const sc=k==='season'&&v!=='전체'?(SC[v]||''):'';
+        return`<span class="chip${on?' on':''}${sc?' '+sc:''}" onclick="setF('${k}','${v}')">${v}</span>`;
+      }).join('')}</div></div></div>
+    </div>`;
+  }).join('');
+  $('reset-btn').className='sb-reset'+(any?' on':'');
+}
+window.togFG=k=>{const el=$(`fg-${k}`);if(el)el.classList.toggle('open')};
+window.setF=(k,v)=>{F[k]=String(v);const el=$(`fg-${k}`);if(el&&v!=='전체')el.classList.add('open');renderFilters();render()};
+window.resetAll=()=>{Object.keys(F).forEach(k=>F[k]='전체');renderFilters();render()};
+
+function filt(){
+  const q=$('srch').value.trim().toLowerCase();
+  return PRODS.filter(p=>{
+    if(F.vendor!=='전체'&&p.vendor!==F.vendor)return false;
+    if(F.region!=='전체'&&p.region!==F.region)return false;
+    if(F.year!=='전체'&&String(p.year)!==F.year)return false;
+    if(F.cat!=='전체'&&p.cat!==F.cat)return false;
+    if(F.season!=='전체'&&p.season!==F.season)return false;
+    if(F.status!=='전체'&&p.status!==F.status)return false;
+    if(q&&!p.name.toLowerCase().includes(q)&&!p.style.toLowerCase().includes(q))return false;
+    return true;
+  });
+}
+
+function renderStats(list){}
+
+function imgH(p,sm){
+  if(p.img)return`<img src="${p.img}" alt="${p.name}" onerror="this.style.display='none'">`;
+  const sv=`<svg viewBox="0 0 24 24" stroke-width="1" fill="none"><path d="M3 17.5C3 15.57 4.57 14 6.5 14h11c1.93 0 3.5 1.57 3.5 3.5S19.43 21 17.5 21h-11C4.57 21 3 19.43 3 17.5z"/><path d="M2 11l4-7h12l4 7"/></svg>`;
+  return sm?`<div class="pc-ph">${sv}<span>이미지 준비중</span></div>`:`<div class="wo-ph">${sv}<p>노션 대표이미지를 등록하면<br>자동으로 표시됩니다</p></div>`;
+}
+
+function renderGrid(list){
+  $('grid-ttl').textContent=`${list.length}개 스타일`;
+  if(!list.length){$('prod-grid').innerHTML=`<div class="empty"><svg viewBox="0 0 24 24" stroke-width="1.5" fill="none"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><p>조건에 맞는 제품이 없어요</p></div>`;return;}
+  const co=p=>[...new Set(p.ord.map(r=>r.c))];
+  $('prod-grid').innerHTML=list.map(p=>{
+    const cs=co(p);const qty=tQ(p.ord);
+    return`<div class="pc${selId===p.id?' act':''}" onclick="sel(${p.id})">
+      <div class="pc-img">${imgH(p,true)}
+        <div class="pc-status"><span class="sp s${p.status.replace(/ /g,'')}">${p.status}</span></div>
+        <div class="pc-expand" onclick="event.stopPropagation();openLB(${p.id})"><svg viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+      </div>
+      <div class="pc-body">
+        <div class="pc-top">
+          <div class="pc-name">${p.name}</div>
+          <div class="pc-style">${p.style}</div>
+        </div>
+        <div class="pc-meta-list">
+          <div class="pc-meta-row"><span class="pc-mk">입고일정</span><span class="pc-mv">${[...new Set(p.ord.map(r=>r.dd))].map(D).join(', ')}</span></div>
+          <div class="pc-meta-row"><span class="pc-mk">생산공장</span><span class="pc-mv">${p.vendor}</span></div>
+          <div class="pc-meta-row"><span class="pc-mk">원가</span><span class="pc-mv">${N(p.uc)}원</span></div>
+          <div class="pc-meta-row"><span class="pc-mk">시즌</span><span class="pc-mv">${p.season}</span></div>
+          <div class="pc-meta-row"><span class="pc-mk">년도</span><span class="pc-mv">${p.year}년</span></div>
+          <div class="pc-meta-row"><span class="pc-mk">카테고리</span><span class="pc-mv">${p.cat}</span></div>
+          <div class="pc-meta-row"><span class="pc-mk">원산지</span><span class="pc-mv">${p.region}</span></div>
+        </div>
+        <div class="pc-foot">
+          <div class="pc-qty">총 <b>${N(qty)}켤레</b></div>
+          <button class="wo-btn" onclick="event.stopPropagation();sel(${p.id})">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            작업지시서
+          </button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+window.sel=id=>{
+  selId=id;render();
+  setTimeout(()=>{ openWOModal(id); },80);
+};
+window.closeWO=()=>{selId=null;$('wo-wrap').innerHTML='';render();};
+
+window.printWO=()=>{
+  const p=PRODS.find(x=>x.id===selId);
+  if(!p)return;
+  const{cs,sz,m}=mtx(p.ord);
+  const rounds=[...new Set(p.ord.map(r=>r.r))];
+  const qty=tQ(p.ord);
+  const ct=sz.map(s=>cs.reduce((sum,c)=>sum+(m[c]?.[s]||0),0));
+  const grand=ct.reduce((a,b)=>a+b,0);
+  const today=new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'});
+
+  const mrows=cs.map(c=>{
+    const vs=sz.map(s=>m[c]?.[s]||0);
+    const ctt=vs.reduce((a,b)=>a+b,0);
+    const dot=CHX[c]||'#888';
+    return`<tr>
+      <td class="clbl"><span class="cdot2" style="background:${dot}"></span>${c}</td>
+      ${vs.map(v=>`<td class="${v?'':'zero'}">${v||'—'}</td>`).join('')}
+      <td class="tot">${ctt}</td>
+    </tr>`;
+  }).join('');
+
+  const imgSrc=p.img
+    ?`<img src="${p.img}" style="width:100%;height:100%;object-fit:cover">`
+    :`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:10px;color:#bbb">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1"><path d="M3 17.5C3 15.57 4.57 14 6.5 14h11c1.93 0 3.5 1.57 3.5 3.5S19.43 21 17.5 21h-11C4.57 21 3 19.43 3 17.5z"/><path d="M2 11l4-7h12l4 7"/></svg>
+        <span style="font-size:11px">이미지 준비중</span>
+      </div>`;
+
+  const css=`
+    @page { size: A4 portrait; margin: 10mm 12mm; }
+    *{ box-sizing:border-box; margin:0; padding:0; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    body{ font-family:'Malgun Gothic','Apple SD Gothic Neo','Inter',sans-serif; font-size:9pt; color:#111; background:#fff; }
+
+    .doc-title{ text-align:center; font-size:17pt; font-weight:700; letter-spacing:.12em; padding-bottom:7px; border-bottom:2.5px solid #111; margin-bottom:9px; }
+
+    /* 상단 메타 — 납기일·진행상태 제거 후 남은 항목 */
+    .meta-tbl{ width:100%; border-collapse:collapse; margin-bottom:9px; }
+    .meta-tbl th,.meta-tbl td{ border:1px solid #555; padding:5px 8px; text-align:center; font-size:9pt; }
+    .meta-tbl th{ background:#f0eeff; font-weight:700; color:#3730A3; }
+    .meta-tbl td{ font-weight:600; }
+
+    /* 메인 2단 */
+    .main-area{ display:grid; grid-template-columns:220px 1fr; border:1.5px solid #555; margin-bottom:9px; }
+    .left-col{ border-right:1.5px solid #555; display:flex; flex-direction:column; }
+
+    /* 이미지 — 크게 */
+    .img-box{ height:260px; background:#f5f5f5; overflow:hidden; border-bottom:1px solid #ddd; flex-shrink:0; }
+
+    /* 발주 정보 */
+    .prod-info{ padding:7px 9px; }
+    .prod-info-row{ display:flex; justify-content:space-between; padding:3px 0; border-bottom:1px dotted #e0e0e0; font-size:8.5pt; }
+    .prod-info-row:last-child{ border-bottom:none; }
+    .pi-key{ color:#666; }
+    .pi-val{ font-weight:600; color:#111; text-align:right; }
+
+    /* 우측 — 수량표 + 특이사항 */
+    .right-col{ display:flex; flex-direction:column; }
+    .qty-section{ flex:1; padding:8px 10px 6px; border-bottom:1px solid #ddd; }
+    .qty-label{ font-size:8pt; font-weight:700; color:#3730A3; margin-bottom:6px; }
+
+    /* 수량표 — 크게 */
+    .qty-tbl{ width:100%; border-collapse:collapse; font-size:9.5pt; }
+    .qty-tbl th{ padding:6px 8px; background:#f0eeff; color:#3730A3; font-weight:700; text-align:center; border:1px solid #c4b5fd; font-size:8.5pt; white-space:nowrap; }
+    .qty-tbl th.lh{ text-align:left; min-width:70px; }
+    .qty-tbl td{ padding:6px 8px; text-align:center; border:1px solid #ddd; font-size:9.5pt; font-weight:500; }
+    .qty-tbl td.clbl{ text-align:left; font-weight:700; background:#fafafa; display:flex; align-items:center; gap:6px; white-space:nowrap; font-size:9pt; }
+    .qty-tbl td.tot{ font-weight:700; background:#f0eeff; color:#3730A3; font-size:10pt; }
+    .qty-tbl tr.trow td{ background:#e8e4ff; font-weight:700; color:#3730A3; font-size:9.5pt; }
+    .qty-tbl td.zero{ color:#ccc; }
+    .cdot2{ display:inline-block; width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+
+    /* 특이사항 */
+    .rem-section{ padding:7px 10px; }
+    .rem-label{ font-size:8pt; font-weight:700; color:#92400E; margin-bottom:5px; }
+    .rem-list{ list-style:none; }
+    .rem-list li{ display:flex; gap:6px; font-size:9pt; color:#444; margin-bottom:3px; line-height:1.5; }
+    .rem-list li::before{ content:'—'; color:#D97706; font-weight:700; flex-shrink:0; }
+
+    /* 푸터 */
+    .footer{ display:flex; justify-content:space-between; font-size:7.5pt; color:#aaa; padding-top:5px; border-top:1px solid #ddd; }
+  `;
+
+  const html=`<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8">
+<title>${p.name} 작업지시서</title>
+<style>${css}</style></head><body>
+
+  <div class="doc-title">작 업 지 시 서</div>
+
+  <table class="meta-tbl">
+    <tr>
+      <th>발주일</th><td>${p.ord[0]?.od?D(p.ord[0].od):'-'}</td>
+      <th>STYLE NO.</th><td>${p.style}</td>
+      <th>브랜드명</th><td>${p.brand}</td>
+      <th>발주 차수</th><td>${rounds.join(', ')}</td>
+    </tr>
+  </table>
+
+  <div class="main-area">
+    <div class="left-col">
+      <div class="img-box">${imgSrc}</div>
+      <div class="prod-info">
+        <div class="prod-info-row"><span class="pi-key">제품명</span><span class="pi-val">${p.name}</span></div>
+        <div class="prod-info-row"><span class="pi-key">카테고리</span><span class="pi-val">${p.cat}</span></div>
+        <div class="prod-info-row"><span class="pi-key">시즌</span><span class="pi-val">${p.year}년 ${p.season}</span></div>
+        <div class="prod-info-row"><span class="pi-key">생산공장</span><span class="pi-val">${p.vendor}</span></div>
+        <div class="prod-info-row"><span class="pi-key">원산지</span><span class="pi-val">${p.region}</span></div>
+        ${p.gender?`<div class="prod-info-row"><span class="pi-key">성별</span><span class="pi-val">${p.gender}</span></div>`:''}
+        <div class="prod-info-row"><span class="pi-key">총 발주</span><span class="pi-val" style="color:#3730A3;font-size:10.5pt">${N(grand)}켤레</span></div>
+        <div class="prod-info-row"><span class="pi-key">업체 단가</span><span class="pi-val">${N(p.uv)}원</span></div>
+      </div>
+    </div>
+    <div class="right-col">
+      <div class="qty-section">
+        <div class="qty-label">컬러 × 사이즈 발주 수량표 &nbsp;|&nbsp; 총 ${N(grand)}켤레 · ${cs.length}색상 · 사이즈 ${sz[0]}~${sz[sz.length-1]}</div>
+        <table class="qty-tbl">
+          <thead><tr>
+            <th class="lh">컬러 / 사이즈</th>
+            ${sz.map(s=>`<th>${s}</th>`).join('')}
+            <th>합계</th>
+          </tr></thead>
+          <tbody>
+            ${mrows}
+            <tr class="trow">
+              <td class="clbl" style="font-weight:700">합계</td>
+              ${ct.map(v=>`<td>${N(v)}</td>`).join('')}
+              <td class="tot">${N(grand)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="rem-section">
+        <div class="rem-label">생산 지시 특이사항</div>
+        <ul class="rem-list">
+          ${p.rem.map(r=>`<li>${r}</li>`).join('')}
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>OZKIZ 슈즈 작업지시서 · 발행일 ${today}</span>
+    <span>${p.style}</span>
+  </div>
+
+<script>window.onload=()=>{ setTimeout(()=>window.print(),200); }<\/script>
+</body></html>`;
+
+  const w=window.open('','_blank','width=900,height=760');
+  if(w){ w.document.write(html); w.document.close(); }
+};
+
+
+function renderWO(p){
+  const{cs,sz,m}=mtx(p.ord);
+  const rounds=[...new Set(p.ord.map(r=>r.r))];
+  const qty=tQ(p.ord);
+  const ct=sz.map(s=>cs.reduce((sum,c)=>sum+(m[c]?.[s]||0),0));
+  const grand=ct.reduce((a,b)=>a+b,0);
+  const today=new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'});
+
+  const bar=c=>`<span class="clr-bar" style="background:${CHX[c]||'#888'}"></span>`;
+  const mrows=cs.map(c=>{
+    const vs=sz.map(s=>m[c]?.[s]||0);
+    const ct2=vs.reduce((a,b)=>a+b,0);
+    const cells=vs.map(v=>v===0?`<td style="color:var(--txt-3);opacity:.4">—</td>`:`<td>${v}</td>`).join('');
+    return`<tr><td class="rh"><div class="dw">${bar(c)}<span>${c}</span></div></td>${cells}<td class="tot">${N(ct2)}</td></tr>`;
+  }).join('');
+
+  $('wo-wrap').innerHTML=`<div class="wo">
+    <div class="wo-head">
+      <div class="wo-htop">
+        <div>
+          <div class="wo-name">${p.name}</div>
+          <div class="wo-meta">
+            <span><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>${p.year}년 ${p.season}</span>
+            <span><svg viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>${p.region}</span>
+            <span><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>${p.vendor}</span>
+            <span>발행일 ${today}</span>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;flex-shrink:0">
+          <span class="sp s${p.status.replace(/ /g,'')}">${p.status}</span>
+          <button onclick="closeWO()" title="닫기" style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:7px;border:1px solid var(--border-md);background:transparent;color:var(--txt-3);cursor:pointer" onmouseover="this.style.background='var(--red-dim)';this.style.color='var(--red)'" onmouseout="this.style.background='transparent';this.style.color='var(--txt-3)'">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="wo-acts">
+        <button class="abtn"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>공장 발송</button>
+        <button class="abtn"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>수정</button>
+        <button class="abtn pri" onclick="printWO()"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>PDF 저장</button>
+      </div>
+    </div>
+    <div class="wo-cols">
+      <div class="wo-left">
+        <div class="wo-imgmain" onclick="openLB(${p.id})">${imgH(p,false)}<div class="wo-zoom"><svg viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>크게 보기</div></div>
+        <div class="wo-info">
+          <div class="sec-t">발주 정보</div>
+          <div class="ir"><span class="ik">품번</span><span class="iv">${p.style}</span></div>
+          <div class="ir"><span class="ik">카테고리</span><span class="iv">${p.cat}${p.gender?' · '+p.gender:''}</span></div>
+          <div class="ir"><span class="ik">발주 차수</span><span class="iv">${rounds.join(', ')}</span></div>
+          <div class="ir"><span class="ik">총 발주수량</span><span class="iv" style="font-weight:700;font-size:13px">${N(qty)}켤레</span></div>
+          <div class="ir"><span class="ik">컬러 수</span><span class="iv">${cs.length}색상</span></div>
+          <div class="ir"><span class="ik">사이즈 범위</span><span class="iv">${sz[0]}~${sz[sz.length-1]}</span></div>
+        </div>
+        <div class="wo-info-sec">
+          <div class="sec-t">원가 계산 <span style="font-size:8px;color:var(--red);background:var(--red-dim);padding:1px 6px;border-radius:4px;letter-spacing:.04em">내부용</span></div>
+          <div class="cost-box">
+            <div class="cost-row"><span>업체 단가</span><span>${N(p.uv)}원</span></div>
+            <div class="cost-row"><span>택·박스 부자재</span><span>${N(p.us)}원</span></div>
+            ${p.ue?`<div class="cost-row"><span>기타 부자재</span><span>${N(p.ue)}원</span></div>`:''}
+            <div class="cost-total"><span>원가</span><span>${N(p.uc)}원</span></div>
+            <div class="cost-retail"><span>판매가</span><span>${N(p.rt)}원</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="wo-right">
+        <div class="wo-matrix">
+          <div class="mtx-hdr">
+            <div class="mtx-lbl">컬러 × 사이즈 발주 수량표</div>
+            <div class="mtx-chips"><span class="mtx-chip">총 ${N(grand)}켤레</span><span class="mtx-chip">${cs.length}색상</span><span class="mtx-chip">${sz.length}사이즈</span></div>
+          </div>
+          <div class="mtx-wrap"><table class="mtx">
+            <thead><tr><th class="lh">컬러 / 사이즈</th>${sz.map(s=>`<th>${s}</th>`).join('')}<th>합계</th></tr></thead>
+            <tbody>${mrows}<tr class="trow"><td class="rh" style="font-weight:700">합계</td>${ct.map(v=>`<td>${N(v)}</td>`).join('')}<td class="tot">${N(grand)}</td></tr></tbody>
+          </table></div>
+        </div>
+        <div class="wo-rem">
+          <div class="rem-t">생산 지시 특이사항</div>
+          <ul class="rem-list">${p.rem.map(r=>`<li>${r}</li>`).join('')}</ul>
+        </div>
+        <div class="wo-hist">
+          <div class="hist-t">제품 히스토리</div>
+          ${p.hist.map(h=>`<div class="hrow"><span class="hd">${D(h.d)}</span><span class="ht">${h.t}</span><span class="hb">${h.b}</span></div>`).join('')}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+window.openWOModal=id=>{
+  const p=PRODS.find(x=>x.id===id);
+  if(!p)return;
+  selId=id;
+  const{cs,sz,m}=mtx(p.ord);
+  const rounds=[...new Set(p.ord.map(r=>r.r))];
+  const qty=tQ(p.ord);
+  const ct=sz.map(s=>cs.reduce((sum,c)=>sum+(m[c]?.[s]||0),0));
+  const grand=ct.reduce((a,b)=>a+b,0);
+  const today=new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'});
+  const bar=c=>`<span class="clr-bar" style="background:${CHX[c]||'#888'}"></span>`;
+
+  // 헤더
+  $('wm-title').textContent=p.name;
+  $('wm-sub').innerHTML=`
+    <span>${p.style}</span><span>${p.year}년 ${p.season}</span>
+    <span>${p.vendor}</span><span>${p.region}</span><span>발행일 ${today}</span>`;
+  $('wm-status').innerHTML=`<span class="sp s${p.status.replace(/ /g,'')}">${p.status}</span>`;
+
+  // 이미지
+  const imgEl=$('wm-img');
+  const zoom=imgEl.querySelector('.wo-modal-imgzoom');
+  if(p.img){
+    imgEl.innerHTML=`<img src="${p.img}" style="width:100%;height:100%;object-fit:cover">${zoom.outerHTML}`;
+  } else {
+    imgEl.innerHTML=`<div class="wo-ph"><svg viewBox="0 0 24 24" width="38" height="38" stroke="currentColor" fill="none" stroke-width="1"><path d="M3 17.5C3 15.57 4.57 14 6.5 14h11c1.93 0 3.5 1.57 3.5 3.5S19.43 21 17.5 21h-11C4.57 21 3 19.43 3 17.5z"/><path d="M2 11l4-7h12l4 7"/></svg><p>이미지 준비중</p></div>${zoom.outerHTML}`;
+  }
+
+  // 발주 정보
+  $('wm-info').innerHTML=`
+    <div class="sec-t">발주 정보</div>
+    <div class="ir"><span class="ik">품번</span><span class="iv">${p.style}</span></div>
+    <div class="ir"><span class="ik">카테고리</span><span class="iv">${p.cat}${p.gender?' · '+p.gender:''}</span></div>
+    <div class="ir"><span class="ik">발주 차수</span><span class="iv">${rounds.join(', ')}</span></div>
+    <div class="ir"><span class="ik">총 발주수량</span><span class="iv" style="font-weight:700;font-size:13px;color:var(--accent)">${N(qty)}켤레</span></div>
+    <div class="ir"><span class="ik">컬러 수</span><span class="iv">${cs.length}색상</span></div>
+    <div class="ir"><span class="ik">사이즈 범위</span><span class="iv">${sz[0]}~${sz[sz.length-1]}</span></div>
+    <div class="ir"><span class="ik">업체 단가</span><span class="iv">${N(p.uv)}원</span></div>
+    <div class="sec-t" style="margin-top:10px">원가 계산 <span style="font-size:8px;color:var(--red);background:var(--red-dim);padding:1px 6px;border-radius:4px">내부용</span></div>
+    <div class="cost-box">
+      <div class="cost-row"><span>업체 단가</span><span>${N(p.uv)}원</span></div>
+      <div class="cost-row"><span>택·박스 부자재</span><span>${N(p.us)}원</span></div>
+      ${p.ue?`<div class="cost-row"><span>기타 부자재</span><span>${N(p.ue)}원</span></div>`:''}
+      <div class="cost-total"><span>원가</span><span>${N(p.uc)}원</span></div>
+      <div class="cost-retail"><span>판매가</span><span>${N(p.rt)}원</span></div>
+    </div>`;
+
+  // 수량표
+  const mrows=cs.map(c=>{
+    const vs=sz.map(s=>m[c]?.[s]||0);
+    const ct2=vs.reduce((a,b)=>a+b,0);
+    const cells=vs.map(v=>v===0?`<td style="color:var(--txt-3);opacity:.4">—</td>`:`<td>${v}</td>`).join('');
+    return`<tr><td class="rh"><div class="dw">${bar(c)}<span>${c}</span></div></td>${cells}<td class="tot">${N(ct2)}</td></tr>`;
+  }).join('');
+  $('wm-mtx').innerHTML=`
+    <div class="mtx-hdr">
+      <div class="mtx-lbl">컬러 × 사이즈 발주 수량표</div>
+      <div class="mtx-chips"><span class="mtx-chip">총 ${N(grand)}켤레</span><span class="mtx-chip">${cs.length}색상</span><span class="mtx-chip">${sz.length}사이즈</span></div>
+    </div>
+    <div class="mtx-wrap"><table class="mtx">
+      <thead><tr><th class="lh">컬러 / 사이즈</th>${sz.map(s=>`<th>${s}</th>`).join('')}<th>합계</th></tr></thead>
+      <tbody>${mrows}<tr class="trow"><td class="rh" style="font-weight:700">합계</td>${ct.map(v=>`<td>${N(v)}</td>`).join('')}<td class="tot">${N(grand)}</td></tr></tbody>
+    </table></div>`;
+
+  // 특이사항
+  $('wm-rem').innerHTML=`
+    <div class="rem-t">생산 지시 특이사항</div>
+    <ul class="rem-list">${p.rem.map(r=>`<li>${r}</li>`).join('')}</ul>`;
+
+  // 히스토리
+  $('wm-hist').innerHTML=`
+    <div class="hist-t">제품 히스토리</div>
+    ${p.hist.map(h=>`<div class="hrow"><span class="hd">${D(h.d)}</span><span class="ht">${h.t}</span><span class="hb">${h.b}</span></div>`).join('')}`;
+
+  $('wo-modal-bg').classList.add('open');
+  document.body.style.overflow='hidden';
+};
+
+window.closeWOModal=e=>{
+  if(!e||e.target===$('wo-modal-bg')){
+    $('wo-modal-bg').classList.remove('open');
+    document.body.style.overflow='';
+  }
+};
+
+window.openLBfromModal=()=>{
+  if(selId)openLB(selId);
+};
+
+
+window.openLB=id=>{
+  const p=PRODS.find(x=>x.id===id);
+  $('lb-nm').textContent=p.name;$('lb-sb').textContent=`${p.style} · ${p.year}년 ${p.season} · ${p.vendor}`;
+  $('lb-img').innerHTML=p.img?`<img class="lb-img" src="${p.img}" alt="${p.name}">`:`<div class="lb-ph"><svg viewBox="0 0 24 24" stroke-width="1" fill="none"><path d="M3 17.5C3 15.57 4.57 14 6.5 14h11c1.93 0 3.5 1.57 3.5 3.5S19.43 21 17.5 21h-11C4.57 21 3 19.43 3 17.5z"/><path d="M2 11l4-7h12l4 7"/></svg><p>노션 대표이미지가 등록되면<br>여기에 크게 표시됩니다</p></div>`;
+  $('lb').classList.add('open');
+};
+window.closeLB=e=>{if(!e||e.target===$('lb'))$('lb').classList.remove('open')};
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('lb').classList.remove('open');$('wo-modal-bg').classList.remove('open');document.body.style.overflow='';}});
+
+function render(){
+  const list=filt();renderStats(list);renderGrid(list);
+  if(selId){const p=PRODS.find(x=>x.id===selId);if(p&&list.includes(p))renderWO(p);else $('wo-wrap').innerHTML='';}
+}
+async function loadData(){
+  const grid=$('prod-grid');
+  const ttl=$('grid-ttl');
+  if(ttl)ttl.textContent='노션에서 불러오는 중...';
+  if(grid)grid.innerHTML='<div class="empty"><p>노션에서 데이터 불러오는 중...</p></div>';
+  try{
+    const r=await fetch('/api/products');
+    if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.error||('HTTP '+r.status));}
+    const data=await r.json();
+    PRODS.length=0;PRODS.push(...data);
+    renderFilters();render();
+  }catch(e){
+    if(grid)grid.innerHTML='<div class="empty"><p style="color:var(--red)">데이터 불러오기 실패</p><p style="font-size:11px;margin-top:8px">'+e.message+'</p></div>';
+    if(ttl)ttl.textContent='오류';
+    console.error('Load error:',e);
+  }
+}
+loadData();
+</script>
+</body>
+</html>

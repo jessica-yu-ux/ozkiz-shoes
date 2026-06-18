@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/", "destination": "/ozkiz-shoes-v3.html" }
+  ]
+}
