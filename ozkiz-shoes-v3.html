@@ -487,7 +487,8 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
         <div><div class="logo-text">OZKIZ Shoes</div><div class="logo-sub">작업지시서 관리</div></div>
       </div>
       <div class="sb-ctrl-row">
-        <div class="notion-tag"><span class="notion-dot"></span>노션 연동 준비중</div>
+        <div class="notion-tag"><span class="notion-dot"></span>노션 연동중</div>
+        <button id="refresh-btn" class="theme-btn" onclick="forceRefresh()" title="노션 데이터 강제 새로고침 (캐시 무효화)" style="font-size:13px">↻</button>
         <button class="theme-btn" onclick="toggleTheme()" title="라이트 / 다크 전환">
           <svg class="icon-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
           <svg class="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
@@ -497,7 +498,7 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
     <div class="sb-search">
       <div class="s-wrap">
         <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        <input id="srch" type="text" placeholder="스타일명 검색..." oninput="render()">
+        <input id="srch" type="text" placeholder="스타일명 검색..." oninput="debouncedRender()">
       </div>
     </div>
     <div class="sb-filters" id="sb-filters"></div>
@@ -857,6 +858,24 @@ function render(){
   const list=filt();renderStats(list);renderGrid(list);
   if(selId){const p=PRODS.find(x=>x.id===selId);if(p&&list.includes(p))renderWO(p);else $('wo-wrap').innerHTML='';}
 }
+
+// 검색 input 디바운스 — 매 키 입력마다 200개 카드 다시 그리는 끊김 방지
+let _srchTimer;
+window.debouncedRender=()=>{
+  clearTimeout(_srchTimer);
+  _srchTimer=setTimeout(render,180);
+};
+
+// 강제 새로고침: 모든 캐시 (브라우저 + 서버 인메모리) 무효화 후 새로 받음
+window.forceRefresh=async()=>{
+  try{localStorage.removeItem(OZK_CACHE_KEY);}catch(e){}
+  const btn=$('refresh-btn');
+  if(btn){btn.disabled=true;btn.textContent='⏳';}
+  try{
+    await fetch('/api/products?revalidate=1',{cache:'no-store',headers:{'Cache-Control':'no-cache'}});
+  }catch(e){}
+  location.reload();
+};
 const OZK_CACHE_KEY='ozkiz-shoes-data-v3';
 const OZK_CACHE_TTL=60*60*1000; // 1시간 (서버단 stale-while-revalidate와 동기)
 
