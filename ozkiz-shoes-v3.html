@@ -530,7 +530,7 @@ let PRODS=[];
 let F={vendor:'전체',region:'전체',year:'전체',cat:'전체',season:'전체',status:'전체'};
 let selId=null;
 const $=id=>document.getElementById(id);
-const N=n=>n.toLocaleString('ko-KR');
+const N=n=>(n??0).toLocaleString('ko-KR');
 const D=d=>d?d.replace(/-/g,'.'):'-';
 const tQ=ord=>ord.reduce((s,r)=>s+r.q,0);
 function mtx(ord){
@@ -856,7 +856,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('lb').classList.r
 
 function render(){
   const list=filt();renderStats(list);renderGrid(list);
-  if(selId){const p=PRODS.find(x=>x.id===selId);if(p&&list.includes(p))renderWO(p);else $('wo-wrap').innerHTML='';}
+  // wo-wrap (메인 페이지 작업지시서)은 모달로 대체됨 — 더 이상 그리지 않음 (성능 + 안전)
 }
 
 // 검색 input 디바운스 — 매 키 입력마다 200개 카드 다시 그리는 끊김 방지
@@ -866,7 +866,7 @@ window.debouncedRender=()=>{
   _srchTimer=setTimeout(render,180);
 };
 
-// 강제 새로고침: 모든 캐시 (브라우저 + 서버 인메모리) 무효화 후 새로 받음
+// 강제 새로고침: localStorage + 브라우저 캐시 + 서버 인메모리 캐시 모두 무효화
 window.forceRefresh=async()=>{
   try{localStorage.removeItem(OZK_CACHE_KEY);}catch(e){}
   const btn=$('refresh-btn');
@@ -874,7 +874,10 @@ window.forceRefresh=async()=>{
   try{
     await fetch('/api/products?revalidate=1',{cache:'no-store',headers:{'Cache-Control':'no-cache'}});
   }catch(e){}
-  location.reload();
+  // 강제 fresh navigation — URL에 timestamp 붙여서 브라우저 캐시 우회
+  const url=new URL(location.href);
+  url.searchParams.set('_t',Date.now());
+  location.replace(url.toString());
 };
 const OZK_CACHE_KEY='ozkiz-shoes-data-v3';
 const OZK_CACHE_TTL=60*60*1000; // 1시간 (서버단 stale-while-revalidate와 동기)
@@ -906,7 +909,7 @@ function normalizeProduct(p){
   return Object.assign({
     vendor:'-',region:'-',cat:'-',season:'-',last:'',fabric:'',
     type:'-',brand:'오즈키즈',moq:null,gender:null,
-    uc:0,rt:0,ed:'',kcStatus:'',
+    uv:0,us:0,ue:0,ur:1,uc:0,rt:0,ed:'',kcStatus:'',
     rem:[],hist:[],ord:[],kcFiles:[],supplies:[]
   },p);
 }
