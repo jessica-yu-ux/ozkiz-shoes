@@ -882,6 +882,16 @@ const SAMPLE_DATA=[
    hist:[{d:'2026-03-15',t:'1차 발주 진행',b:'발주'},{d:'2026-04-10',t:'원단 수령 완료, 재단 시작',b:'생산'}]}
 ];
 
+// 서버 응답에서 빈 값이 omit됐을 때를 대비 — 누락된 필드를 안전한 기본값으로 채움
+function normalizeProduct(p){
+  return Object.assign({
+    vendor:'-',region:'-',cat:'-',season:'-',last:'',fabric:'',
+    type:'-',brand:'오즈키즈',moq:null,gender:null,
+    uc:0,rt:0,ed:'',kcStatus:'',
+    rem:[],hist:[],ord:[],kcFiles:[],supplies:[]
+  },p);
+}
+
 async function loadData(){
   // 미리보기 모드 감지: file:// 더블클릭, Claude Artifact, 또는 ?preview 쿼리
   const isPreview = location.protocol==='file:' ||
@@ -889,7 +899,7 @@ async function loadData(){
                     location.hostname.includes('anthropic') ||
                     location.search.includes('preview');
   if(isPreview){
-    PRODS.length=0;PRODS.push(...SAMPLE_DATA);
+    PRODS.length=0;PRODS.push(...SAMPLE_DATA.map(normalizeProduct));
     renderFilters();render();
     const ttl=$('grid-ttl');
     if(ttl)ttl.textContent='🔍 미리보기 모드 — 샘플 2개 (배포 후 vercel.app에선 실제 노션 데이터)';
@@ -904,7 +914,7 @@ async function loadData(){
     if(raw){
       const {data,ts}=JSON.parse(raw);
       if(Array.isArray(data)&&data.length&&(Date.now()-ts)<OZK_CACHE_TTL){
-        PRODS.length=0;PRODS.push(...data);
+        PRODS.length=0;PRODS.push(...data.map(normalizeProduct));
         renderFilters();render();
         usedCache=true;
         if(ttl)ttl.textContent='저장된 데이터 (백그라운드 갱신중...)';
@@ -921,7 +931,7 @@ async function loadData(){
     const r=await fetch('/api/products');
     if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.error||('HTTP '+r.status));}
     const data=await r.json();
-    PRODS.length=0;PRODS.push(...data);
+    PRODS.length=0;PRODS.push(...data.map(normalizeProduct));
     renderFilters();render();
     try{localStorage.setItem(OZK_CACHE_KEY,JSON.stringify({data,ts:Date.now()}));}catch(e){}
   }catch(e){
