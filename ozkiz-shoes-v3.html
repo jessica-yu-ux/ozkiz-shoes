@@ -252,113 +252,140 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
 .ht{font-size:11px;color:var(--txt-2);flex:1}
 .hb{font-size:9px;padding:1px 7px;border-radius:999px;background:var(--mtx-head);color:var(--txt-3);border:1px solid var(--border);flex-shrink:0}
 
-/* ── 인쇄 전용 스타일 ── */
+/* ── 인쇄 전용: A4 landscape, 모달 디자인 그대로 ── */
 @media print {
-  @page { size: A4 landscape; margin: 0; }
+  @page { size: A4 landscape; margin: 10mm; }
 
-  /* ① 화면 UI 전부 숨기기 */
-  .sidebar, .topbar, .grid-wrap, .lb,
-  .wo-acts, .wo-zoom, .pc-expand { display: none !important; }
+  .sidebar, .grid-wrap, .lb, #wo-wrap { display: none !important; }
 
-  /* ② 기본 리셋 */
-  html, body {
-    width: 297mm; height: 210mm;
-    overflow: hidden;
-    background: #fff !important; color: #111;
+  :root, [data-theme="dark"], [data-theme="light"] {
+    --bg: #fff !important; --surface: #fff !important; --card: #fff !important;
+    --card-hover: #fff !important;
+    --border: #ddd !important; --border-md: #999 !important; --border-hi: #555 !important;
+    --txt: #111 !important; --txt-2: #555 !important; --txt-3: #888 !important;
+    --accent: #5B4EE8 !important; --accent-dim: #EDEAFF !important;
+    --green: #15803D !important; --green-dim: #F0FDF4 !important;
+    --amber: #B45309 !important; --amber-dim: #FFFBEB !important;
+    --red: #DC2626 !important; --red-dim: #FEF2F2 !important;
+    --blue: #1D4ED8 !important; --blue-dim: #EFF6FF !important;
+    --cost-bg: #F5F4F0 !important; --rem-bg: #FFFBEB !important; --mtx-head: #F5F5F5 !important;
+  }
+  html, body, .shell, .content {
+    width: auto !important; height: auto !important;
+    overflow: visible !important;
+    background: #fff !important; color: #111 !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
-  .shell { display: block; width: 297mm; height: 210mm; overflow: hidden; }
-  .content { overflow: hidden; padding: 0; }
+  .shell { display: block !important; }
+  .content { display: block !important; padding: 0 !important; }
 
-  /* ③ 작업지시서 전체를 8mm 여백 안에서 scale로 꽉 맞춤 */
-  #wo-wrap {
-    position: fixed;
-    top: 8mm; left: 8mm;
-    width: 281mm;           /* 297 - 16 */
-    max-height: 194mm;      /* 210 - 16 */
-    overflow: hidden;
-    transform-origin: top left;
+  /* 모달 배경 + 본체를 페이지 전체로 펼침 */
+  .wo-modal-bg {
+    position: static !important;
+    display: block !important;
+    background: none !important;
+    padding: 0 !important;
+    width: 100% !important; height: auto !important;
   }
-  .wo {
-    margin: 0;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    overflow: hidden;
-    background: #fff !important;
-    font-size: 10px;
-    width: 100%;
+  .wo-modal {
+    width: 100% !important; height: auto !important; max-height: none !important;
+    border: none !important; border-radius: 0 !important; box-shadow: none !important;
+    background: #fff !important; overflow: visible !important;
   }
+  .wo-modal-close, .wo-modal-actions .abtn, .wo-modal-imgzoom { display: none !important; }
 
-  /* ④ 헤더 */
-  .wo-head {
-    padding: 7px 14px 6px;
-    background: #f4f0ff !important;
+  .wo-modal-head {
+    padding: 10px 16px !important;
+    background: linear-gradient(135deg, rgba(124,110,250,.06), transparent) !important;
+    border-bottom: 1.5px solid #ccc !important;
+    page-break-after: avoid;
+    backdrop-filter: none !important;
+    position: static !important;
   }
-  .wo-name { font-size: 13px !important; color: #111; }
-  .wo-meta { font-size: 9px !important; color: #555; margin-top: 2px; }
-  .wo-htop > div:last-child button { display: none !important; }
-  .wo-meta svg { display: none; }
+  .wo-modal-title { font-size: 16px !important; color: #111 !important; }
+  .wo-modal-sub { font-size: 10px !important; color: #555 !important; }
 
-  /* ⑤ 2단 레이아웃 */
-  .wo-cols { display: grid !important; grid-template-columns: 200mm 1fr; }
-  .wo-left { border-right: 1px solid #e0e0e0; }
+  .wo-modal-body {
+    display: grid !important;
+    grid-template-columns: 280px 1fr !important;
+    overflow: visible !important;
+    height: auto !important;
+    flex: none !important;
+  }
+  .wo-modal-left { border-right: 1px solid #ddd !important; overflow: visible !important; height: auto !important; }
+  .wo-modal-right { overflow: visible !important; height: auto !important; }
 
-  /* ⑥ 이미지 */
-  .wo-imgmain { height: 120px !important; cursor: default; }
-  .wo-imgmain img { object-fit: cover; }
+  .wo-modal-imgbox { height: 200px !important; cursor: default !important; background: #f5f5f5 !important; }
+  .wo-modal-imgbox img { object-fit: cover; }
+  .wo-ph svg { stroke: #aaa !important; }
 
-  /* ⑦ 발주 정보 */
-  .wo-info { padding: 6px 10px !important; border-top: 1px solid #eee; }
-  .sec-t { font-size: 7px !important; color: #7C6EFA !important; margin-bottom: 4px; }
-  .ir { padding: 2px 0 !important; border-bottom: 1px solid #f0f0f0; }
-  .ik { font-size: 9px !important; color: #666; }
-  .iv { font-size: 9px !important; color: #111; font-weight: 600; }
+  .wo-modal-info { padding: 12px 14px !important; }
+  .sec-t { font-size: 9px !important; margin-bottom: 5px !important; color: #5B4EE8 !important; }
+  .ir { padding: 3px 0 !important; border-bottom: 1px solid #eee !important; }
+  .ir:last-child { border-bottom: none !important; }
+  .ik { font-size: 10px !important; color: #555 !important; }
+  .iv { font-size: 10px !important; color: #111 !important; font-weight: 600 !important; }
+  .cost-box {
+    background: #F5F4F0 !important;
+    border: 1px solid #ddd !important;
+    font-size: 10px !important;
+    padding: 7px 9px !important;
+  }
+  .cost-total { font-size: 11px !important; }
+  .cost-retail { font-size: 10px !important; color: #15803D !important; }
 
-  /* ⑧ 원가 계산 완전 숨기기 */
-  .wo-info-sec { display: none !important; }
-
-  /* ⑨ 수량표 */
-  .wo-matrix { padding: 6px 10px 4px !important; border-bottom: 1px solid #eee; }
-  .mtx-hdr { margin-bottom: 5px !important; }
-  .mtx-lbl { font-size: 7px !important; }
+  .wo-modal-mtx { padding: 10px 14px 6px !important; border-bottom: 1px solid #eee !important; page-break-inside: avoid; }
+  .mtx-lbl { font-size: 8px !important; color: #5B4EE8 !important; }
   .mtx-chip {
-    font-size: 8px !important; padding: 1px 7px !important;
-    background: #f0eeff !important; color: #3730A3 !important;
-    border-color: #c4b5fd !important;
+    background: #EDEAFF !important;
+    color: #3730A3 !important;
+    border-color: #C4B5FD !important;
+    font-size: 9px !important;
+    padding: 1px 7px !important;
   }
+  .mtx-wrap { border: 1px solid #ddd !important; border-radius: 4px !important; }
+  .mtx { font-size: 9px !important; }
   .mtx th {
-    font-size: 8px !important; padding: 4px 6px !important;
-    background: #f0eeff !important; color: #3730A3 !important;
+    padding: 5px 6px !important;
+    background: #EDEAFF !important;
+    color: #3730A3 !important;
+    font-size: 9px !important;
+    border-bottom: 1.5px solid #C4B5FD !important;
   }
-  .mtx td { font-size: 9px !important; padding: 4px 6px !important; color: #111; }
-  .mtx td.rh { font-weight: 600 !important; background: #fafafa !important; }
-  .mtx td.tot {
-    font-weight: 700 !important;
-    background: #f0eeff !important; color: #3730A3 !important;
+  .mtx td {
+    padding: 4px 6px !important;
+    font-size: 9px !important;
+    color: #111 !important;
+    border-bottom: 1px solid #eee !important;
   }
-  .mtx tr.trow td { background: #e8e4ff !important; color: #3730A3 !important; }
-  .mtx tr.trow td.tot { background: #d4caff !important; }
-  .mtx td.rh .clr-bar { width: 3px !important; height: 14px !important; }
-  .mtx-wrap { border: 1px solid #ddd; border-radius: 5px; overflow: hidden; }
+  .mtx td.rh { background: #fafafa !important; border-right: 1px solid #eee !important; }
+  .mtx td.tot { background: #EDEAFF !important; color: #3730A3 !important; font-weight: 700 !important; }
+  .mtx tr.trow td { background: #E8E4FF !important; color: #3730A3 !important; }
+  .mtx tr.trow td.tot { background: #D4CAFF !important; }
+  .mtx td.rh .clr-bar { width: 3px !important; height: 12px !important; }
 
-  /* ⑩ 특이사항 */
-  .wo-rem {
-    padding: 5px 10px !important;
-    border-bottom: 1px solid #eee;
-    background: #fffbeb !important;
+  .wo-modal-rem {
+    padding: 8px 14px !important;
+    background: #FFFBEB !important;
+    border-bottom: 1px solid #eee !important;
+    page-break-inside: avoid;
   }
-  .rem-t { font-size: 7px !important; color: #92400E !important; margin-bottom: 3px; }
-  .rem-list li { font-size: 9px !important; gap: 6px; line-height: 1.4; }
+  .rem-t { font-size: 9px !important; color: #92400E !important; }
+  .rem-list li { font-size: 9px !important; line-height: 1.4 !important; color: #444 !important; }
   .rem-list li::before { color: #D97706 !important; }
 
-  /* ⑪ 히스토리 */
-  .wo-hist { padding: 5px 10px !important; }
-  .hist-t { font-size: 7px !important; color: #888; margin-bottom: 3px; }
-  .hrow { padding: 2px 0 !important; gap: 8px; }
-  .hd { font-size: 8px !important; min-width: 58px; }
-  .ht { font-size: 9px !important; }
-  .hb { font-size: 8px !important; padding: 1px 6px !important; border: 1px solid #ddd !important; }
+  .wo-modal-info .rem-list li { font-size: 10px !important; color: #333 !important; }
+  .wo-modal-info .rem-list li::before { color: #5B4EE8 !important; }
+
+  .wo-modal-hist { padding: 8px 14px !important; page-break-inside: avoid; }
+  .hist-t { font-size: 9px !important; color: #555 !important; }
+  .hrow { padding: 3px 0 !important; gap: 8px !important; border-bottom: 1px solid #eee !important; }
+  .hd { font-size: 9px !important; color: #888 !important; min-width: 60px !important; }
+  .ht { font-size: 9px !important; color: #444 !important; }
+  .hb { font-size: 8px !important; padding: 1px 6px !important; background: #f5f5f5 !important; border: 1px solid #ddd !important; color: #666 !important; }
+
+  .cdot { border-color: #ccc !important; }
 }
 
 /* Lightbox */
@@ -607,155 +634,14 @@ window.sel=id=>{
 window.closeWO=()=>{selId=null;$('wo-wrap').innerHTML='';render();};
 
 window.printWO=()=>{
-  const p=PRODS.find(x=>x.id===selId);
-  if(!p)return;
-  const{cs,sz,m}=mtx(p.ord);
-  const rounds=[...new Set(p.ord.map(r=>r.r))];
-  const qty=tQ(p.ord);
-  const ct=sz.map(s=>cs.reduce((sum,c)=>sum+(m[c]?.[s]||0),0));
-  const grand=ct.reduce((a,b)=>a+b,0);
-  const today=new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'});
-
-  const mrows=cs.map(c=>{
-    const vs=sz.map(s=>m[c]?.[s]||0);
-    const ctt=vs.reduce((a,b)=>a+b,0);
-    const dot=CHX[c]||'#888';
-    return`<tr>
-      <td class="clbl"><span class="cdot2" style="background:${dot}"></span>${c}</td>
-      ${vs.map(v=>`<td class="${v?'':'zero'}">${v||'—'}</td>`).join('')}
-      <td class="tot">${ctt}</td>
-    </tr>`;
-  }).join('');
-
-  const imgSrc=p.img
-    ?`<img src="${p.img}" style="width:100%;height:100%;object-fit:cover">`
-    :`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:10px;color:#bbb">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1"><path d="M3 17.5C3 15.57 4.57 14 6.5 14h11c1.93 0 3.5 1.57 3.5 3.5S19.43 21 17.5 21h-11C4.57 21 3 19.43 3 17.5z"/><path d="M2 11l4-7h12l4 7"/></svg>
-        <span style="font-size:11px">이미지 준비중</span>
-      </div>`;
-
-  const css=`
-    @page { size: A4 portrait; margin: 10mm 12mm; }
-    *{ box-sizing:border-box; margin:0; padding:0; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-    body{ font-family:'Malgun Gothic','Apple SD Gothic Neo','Inter',sans-serif; font-size:9pt; color:#111; background:#fff; }
-
-    .doc-title{ text-align:center; font-size:17pt; font-weight:700; letter-spacing:.12em; padding-bottom:7px; border-bottom:2.5px solid #111; margin-bottom:9px; }
-
-    /* 상단 메타 — 납기일·진행상태 제거 후 남은 항목 */
-    .meta-tbl{ width:100%; border-collapse:collapse; margin-bottom:9px; }
-    .meta-tbl th,.meta-tbl td{ border:1px solid #555; padding:5px 8px; text-align:center; font-size:9pt; }
-    .meta-tbl th{ background:#f0eeff; font-weight:700; color:#3730A3; }
-    .meta-tbl td{ font-weight:600; }
-
-    /* 메인 2단 */
-    .main-area{ display:grid; grid-template-columns:220px 1fr; border:1.5px solid #555; margin-bottom:9px; }
-    .left-col{ border-right:1.5px solid #555; display:flex; flex-direction:column; }
-
-    /* 이미지 — 크게 */
-    .img-box{ height:260px; background:#f5f5f5; overflow:hidden; border-bottom:1px solid #ddd; flex-shrink:0; }
-
-    /* 발주 정보 */
-    .prod-info{ padding:7px 9px; }
-    .prod-info-row{ display:flex; justify-content:space-between; padding:3px 0; border-bottom:1px dotted #e0e0e0; font-size:8.5pt; }
-    .prod-info-row:last-child{ border-bottom:none; }
-    .pi-key{ color:#666; }
-    .pi-val{ font-weight:600; color:#111; text-align:right; }
-
-    /* 우측 — 수량표 + 특이사항 */
-    .right-col{ display:flex; flex-direction:column; }
-    .qty-section{ flex:1; padding:8px 10px 6px; border-bottom:1px solid #ddd; }
-    .qty-label{ font-size:8pt; font-weight:700; color:#3730A3; margin-bottom:6px; }
-
-    /* 수량표 — 크게 */
-    .qty-tbl{ width:100%; border-collapse:collapse; font-size:9.5pt; }
-    .qty-tbl th{ padding:6px 8px; background:#f0eeff; color:#3730A3; font-weight:700; text-align:center; border:1px solid #c4b5fd; font-size:8.5pt; white-space:nowrap; }
-    .qty-tbl th.lh{ text-align:left; min-width:70px; }
-    .qty-tbl td{ padding:6px 8px; text-align:center; border:1px solid #ddd; font-size:9.5pt; font-weight:500; }
-    .qty-tbl td.clbl{ text-align:left; font-weight:700; background:#fafafa; display:flex; align-items:center; gap:6px; white-space:nowrap; font-size:9pt; }
-    .qty-tbl td.tot{ font-weight:700; background:#f0eeff; color:#3730A3; font-size:10pt; }
-    .qty-tbl tr.trow td{ background:#e8e4ff; font-weight:700; color:#3730A3; font-size:9.5pt; }
-    .qty-tbl td.zero{ color:#ccc; }
-    .cdot2{ display:inline-block; width:10px; height:10px; border-radius:50%; flex-shrink:0; }
-
-    /* 특이사항 */
-    .rem-section{ padding:7px 10px; }
-    .rem-label{ font-size:8pt; font-weight:700; color:#92400E; margin-bottom:5px; }
-    .rem-list{ list-style:none; }
-    .rem-list li{ display:flex; gap:6px; font-size:9pt; color:#444; margin-bottom:3px; line-height:1.5; }
-    .rem-list li::before{ content:'—'; color:#D97706; font-weight:700; flex-shrink:0; }
-
-    /* 푸터 */
-    .footer{ display:flex; justify-content:space-between; font-size:7.5pt; color:#aaa; padding-top:5px; border-top:1px solid #ddd; }
-  `;
-
-  const html=`<!DOCTYPE html>
-<html lang="ko"><head><meta charset="UTF-8">
-<title>${p.name} 작업지시서</title>
-<style>${css}</style></head><body>
-
-  <div class="doc-title">작 업 지 시 서</div>
-
-  <table class="meta-tbl">
-    <tr>
-      <th>발주일</th><td>${p.ord[0]?.od?D(p.ord[0].od):'-'}</td>
-      <th>STYLE NO.</th><td>${p.style}</td>
-      <th>브랜드명</th><td>${p.brand}</td>
-      <th>발주 차수</th><td>${rounds.join(', ')}</td>
-    </tr>
-  </table>
-
-  <div class="main-area">
-    <div class="left-col">
-      <div class="img-box">${imgSrc}</div>
-      <div class="prod-info">
-        <div class="prod-info-row"><span class="pi-key">제품명</span><span class="pi-val">${p.name}</span></div>
-        <div class="prod-info-row"><span class="pi-key">카테고리</span><span class="pi-val">${p.cat}</span></div>
-        <div class="prod-info-row"><span class="pi-key">시즌</span><span class="pi-val">${p.year}년 ${p.season}</span></div>
-        <div class="prod-info-row"><span class="pi-key">생산공장</span><span class="pi-val">${p.vendor}</span></div>
-        <div class="prod-info-row"><span class="pi-key">원산지</span><span class="pi-val">${p.region}</span></div>
-        ${p.gender?`<div class="prod-info-row"><span class="pi-key">성별</span><span class="pi-val">${p.gender}</span></div>`:''}
-        <div class="prod-info-row"><span class="pi-key">총 발주</span><span class="pi-val" style="color:#3730A3;font-size:10.5pt">${N(grand)}켤레</span></div>
-        <div class="prod-info-row"><span class="pi-key">업체 단가</span><span class="pi-val">${N(p.uv)}원</span></div>
-      </div>
-    </div>
-    <div class="right-col">
-      <div class="qty-section">
-        <div class="qty-label">컬러 × 사이즈 발주 수량표 &nbsp;|&nbsp; 총 ${N(grand)}켤레 · ${cs.length}색상 · 사이즈 ${sz[0]}~${sz[sz.length-1]}</div>
-        <table class="qty-tbl">
-          <thead><tr>
-            <th class="lh">컬러 / 사이즈</th>
-            ${sz.map(s=>`<th>${s}</th>`).join('')}
-            <th>합계</th>
-          </tr></thead>
-          <tbody>
-            ${mrows}
-            <tr class="trow">
-              <td class="clbl" style="font-weight:700">합계</td>
-              ${ct.map(v=>`<td>${N(v)}</td>`).join('')}
-              <td class="tot">${N(grand)}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="rem-section">
-        <div class="rem-label">생산 지시 특이사항</div>
-        <ul class="rem-list">
-          ${p.rem.map(r=>`<li>${r}</li>`).join('')}
-        </ul>
-      </div>
-    </div>
-  </div>
-
-  <div class="footer">
-    <span>OZKIZ 슈즈 작업지시서 · 발행일 ${today}</span>
-    <span>${p.style}</span>
-  </div>
-
-<script>window.onload=()=>{ setTimeout(()=>window.print(),200); }<\/script>
-</body></html>`;
-
-  const w=window.open('','_blank','width=900,height=760');
-  if(w){ w.document.write(html); w.document.close(); }
+  if(!selId)return;
+  // 모달이 안 열려있으면 먼저 열고 약간 기다린 후 인쇄
+  if(!$('wo-modal-bg').classList.contains('open')){
+    openWOModal(selId);
+    setTimeout(()=>window.print(),300);
+  }else{
+    window.print();
+  }
 };
 
 
@@ -875,23 +761,44 @@ window.openWOModal=id=>{
     imgEl.innerHTML=`<div class="wo-ph"><svg viewBox="0 0 24 24" width="38" height="38" stroke="currentColor" fill="none" stroke-width="1"><path d="M3 17.5C3 15.57 4.57 14 6.5 14h11c1.93 0 3.5 1.57 3.5 3.5S19.43 21 17.5 21h-11C4.57 21 3 19.43 3 17.5z"/><path d="M2 11l4-7h12l4 7"/></svg><p>이미지 준비중</p></div>${zoom.outerHTML}`;
   }
 
-  // 발주 정보
+  // 발주 정보 + 생산 정보 + KC + 부자재
+  const hasLast=p.last&&p.last!=='-'&&p.last!=='';
+  const hasFabric=p.fabric&&p.fabric!=='';
+  const hasKC=(p.kcStatus&&p.kcStatus!=='')||(p.kcFiles&&p.kcFiles.length>0);
+  const hasSupplies=p.supplies&&p.supplies.length>0;
+
   $('wm-info').innerHTML=`
-    <div class="sec-t">발주 정보</div>
+    <div class="sec-t">제품 정보</div>
     <div class="ir"><span class="ik">품번</span><span class="iv">${p.style}</span></div>
     <div class="ir"><span class="ik">카테고리</span><span class="iv">${p.cat}${p.gender?' · '+p.gender:''}</span></div>
+    ${hasLast?`<div class="ir"><span class="ik">라스트</span><span class="iv">${p.last}</span></div>`:''}
+    ${hasFabric?`<div class="ir"><span class="ik">원단</span><span class="iv">${p.fabric}</span></div>`:''}
+
+    <div class="sec-t" style="margin-top:10px">발주 정보</div>
     <div class="ir"><span class="ik">발주 차수</span><span class="iv">${rounds.join(', ')}</span></div>
     <div class="ir"><span class="ik">총 발주수량</span><span class="iv" style="font-weight:700;font-size:13px;color:var(--accent)">${N(qty)}켤레</span></div>
     <div class="ir"><span class="ik">컬러 수</span><span class="iv">${cs.length}색상</span></div>
     <div class="ir"><span class="ik">사이즈 범위</span><span class="iv">${sz[0]}~${sz[sz.length-1]}</span></div>
     <div class="ir"><span class="ik">업체 단가</span><span class="iv">${N(p.uv)}원</span></div>
+
+    ${hasKC?`
+    <div class="sec-t" style="margin-top:10px">KC 인증</div>
+    ${p.kcStatus?`<div class="ir"><span class="ik">진행 상태</span><span class="iv">${p.kcStatus}</span></div>`:''}
+    ${p.kcFiles&&p.kcFiles.length?`<div class="ir"><span class="ik">서류</span><span class="iv">${p.kcFiles.map(f=>`<a href="${f.url}" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:underline">${f.name}</a>`).join(' · ')}</span></div>`:''}
+    `:''}
+
+    ${hasSupplies?`
+    <div class="sec-t" style="margin-top:10px">부자재 구매 항목</div>
+    <ul class="rem-list" style="padding:6px 0 2px">${p.supplies.map(s=>`<li>${s}</li>`).join('')}</ul>
+    `:''}
+
     <div class="sec-t" style="margin-top:10px">원가 계산 <span style="font-size:8px;color:var(--red);background:var(--red-dim);padding:1px 6px;border-radius:4px">내부용</span></div>
     <div class="cost-box">
       <div class="cost-row"><span>업체 단가</span><span>${N(p.uv)}원</span></div>
       <div class="cost-row"><span>택·박스 부자재</span><span>${N(p.us)}원</span></div>
       ${p.ue?`<div class="cost-row"><span>기타 부자재</span><span>${N(p.ue)}원</span></div>`:''}
       <div class="cost-total"><span>원가</span><span>${N(p.uc)}원</span></div>
-      <div class="cost-retail"><span>판매가</span><span>${N(p.rt)}원</span></div>
+      ${p.rt?`<div class="cost-retail"><span>판매가</span><span>${N(p.rt)}원</span></div>`:''}
     </div>`;
 
   // 수량표
@@ -950,9 +857,44 @@ function render(){
   const list=filt();renderStats(list);renderGrid(list);
   if(selId){const p=PRODS.find(x=>x.id===selId);if(p&&list.includes(p))renderWO(p);else $('wo-wrap').innerHTML='';}
 }
-const OZK_CACHE_KEY='ozkiz-shoes-data-v1';
+const OZK_CACHE_KEY='ozkiz-shoes-data-v2';
 const OZK_CACHE_TTL=5*60*1000;
+
+// 로컬에서 더블클릭으로 열었을 때 사용하는 미리보기용 샘플 데이터
+const SAMPLE_DATA=[
+  {id:1,name:'샌들-샤이니블룸LED',style:'OZK-SH-2601',brand:'오즈키즈',vendor:'페라리(미리네)',region:'대한민국',year:2026,cat:'샌들',season:'여름',status:'계속판매',last:'미리네 전용 라스트',type:'신제품',gender:null,moq:null,img:null,
+   uv:17000,us:550,ue:1650,ur:1.1,uc:21120,rt:84000,ed:'2026-05-07',
+   fabric:'PU 가죽 + LED 발광 모듈 내장 + 투명 PVC 스트랩',
+   supplies:['LED 배터리 (CR2032) - 8,000개','샤이니 버클 - 4,000개','EVA 인솔 4mm - 250켤레','박스 200×150×100mm - 250개','LED 교체 안내 카드 - 250장'],
+   kcStatus:'합격',
+   kcFiles:[{name:'KC인증서-SH2601.pdf',url:'#'}],
+   rem:['갑피: PU 소재, LED 발광 모듈 내장','스트랩: 투명 PVC + 샤이니 버클','밑창: TPR 투명 (논슬립 처리)','LED 배터리 교체 가능 구조 확인 필수','박스 내 LED 교체 안내 카드 동봉'],
+   ord:[{c:'퍼플',s:150,q:30,od:'2026-04-01',dd:'2026-05-07',r:'1차'},{c:'퍼플',s:160,q:45,od:'2026-04-01',dd:'2026-05-07',r:'1차'},{c:'퍼플',s:170,q:55,od:'2026-04-01',dd:'2026-05-07',r:'1차'},{c:'퍼플',s:180,q:55,od:'2026-04-01',dd:'2026-05-07',r:'1차'},{c:'퍼플',s:190,q:40,od:'2026-04-01',dd:'2026-05-07',r:'1차'},{c:'퍼플',s:200,q:25,od:'2026-04-01',dd:'2026-05-07',r:'1차'},{c:'핑크',s:150,q:30,od:'2026-04-01',dd:'2026-05-07',r:'1차'},{c:'핑크',s:160,q:45,od:'2026-04-01',dd:'2026-05-07',r:'1차'},{c:'핑크',s:170,q:55,od:'2026-04-01',dd:'2026-05-07',r:'1차'},{c:'핑크',s:180,q:55,od:'2026-04-01',dd:'2026-05-07',r:'1차'},{c:'핑크',s:190,q:40,od:'2026-04-01',dd:'2026-05-07',r:'1차'},{c:'핑크',s:200,q:25,od:'2026-04-01',dd:'2026-05-07',r:'1차'}],
+   hist:[{d:'2026-04-01',t:'1차 발주 요청 — 퍼플 250켤레, 핑크 250켤레',b:'발주'},{d:'2026-05-07',t:'퍼플 전량 입고 완료',b:'입고'},{d:'2026-05-08',t:'원가 확정 (21,120원)',b:'수정'}]},
+  {id:2,name:'스니커즈-클라우드스텝',style:'OZK-SH-2602',brand:'오즈키즈',vendor:'신흥제화',region:'중국(광저우)',year:2026,cat:'운동화',season:'봄',status:'생산중',last:'신흥 210 라스트',type:'신제품',gender:'공용',moq:500,img:null,
+   uv:14000,us:400,ue:0,ur:1.1,uc:15840,rt:69000,ed:'2026-03-20',
+   fabric:'에어메쉬 + PU 오버레이 + EVA 미드솔',
+   supplies:['메모리폼 4mm 인솔','면 끈 120cm','로고 라벨','OPP 봉투'],
+   kcStatus:'진행예정',
+   kcFiles:[],
+   rem:['갑피: 에어메쉬 + PU 오버레이','밑창: EVA 화이트, 두께 25mm','인솔: 메모리폼 4mm 삽입','봉제선 3mm 균일 유지','로고 라벨 인솔 우측 발꿈치 위치'],
+   ord:[{c:'화이트',s:150,q:50,od:'2026-03-15',dd:'2026-05-30',r:'1차'},{c:'화이트',s:160,q:80,od:'2026-03-15',dd:'2026-05-30',r:'1차'},{c:'화이트',s:170,q:100,od:'2026-03-15',dd:'2026-05-30',r:'1차'},{c:'화이트',s:180,q:100,od:'2026-03-15',dd:'2026-05-30',r:'1차'},{c:'화이트',s:190,q:80,od:'2026-03-15',dd:'2026-05-30',r:'1차'},{c:'화이트',s:200,q:40,od:'2026-03-15',dd:'2026-05-30',r:'1차'},{c:'민트',s:150,q:30,od:'2026-03-15',dd:'2026-05-30',r:'1차'},{c:'민트',s:160,q:50,od:'2026-03-15',dd:'2026-05-30',r:'1차'},{c:'민트',s:170,q:60,od:'2026-03-15',dd:'2026-05-30',r:'1차'},{c:'민트',s:180,q:60,od:'2026-03-15',dd:'2026-05-30',r:'1차'},{c:'민트',s:190,q:40,od:'2026-03-15',dd:'2026-05-30',r:'1차'},{c:'민트',s:200,q:20,od:'2026-03-15',dd:'2026-05-30',r:'1차'}],
+   hist:[{d:'2026-03-15',t:'1차 발주 진행',b:'발주'},{d:'2026-04-10',t:'원단 수령 완료, 재단 시작',b:'생산'}]}
+];
+
 async function loadData(){
+  // 미리보기 모드 감지: file:// 더블클릭, Claude Artifact, 또는 ?preview 쿼리
+  const isPreview = location.protocol==='file:' ||
+                    location.hostname.includes('claude') ||
+                    location.hostname.includes('anthropic') ||
+                    location.search.includes('preview');
+  if(isPreview){
+    PRODS.length=0;PRODS.push(...SAMPLE_DATA);
+    renderFilters();render();
+    const ttl=$('grid-ttl');
+    if(ttl)ttl.textContent='🔍 미리보기 모드 — 샘플 2개 (배포 후 vercel.app에선 실제 노션 데이터)';
+    return;
+  }
   const grid=$('prod-grid');
   const ttl=$('grid-ttl');
   // 1) localStorage 캐시가 신선하면 즉시 표시

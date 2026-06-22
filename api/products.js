@@ -177,6 +177,20 @@ function mapProduct(page, myOrders, idx) {
     rt:      p['판매가']?.number || 0,
     ed:      p['입고일']?.date?.start || '',
 
+    // 새 필드들 (작업지시서용)
+    fabric:    getText(p['원단명']) || '',
+    supplies:  parseLines(getText(p['부자재 구매'])),
+    kcStatus:  p['KC진행']?.select?.name || '',
+    kcFiles:   (p['KC 시험성적서']?.files || []).map(f => ({
+      name: f.name || 'KC 서류',
+      url:  f.type === 'file' ? f.file?.url : (f.external?.url || null)
+    })).filter(f => f.url),
+
     rem, ord, hist
   };
 };
+
+function parseLines(text) {
+  if (!text) return [];
+  return text.split('\n').map(l => l.trim()).filter(Boolean);
+}
