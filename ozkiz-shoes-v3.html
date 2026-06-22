@@ -585,7 +585,7 @@ function filt(){
 function renderStats(list){}
 
 function imgH(p,sm){
-  if(p.img)return`<img src="${p.img}" alt="${p.name}" onerror="this.style.display='none'">`;
+  if(p.img)return`<img src="${p.img}" alt="${p.name}" loading="lazy" decoding="async" onerror="this.style.display='none'">`;
   const sv=`<svg viewBox="0 0 24 24" stroke-width="1" fill="none"><path d="M3 17.5C3 15.57 4.57 14 6.5 14h11c1.93 0 3.5 1.57 3.5 3.5S19.43 21 17.5 21h-11C4.57 21 3 19.43 3 17.5z"/><path d="M2 11l4-7h12l4 7"/></svg>`;
   return sm?`<div class="pc-ph">${sv}<span>이미지 준비중</span></div>`:`<div class="wo-ph">${sv}<p>노션 대표이미지를 등록하면<br>자동으로 표시됩니다</p></div>`;
 }
@@ -756,7 +756,7 @@ window.openWOModal=id=>{
   const imgEl=$('wm-img');
   const zoom=imgEl.querySelector('.wo-modal-imgzoom');
   if(p.img){
-    imgEl.innerHTML=`<img src="${p.img}" style="width:100%;height:100%;object-fit:cover">${zoom.outerHTML}`;
+    imgEl.innerHTML=`<img src="${p.img}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover">${zoom.outerHTML}`;
   } else {
     imgEl.innerHTML=`<div class="wo-ph"><svg viewBox="0 0 24 24" width="38" height="38" stroke="currentColor" fill="none" stroke-width="1"><path d="M3 17.5C3 15.57 4.57 14 6.5 14h11c1.93 0 3.5 1.57 3.5 3.5S19.43 21 17.5 21h-11C4.57 21 3 19.43 3 17.5z"/><path d="M2 11l4-7h12l4 7"/></svg><p>이미지 준비중</p></div>${zoom.outerHTML}`;
   }
@@ -847,7 +847,7 @@ window.openLBfromModal=()=>{
 window.openLB=id=>{
   const p=PRODS.find(x=>x.id===id);
   $('lb-nm').textContent=p.name;$('lb-sb').textContent=`${p.style} · ${p.year}년 ${p.season} · ${p.vendor}`;
-  $('lb-img').innerHTML=p.img?`<img class="lb-img" src="${p.img}" alt="${p.name}">`:`<div class="lb-ph"><svg viewBox="0 0 24 24" stroke-width="1" fill="none"><path d="M3 17.5C3 15.57 4.57 14 6.5 14h11c1.93 0 3.5 1.57 3.5 3.5S19.43 21 17.5 21h-11C4.57 21 3 19.43 3 17.5z"/><path d="M2 11l4-7h12l4 7"/></svg><p>노션 대표이미지가 등록되면<br>여기에 크게 표시됩니다</p></div>`;
+  $('lb-img').innerHTML=p.img?`<img class="lb-img" src="${p.img}" alt="${p.name}" loading="lazy" decoding="async">`:`<div class="lb-ph"><svg viewBox="0 0 24 24" stroke-width="1" fill="none"><path d="M3 17.5C3 15.57 4.57 14 6.5 14h11c1.93 0 3.5 1.57 3.5 3.5S19.43 21 17.5 21h-11C4.57 21 3 19.43 3 17.5z"/><path d="M2 11l4-7h12l4 7"/></svg><p>노션 대표이미지가 등록되면<br>여기에 크게 표시됩니다</p></div>`;
   $('lb').classList.add('open');
 };
 window.closeLB=e=>{if(!e||e.target===$('lb'))$('lb').classList.remove('open')};
@@ -857,8 +857,8 @@ function render(){
   const list=filt();renderStats(list);renderGrid(list);
   if(selId){const p=PRODS.find(x=>x.id===selId);if(p&&list.includes(p))renderWO(p);else $('wo-wrap').innerHTML='';}
 }
-const OZK_CACHE_KEY='ozkiz-shoes-data-v2';
-const OZK_CACHE_TTL=5*60*1000;
+const OZK_CACHE_KEY='ozkiz-shoes-data-v3';
+const OZK_CACHE_TTL=60*60*1000; // 1시간 (서버단 stale-while-revalidate와 동기)
 
 // 로컬에서 더블클릭으로 열었을 때 사용하는 미리보기용 샘플 데이터
 const SAMPLE_DATA=[
