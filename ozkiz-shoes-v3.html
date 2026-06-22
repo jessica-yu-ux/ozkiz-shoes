@@ -413,9 +413,9 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
 .wo-modal-actions{display:flex;gap:8px;align-items:center}
 .wo-modal-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border-md);background:transparent;color:var(--txt-3);cursor:pointer;display:grid;place-items:center;transition:.12s;flex-shrink:0}
 .wo-modal-close:hover{background:var(--red-dim);color:var(--red);border-color:rgba(248,113,113,.3)}
-.wo-modal-body{display:grid;grid-template-columns:380px 1fr;flex:1;overflow:hidden}
+.wo-modal-body{display:grid;grid-template-columns:300px 1fr;flex:1;overflow:hidden}
 .wo-modal-left{border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto}
-.wo-modal-imgbox{height:360px;background:var(--bg);position:relative;overflow:hidden;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.wo-modal-imgbox{height:280px;background:var(--bg);position:relative;overflow:hidden;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .wo-modal-imgbox img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
 .wo-modal-imgbox:hover img{transform:scale(1.03)}
 .wo-modal-imgzoom{position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.2);border-radius:7px;padding:5px 11px;font-size:11px;color:white;display:flex;align-items:center;gap:5px;opacity:0;transition:.15s}
@@ -426,6 +426,18 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
 .wo-modal-mtx{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;flex-direction:column}
 .wo-modal-rem{padding:14px 20px;border-bottom:1px solid var(--border);background:var(--rem-bg)}
 .wo-modal-hist{padding:14px 20px}
+
+/* 작업지시서 정보 표 — 엑셀 형식 */
+.wo-modal-info-tbl{padding:14px 18px;border-bottom:1px solid var(--border)}
+.wo-modal-supplies{padding:12px 18px;border-bottom:1px solid var(--border)}
+.info-tbl{width:100%;border-collapse:collapse;font-size:11px}
+.info-tbl th,.info-tbl td{border:1px solid var(--border-md);padding:7px 10px;text-align:left;vertical-align:middle}
+.info-tbl th{background:var(--mtx-head);font-weight:600;color:var(--txt-2);width:13%;white-space:nowrap;font-size:10px;letter-spacing:.03em}
+.info-tbl td{color:var(--txt);font-weight:500;width:37%;word-break:break-word}
+[data-theme="light"] .info-tbl th{background:rgba(0,0,0,0.03)}
+.supplies-list{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:2px 14px}
+.supplies-list li{font-size:11px;color:var(--txt-2);padding:3px 0;display:flex;gap:6px;line-height:1.4}
+.supplies-list li::before{content:'—';color:var(--accent);flex-shrink:0;font-weight:600}
 
 ::-webkit-scrollbar{width:4px;height:4px}
 ::-webkit-scrollbar-track{background:transparent}
@@ -462,6 +474,8 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
         <div class="wo-modal-info" id="wm-info"></div>
       </div>
       <div class="wo-modal-right">
+        <div class="wo-modal-info-tbl" id="wm-info-tbl"></div>
+        <div class="wo-modal-supplies" id="wm-supplies"></div>
         <div class="wo-modal-mtx" id="wm-mtx"></div>
         <div class="wo-modal-rem" id="wm-rem"></div>
         <div class="wo-modal-hist" id="wm-hist"></div>
@@ -762,38 +776,9 @@ window.openWOModal=id=>{
     imgEl.innerHTML=`<div class="wo-ph"><svg viewBox="0 0 24 24" width="38" height="38" stroke="currentColor" fill="none" stroke-width="1"><path d="M3 17.5C3 15.57 4.57 14 6.5 14h11c1.93 0 3.5 1.57 3.5 3.5S19.43 21 17.5 21h-11C4.57 21 3 19.43 3 17.5z"/><path d="M2 11l4-7h12l4 7"/></svg><p>이미지 준비중</p></div>${zoom.outerHTML}`;
   }
 
-  // 발주 정보 + 생산 정보 + KC + 부자재
-  const hasLast=p.last&&p.last!=='-'&&p.last!=='';
-  const hasFabric=p.fabric&&p.fabric!=='';
-  const hasKC=(p.kcStatus&&p.kcStatus!=='')||(p.kcFiles&&p.kcFiles.length>0);
-  const hasSupplies=p.supplies&&p.supplies.length>0;
-
+  // 좌측: 원가 계산만 (위치 유지)
   $('wm-info').innerHTML=`
-    <div class="sec-t">제품 정보</div>
-    <div class="ir"><span class="ik">품번</span><span class="iv">${p.style}</span></div>
-    <div class="ir"><span class="ik">카테고리</span><span class="iv">${p.cat}${p.gender?' · '+p.gender:''}</span></div>
-    ${hasLast?`<div class="ir"><span class="ik">라스트</span><span class="iv">${p.last}</span></div>`:''}
-    ${hasFabric?`<div class="ir"><span class="ik">원단</span><span class="iv">${p.fabric}</span></div>`:''}
-
-    <div class="sec-t" style="margin-top:10px">발주 정보</div>
-    <div class="ir"><span class="ik">발주 차수</span><span class="iv">${rounds.join(', ')}</span></div>
-    <div class="ir"><span class="ik">총 발주수량</span><span class="iv" style="font-weight:700;font-size:13px;color:var(--accent)">${N(qty)}켤레</span></div>
-    <div class="ir"><span class="ik">컬러 수</span><span class="iv">${cs.length}색상</span></div>
-    <div class="ir"><span class="ik">사이즈 범위</span><span class="iv">${sz[0]}~${sz[sz.length-1]}</span></div>
-    <div class="ir"><span class="ik">업체 단가</span><span class="iv">${N(p.uv)}원</span></div>
-
-    ${hasKC?`
-    <div class="sec-t" style="margin-top:10px">KC 인증</div>
-    ${p.kcStatus?`<div class="ir"><span class="ik">진행 상태</span><span class="iv">${p.kcStatus}</span></div>`:''}
-    ${p.kcFiles&&p.kcFiles.length?`<div class="ir"><span class="ik">서류</span><span class="iv">${p.kcFiles.map(f=>`<a href="${f.url}" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:underline">${f.name}</a>`).join(' · ')}</span></div>`:''}
-    `:''}
-
-    ${hasSupplies?`
-    <div class="sec-t" style="margin-top:10px">부자재 구매 항목</div>
-    <ul class="rem-list" style="padding:6px 0 2px">${p.supplies.map(s=>`<li>${s}</li>`).join('')}</ul>
-    `:''}
-
-    <div class="sec-t" style="margin-top:10px">원가 계산 <span style="font-size:8px;color:var(--red);background:var(--red-dim);padding:1px 6px;border-radius:4px">내부용</span></div>
+    <div class="sec-t">원가 계산 <span style="font-size:8px;color:var(--red);background:var(--red-dim);padding:1px 6px;border-radius:4px">내부용</span></div>
     <div class="cost-box">
       <div class="cost-row"><span>업체 단가</span><span>${N(p.uv)}원</span></div>
       <div class="cost-row"><span>택·박스 부자재</span><span>${N(p.us)}원</span></div>
@@ -801,6 +786,57 @@ window.openWOModal=id=>{
       <div class="cost-total"><span>원가</span><span>${N(p.uc)}원</span></div>
       ${p.rt?`<div class="cost-retail"><span>판매가</span><span>${N(p.rt)}원</span></div>`:''}
     </div>`;
+
+  // 우측 위: 제품 정보 + 발주 정보를 엑셀 표 형식으로 (4열 grid)
+  const hasLast=p.last&&p.last!=='-'&&p.last!=='';
+  const hasFabric=p.fabric&&p.fabric!=='';
+  const hasLastFab=hasLast||hasFabric;
+  const hasKC=(p.kcStatus&&p.kcStatus!=='')||(p.kcFiles&&p.kcFiles.length>0);
+  const firstOrd=(p.ord&&p.ord[0])||{};
+  $('wm-info-tbl').innerHTML=`
+    <table class="info-tbl">
+      <tr>
+        <th>품번</th><td>${p.style}</td>
+        <th>제품명</th><td>${p.name}</td>
+      </tr>
+      <tr>
+        <th>카테고리</th><td>${p.cat}${p.gender?' · '+p.gender:''}</td>
+        <th>시즌</th><td>${p.year}년 ${p.season}</td>
+      </tr>
+      <tr>
+        <th>생산공장</th><td>${p.vendor}</td>
+        <th>원산지</th><td>${p.region}</td>
+      </tr>
+      ${hasLastFab?`<tr>
+        <th>라스트</th><td>${hasLast?p.last:'-'}</td>
+        <th>원단</th><td>${hasFabric?p.fabric:'-'}</td>
+      </tr>`:''}
+      <tr>
+        <th>발주차수</th><td>${rounds.join(', ')}</td>
+        <th>발주일</th><td>${firstOrd.od?D(firstOrd.od):'-'}</td>
+      </tr>
+      <tr>
+        <th>총 수량</th><td style="color:var(--accent);font-weight:700">${N(qty)}켤레 · ${cs.length}색 · ${sz.length}사이즈</td>
+        <th>업체 단가</th><td>${N(p.uv)}원</td>
+      </tr>
+      ${hasKC?`<tr>
+        <th>KC 진행</th><td>${p.kcStatus||'-'}</td>
+        <th>KC 서류</th><td>${p.kcFiles&&p.kcFiles.length?p.kcFiles.map(f=>`<a href="${f.url}" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:underline">${f.name}</a>`).join(' · '):'-'}</td>
+      </tr>`:''}
+    </table>`;
+
+  // 우측: 부자재 구매 항목 (있을 때만 표시)
+  const hasSupplies=p.supplies&&p.supplies.length>0;
+  const supEl=$('wm-supplies');
+  if(hasSupplies){
+    supEl.style.display='';
+    supEl.innerHTML=`
+      <div class="sec-t" style="margin-bottom:7px">부자재 구매 항목</div>
+      <ul class="supplies-list">${p.supplies.map(s=>`<li>${s}</li>`).join('')}</ul>`;
+  }else{
+    supEl.style.display='none';
+    supEl.innerHTML='';
+  }
 
   // 수량표
   const mrows=cs.map(c=>{
