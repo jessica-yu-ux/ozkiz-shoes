@@ -49,6 +49,13 @@ module.exports = async function handler(req, res) {
       return res.status(500).json({ error: 'NOTION_TOKEN 환경변수가 설정되지 않았습니다.' });
     }
 
+    // 강제 캐시 무효화 — /api/products?revalidate=1 호출 시
+    const force = req.query?.revalidate === '1' || req.query?.refresh === '1';
+    if (force) {
+      dataCache = { data: null, timestamp: 0, refreshing: false };
+      console.log('[revalidate] 인메모리 캐시 강제 무효화');
+    }
+
     const now = Date.now();
     const age = now - dataCache.timestamp;
 
