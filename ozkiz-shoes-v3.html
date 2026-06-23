@@ -799,25 +799,38 @@ window.saveAsImage=async()=>{
     }));
   }
 
-  body.innerHTML='<div class="img-copy-loading">사진 변환 중...</div>';
+  body.innerHTML='<div class="img-copy-loading">사진 변환 중...<br><span style="font-size:11px;color:var(--txt-3);margin-top:6px">최대 30초 소요</span></div>';
+  console.log('[saveAsImage] html2canvas 시작, 대상 크기:',target.offsetWidth,'x',target.offsetHeight);
 
   try{
-    const canvas=await html2canvas(target,{
+    // 30초 강제 타임아웃 — 정의된 시간 안에 끝나지 않으면 에러
+    const canvasPromise=html2canvas(target,{
       backgroundColor:'#ffffff',
-      scale:2,
+      scale:1.5,
       useCORS:true,
+      allowTaint:false,
       logging:false,
-      imageTimeout:5000,
-      windowWidth:target.scrollWidth,
-      windowHeight:target.scrollHeight
+      imageTimeout:4000,
+      foreignObjectRendering:false,
+      removeContainer:true
     });
-    // 미리보기 이미지 표시 (먼저 toDataURL — 빠른 표시)
+    const timeoutPromise=new Promise((_,rej)=>setTimeout(
+      ()=>rej(new Error('30초 초과 — 캡처가 너무 오래 걸렸어요. 새로고침 후 다시 시도해주세요.')),
+      30000
+    ));
+    const canvas=await Promise.race([canvasPromise,timeoutPromise]);
+    console.log('[saveAsImage] html2canvas 완료, 캔버스 크기:',canvas.width,'x',canvas.height);
+
+    // 미리보기 이미지 표시
     let dataUrl;
     try{ dataUrl=canvas.toDataURL('image/png'); }
     catch(secErr){
-      throw new Error('이미지 보안 제한 (CORS). 노션 이미지 로딩 실패. 다시 시도해주세요.');
+      console.error('[saveAsImage] toDataURL SecurityError:',secErr);
+      throw new Error('CORS 제한으로 이미지 변환 실패. 다시 시도하면 될 수도 있어요.');
     }
     body.innerHTML=`<img src="${dataUrl}" alt="작업지시서 미리보기">`;
+    console.log('[saveAsImage] 미리보기 표시 완료');
+
     // Blob 변환 후 자동 클립보드 복사
     canvas.toBlob(async blob=>{
       if(!blob){
@@ -826,13 +839,14 @@ window.saveAsImage=async()=>{
         return;
       }
       _currentImageBlob=blob;
+      console.log('[saveAsImage] Blob 생성 완료, 크기:',blob.size,'bytes');
       tryAutoCopyClipboard();
     },'image/png');
   }catch(e){
     hint.className='img-copy-sub error';
     hint.textContent='캡처 실패';
-    body.innerHTML=`<div style="color:var(--red);padding:40px;text-align:center;font-size:13px">캡처 실패<br><br><span style="font-size:11px;color:var(--txt-3)">${e.message}</span><br><br><button class="abtn" onclick="saveAsImage()">다시 시도</button></div>`;
-    console.error('saveAsImage error:',e);
+    body.innerHTML=`<div style="color:var(--red);padding:40px;text-align:center;font-size:13px">캡처 실패<br><br><span style="font-size:11px;color:var(--txt-3)">${e.message}</span><br><br><button class="abtn" onclick="saveAsImage()" style="margin-top:8px">다시 시도</button></div>`;
+    console.error('[saveAsImage] 에러:',e);
   }finally{
     hideEls.forEach(el=>el.style.visibility='');
     // 이미지 src 원복
