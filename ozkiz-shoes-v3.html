@@ -451,6 +451,26 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
 .supplies-list li{font-size:13px;color:var(--txt-2);padding:4px 0;display:flex;gap:6px;line-height:1.5}
 .supplies-list li::before{content:'—';color:var(--accent);flex-shrink:0;font-weight:600}
 
+/* 사진 복사 미리보기 모달 */
+.img-copy-bg{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:3000;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.img-copy-bg.open{display:flex}
+.img-copy{background:var(--card);border:1px solid var(--border-md);border-radius:14px;width:min(94vw,860px);max-height:92vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.img-copy-head{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,rgba(236,72,153,.06),transparent)}
+.img-copy-title{font-size:15px;font-weight:700;color:var(--txt)}
+.img-copy-sub{font-size:11px;color:var(--txt-3);margin-top:3px;transition:.2s}
+.img-copy-sub.success{color:var(--green);font-weight:600}
+.img-copy-sub.error{color:var(--amber)}
+.img-copy-close{width:30px;height:30px;border-radius:8px;border:1px solid var(--border-md);background:transparent;color:var(--txt-3);cursor:pointer;display:grid;place-items:center;transition:.12s}
+.img-copy-close:hover{background:var(--red-dim);color:var(--red);border-color:rgba(248,113,113,.3)}
+.img-copy-body{padding:16px;overflow:auto;background:var(--bg);text-align:center;flex:1;min-height:200px;display:flex;align-items:center;justify-content:center}
+.img-copy-body img{max-width:100%;max-height:60vh;border:1px solid var(--border);border-radius:8px;background:white;box-shadow:0 4px 14px rgba(0,0,0,.08)}
+.img-copy-body img:not([src]),.img-copy-body img[src=""]{display:none}
+.img-copy-loading{color:var(--txt-3);font-size:13px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.img-copy-loading::before{content:'';width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.img-copy-actions{padding:13px 20px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end}
+.img-copy-actions .abtn{padding:8px 16px;font-size:12px}
+
 ::-webkit-scrollbar{width:4px;height:4px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border-md);border-radius:3px}
@@ -469,9 +489,9 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
       </div>
       <div class="wo-modal-actions">
         <span id="wm-status"></span>
-        <button class="abtn" onclick="saveAsImage()" title="카톡으로 보낼 수 있는 PNG 이미지로 저장">
-          <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-          사진 저장
+        <button class="abtn" onclick="saveAsImage()" title="카톡으로 보낼 사진 — 클립보드 자동 복사">
+          <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          사진 복사
         </button>
         <button class="abtn pri" onclick="printWO()">
           <svg viewBox="0 0 24 24" width="13" height="13" stroke="white" fill="none" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -496,6 +516,28 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
         <div class="wo-modal-rem" id="wm-rem"></div>
         <div class="wo-modal-hist" id="wm-hist"></div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- 사진 복사 미리보기 모달 -->
+<div class="img-copy-bg" id="img-copy-bg" onclick="closeImageCopy(event)">
+  <div class="img-copy">
+    <div class="img-copy-head">
+      <div>
+        <div class="img-copy-title">📷 작업지시서 사진</div>
+        <div class="img-copy-sub" id="img-copy-hint">캡처 중...</div>
+      </div>
+      <button class="img-copy-close" onclick="closeImageCopy()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="img-copy-body">
+      <img id="img-copy-content" alt="작업지시서 미리보기">
+    </div>
+    <div class="img-copy-actions">
+      <button class="abtn" onclick="copyImageToClipboard()">📋 클립보드 복사</button>
+      <button class="abtn pri" onclick="downloadCurrentImage()">⬇ 파일로 저장</button>
     </div>
   </div>
 </div>
@@ -698,25 +740,41 @@ window.printWO=()=>{
   }
 };
 
-// 모달을 PNG 이미지로 저장 (카톡 등 사진 공유용)
+// 사진 복사 — 모달 캡처 후 미리보기 + 자동 클립보드 복사
+let _currentImageBlob=null;
+
 window.saveAsImage=async()=>{
   if(!selId)return;
   if(typeof html2canvas==='undefined'){
-    alert('이미지 저장 도구 로딩 중이에요. 1-2초 후 다시 시도해주세요.');
+    alert('이미지 도구 로딩 중이에요. 1-2초 후 다시 시도해주세요.');
     return;
   }
-  const p=PRODS.find(x=>x.id===selId);
-  if(!p)return;
   // 모달이 안 열려있으면 먼저 열기
   if(!$('wo-modal-bg').classList.contains('open')){
     openWOModal(selId);
     await new Promise(r=>setTimeout(r,200));
   }
+  // 미리보기 모달 띄우기 + 캡처 중 표시
+  _currentImageBlob=null;
+  const imgEl=$('img-copy-content');
+  imgEl.removeAttribute('src');
+  imgEl.style.display='none';
+  const hint=$('img-copy-hint');
+  hint.className='img-copy-sub';
+  hint.textContent='작업지시서 사진 만드는 중...';
+  // body에 로딩 표시
+  const body=document.querySelector('.img-copy-body');
+  body.innerHTML='<div class="img-copy-loading">캡처 중...</div>';
+  $('img-copy-bg').classList.add('open');
+  // 잠시 기다림 (UI 업데이트)
+  await new Promise(r=>setTimeout(r,50));
+
   const target=document.querySelector('.wo-modal');
-  if(!target){alert('모달을 찾을 수 없습니다.');return;}
+  if(!target){closeImageCopy({target:$('img-copy-bg')});return;}
   // 캡처 시 안 보일 요소 임시 숨김
   const hideEls=target.querySelectorAll('.wo-modal-close, .wo-modal-actions, .wo-modal-imgzoom');
   hideEls.forEach(el=>el.style.visibility='hidden');
+
   try{
     const canvas=await html2canvas(target,{
       backgroundColor:'#ffffff',
@@ -726,21 +784,81 @@ window.saveAsImage=async()=>{
       windowWidth:target.scrollWidth,
       windowHeight:target.scrollHeight
     });
-    canvas.toBlob(blob=>{
-      if(!blob){alert('이미지 생성 실패');return;}
-      const url=URL.createObjectURL(blob);
-      const a=document.createElement('a');
-      a.href=url;
-      const safe=p.name.replace(/[\\/:*?"<>|]/g,'');
-      a.download=`작업지시서_${safe}.png`;
-      document.body.appendChild(a);a.click();a.remove();
-      setTimeout(()=>URL.revokeObjectURL(url),1000);
+    // 미리보기 이미지 표시
+    const dataUrl=canvas.toDataURL('image/png');
+    body.innerHTML=`<img id="img-copy-content" src="${dataUrl}" alt="작업지시서 미리보기">`;
+    // Blob 변환 후 자동 클립보드 복사
+    canvas.toBlob(async blob=>{
+      if(!blob){
+        hint.className='img-copy-sub error';
+        hint.textContent='이미지 생성 실패';
+        return;
+      }
+      _currentImageBlob=blob;
+      tryAutoCopyClipboard();
     },'image/png');
   }catch(e){
-    alert('사진 저장 실패: '+e.message);
+    hint.className='img-copy-sub error';
+    hint.textContent='캡처 실패: '+e.message;
+    body.innerHTML='<div style="color:var(--red);padding:40px;text-align:center">캡처 실패 — '+e.message+'</div>';
     console.error('saveAsImage error:',e);
   }finally{
     hideEls.forEach(el=>el.style.visibility='');
+  }
+};
+
+async function tryAutoCopyClipboard(){
+  const hint=$('img-copy-hint');
+  if(!_currentImageBlob)return;
+  if(typeof ClipboardItem==='undefined'||!navigator.clipboard||!navigator.clipboard.write){
+    hint.className='img-copy-sub';
+    hint.innerHTML='이 브라우저는 자동 복사를 지원 안 해요 — "<b>⬇ 파일로 저장</b>" 사용해주세요';
+    return;
+  }
+  try{
+    await navigator.clipboard.write([new ClipboardItem({'image/png':_currentImageBlob})]);
+    hint.className='img-copy-sub success';
+    hint.innerHTML='✓ 클립보드에 자동 복사됨! 카톡에서 <b>Ctrl + V</b>로 붙여넣기';
+  }catch(e){
+    hint.className='img-copy-sub';
+    hint.innerHTML='💡 자동 복사 안 됨 — "<b>📋 클립보드 복사</b>" 버튼을 직접 눌러주세요';
+  }
+}
+
+window.copyImageToClipboard=async()=>{
+  const hint=$('img-copy-hint');
+  if(!_currentImageBlob){alert('이미지가 아직 준비 안 됐어요. 잠시 후 다시 시도해주세요.');return;}
+  if(typeof ClipboardItem==='undefined'||!navigator.clipboard||!navigator.clipboard.write){
+    alert('이 브라우저는 클립보드 이미지 복사를 지원하지 않아요.\n"⬇ 파일로 저장" 버튼으로 다운로드 후 카톡에 첨부해주세요.');
+    return;
+  }
+  try{
+    await navigator.clipboard.write([new ClipboardItem({'image/png':_currentImageBlob})]);
+    hint.className='img-copy-sub success';
+    hint.innerHTML='✓ 복사됨! 카톡에서 <b>Ctrl + V</b>로 붙여넣기';
+  }catch(e){
+    alert('클립보드 복사 실패: '+e.message+'\n파일로 저장해서 카톡에 첨부해주세요.');
+  }
+};
+
+window.downloadCurrentImage=()=>{
+  if(!_currentImageBlob){alert('이미지가 아직 준비 안 됐어요.');return;}
+  const p=PRODS.find(x=>x.id===selId);
+  const safe=p?p.name.replace(/[\\/:*?"<>|]/g,''):'item';
+  const url=URL.createObjectURL(_currentImageBlob);
+  const a=document.createElement('a');
+  a.href=url;a.download=`작업지시서_${safe}.png`;
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+  const hint=$('img-copy-hint');
+  hint.className='img-copy-sub success';
+  hint.innerHTML='✓ 파일 저장됨! 카톡에서 사진 첨부 → 다운로드한 파일 선택';
+};
+
+window.closeImageCopy=(e)=>{
+  if(!e||e.target===$('img-copy-bg')||(e.target.closest&&e.target.closest('.img-copy-close'))){
+    $('img-copy-bg').classList.remove('open');
+    _currentImageBlob=null;
   }
 };
 
