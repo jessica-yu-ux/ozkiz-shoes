@@ -814,8 +814,12 @@ window.openWOModal=id=>{
         <th>발주일</th><td>${firstOrd.od?D(firstOrd.od):'-'}</td>
       </tr>
       <tr>
-        <th>총 수량</th><td style="color:var(--accent);font-weight:700">${N(qty)}켤레 · ${cs.length}색 · ${sz.length}사이즈</td>
-        <th>업체 단가</th><td>${N(p.uv)}원</td>
+        <th>총 수량</th><td style="color:var(--accent);font-weight:700">${N(qty)}켤레</td>
+        <th>업체 단가</th><td>${p.uv?N(p.uv)+'원':'-'}</td>
+      </tr>
+      <tr>
+        <th>컬러 군</th><td>${cs.length?cs.join(', '):'-'}</td>
+        <th>사이즈</th><td>${sz.length?sz.join(', '):'-'}</td>
       </tr>
       ${hasKC?`<tr>
         <th>KC 진행</th><td>${p.kcStatus||'-'}</td>
@@ -830,7 +834,9 @@ window.openWOModal=id=>{
     supEl.style.display='';
     supEl.innerHTML=`
       <div class="sec-t" style="margin-bottom:7px">부자재 구매 항목</div>
-      <ul class="supplies-list">${p.supplies.map(s=>`<li>${s}</li>`).join('')}</ul>`;
+      <ul class="supplies-list">${p.supplies.map(s=>s.url
+        ?`<li><a href="${s.url}" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:underline;display:inline-flex;align-items:center;gap:4px">${s.text}<span style="font-size:10px;opacity:.7">🔗</span></a></li>`
+        :`<li>${s.text}</li>`).join('')}</ul>`;
   }else{
     supEl.style.display='none';
     supEl.innerHTML='';
@@ -921,7 +927,13 @@ const SAMPLE_DATA=[
   {id:1,name:'샌들-샤이니블룸LED',style:'OZK-SH-2601',brand:'오즈키즈',vendor:'페라리(미리네)',region:'대한민국',year:2026,cat:'샌들',season:'여름',status:'계속판매',last:'미리네 전용 라스트',type:'신제품',gender:null,moq:null,img:null,
    uv:17000,us:550,ue:1650,ur:1.1,uc:21120,rt:84000,ed:'2026-05-07',
    fabric:'PU 가죽 + LED 발광 모듈 내장 + 투명 PVC 스트랩',
-   supplies:['LED 배터리 (CR2032) - 8,000개','샤이니 버클 - 4,000개','EVA 인솔 4mm - 250켤레','박스 200×150×100mm - 250개','LED 교체 안내 카드 - 250장'],
+   supplies:[
+     {text:'LED 배터리 (CR2032) - 8,000개',url:'https://example.com/battery'},
+     {text:'샤이니 버클 - 4,000개',url:'https://example.com/buckle'},
+     {text:'EVA 인솔 4mm - 250켤레',url:null},
+     {text:'박스 200×150×100mm - 250개',url:'https://example.com/box'},
+     {text:'LED 교체 안내 카드 - 250장',url:null}
+   ],
    kcStatus:'합격',
    kcFiles:[{name:'KC인증서-SH2601.pdf',url:'#'}],
    rem:['갑피: PU 소재, LED 발광 모듈 내장','스트랩: 투명 PVC + 샤이니 버클','밑창: TPR 투명 (논슬립 처리)','LED 배터리 교체 가능 구조 확인 필수','박스 내 LED 교체 안내 카드 동봉'],
@@ -940,12 +952,15 @@ const SAMPLE_DATA=[
 
 // 서버 응답에서 빈 값이 omit됐을 때를 대비 — 누락된 필드를 안전한 기본값으로 채움
 function normalizeProduct(p){
-  return Object.assign({
+  const r=Object.assign({
     vendor:'-',region:'-',cat:'-',season:'-',last:'',fabric:'',
     type:'-',brand:'오즈키즈',moq:null,gender:null,
     uv:0,us:0,ue:0,ur:1,uc:0,rt:0,ed:'',kcStatus:'',
     rem:[],hist:[],ord:[],kcFiles:[],supplies:[]
   },p);
+  // supplies 호환성 — 문자열 배열로 들어왔으면 객체 배열로 변환
+  r.supplies=(r.supplies||[]).map(s=>typeof s==='string'?{text:s,url:null}:(s&&s.text?s:{text:String(s||''),url:null})).filter(s=>s.text);
+  return r;
 }
 
 async function loadData(){

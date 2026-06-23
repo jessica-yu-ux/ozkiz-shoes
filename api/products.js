@@ -18,7 +18,7 @@ const TARGET_YEARS = ['2025', '2026', '2027'];
 const PRODUCT_PROPS_NEEDED = [
   '제품명', '품번', '브랜드', '생산공장', '원산지', '개발년도',
   '복종', '시즌', '진행상태', '라스트', '제품유형', '성별', 'MOQ',
-  '대표이미지', '원가', '판매가', '입고일',
+  '대표이미지', '원가', '판매가', '입고일', '업체 단가',
   '의류/슈즈/잡화',
   '원단명', '부자재 구매', 'KC진행', 'KC 시험성적서',
   '생산지시 특이사항', '히스토리'
@@ -229,6 +229,33 @@ function parseLines(text) {
   return text.split('\n').map(l => l.trim()).filter(Boolean);
 }
 
+// rich_text를 줄별로 분리, 각 줄의 URL을 추출 (노션 hyperlink + 텍스트 안 URL 패턴 둘 다 처리)
+// 부자재 구매 같은 컬럼에 쓰임 — 한 줄 = 한 항목, 링크 걸리면 클릭 가능
+function getRichTextLines(prop) {
+  if (!prop || prop.type !== 'rich_text') return [];
+  const segments = prop.rich_text || [];
+  const fullText = segments.map(s => s.plain_text || '').join('');
+  // 노션 hyperlink 정보: 어떤 텍스트 조각에 href가 있나
+  const hrefMap = segments
+    .filter(s => s.href && s.plain_text)
+    .map(s => ({ text: s.plain_text, url: s.href }));
+
+  return fullText.split('\n').map(l => l.trim()).filter(Boolean).map(line => {
+    // 노션 hyperlink 매칭
+    for (const h of hrefMap) {
+      if (line.includes(h.text.trim())) return { text: line, url: h.url };
+    }
+    // 텍스트 안의 URL 패턴 (https://...)
+    const m = line.match(/(https?:\/\/[^\s]+)/);
+    if (m) {
+      const url = m[1];
+      const label = line.replace(url, '').replace(/[-—–:|]\s*$/, '').trim();
+      return { text: label || url, url };
+    }
+    return { text: line, url: null };
+  });
+}
+
 function mapProduct(page, myOrders, idx) {
   const p = page.properties;
 
@@ -264,11 +291,12 @@ function mapProduct(page, myOrders, idx) {
     gender:  p['성별']?.select?.name || null,
     moq:     p['MOQ']?.number || null,
     img:     getImg(p['대표이미지']),
+    uv:      p['업체 단가']?.number || 0,
     uc:      p['원가']?.number || 0,
     rt:      p['판매가']?.number || 0,
     ed:      p['입고일']?.date?.start || '',
     fabric:    getText(p['원단명']),
-    supplies:  parseLines(getText(p['부자재 구매'])),
+    supplies:  getRichTextLines(p['부자재 구매']),
     kcStatus:  p['KC진행']?.select?.name || '',
     kcFiles:   (p['KC 시험성적서']?.files || []).map(f => ({
       name: f.name || 'KC 서류',
