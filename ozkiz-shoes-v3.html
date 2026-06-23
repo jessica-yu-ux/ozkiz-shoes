@@ -740,6 +740,29 @@ window.printWO=()=>{
   }
 };
 
+// 외부 이미지를 /api/img-proxy로 fetch → base64 data URL로 변환 (CORS 완전 우회)
+async function fetchAsDataUrl(url,timeoutMs){
+  timeoutMs=timeoutMs||8000;
+  const controller=new AbortController();
+  const t=setTimeout(()=>controller.abort(),timeoutMs);
+  try{
+    const r=await fetch('/api/img-proxy?url='+encodeURIComponent(url),{signal:controller.signal});
+    if(!r.ok){console.warn('img-proxy 실패:',r.status,url);return null;}
+    const blob=await r.blob();
+    return await new Promise((resolve,reject)=>{
+      const reader=new FileReader();
+      reader.onloadend=()=>resolve(reader.result);
+      reader.onerror=()=>reject(new Error('FileReader 실패'));
+      reader.readAsDataURL(blob);
+    });
+  }catch(e){
+    console.warn('fetchAsDataUrl 에러:',e.message);
+    return null;
+  }finally{
+    clearTimeout(t);
+  }
+}
+
 // 사진 복사 — 모달 캡처 후 미리보기 + 자동 클립보드 복사
 let _currentImageBlob=null;
 
@@ -770,7 +793,7 @@ window.saveAsImage=async()=>{
   const hideEls=target.querySelectorAll('.wo-modal-close, .wo-modal-actions, .wo-modal-imgzoom');
   hideEls.forEach(el=>el.style.visibility='hidden');
 
-  // 노션 이미지(S3)는 CORS 막힘 — 우리 도메인 프록시로 임시 교체
+  // 노션 이미지(S3)는 CORS 막힘 — base64로 완전 변환해서 html2canvas에 박음
   // file:// 미리보기나 claude.ai에선 프록시 호출 못 하므로 그 환경은 skip
   const canProxy=(location.protocol==='https:'||location.protocol==='http:')&&
                  !location.hostname.includes('claude')&&
@@ -778,25 +801,37 @@ window.saveAsImage=async()=>{
   const imgs=Array.from(target.querySelectorAll('img'));
   const originalSrcs=new Map();
 
-  if(canProxy){
-    body.innerHTML='<div class="img-copy-loading">이미지 다운로드 중...</div>';
-    for(const img of imgs){
+  if(canProxy&&imgs.length>0){
+    const external=imgs.filter(img=>img.src&&img.src.startsWith('http')&&!img.src.startsWith(location.origin));
+    console.log('[saveAsImage] 외부 이미지',external.length,'개 base64 변환 시작');
+    for(let i=0;i<external.length;i++){
+      const img=external[i];
       const src=img.src;
-      if(src&&src.startsWith('http')&&!src.startsWith(location.origin)){
-        originalSrcs.set(img,src);
-        img.crossOrigin='anonymous';
-        img.src=`/api/img-proxy?url=${encodeURIComponent(src)}`;
+      body.innerHTML=`<div class="img-copy-loading">이미지 다운로드 중 (${i+1}/${external.length})...</div>`;
+      try{
+        const dataUrl=await fetchAsDataUrl(src,8000);
+        if(dataUrl){
+          originalSrcs.set(img,src);
+          img.src=dataUrl;
+          // base64 로드 대기 (즉시 끝나야 함)
+          await new Promise(r=>{
+            if(img.complete&&img.naturalHeight>0)return r();
+            const t=setTimeout(r,2000);
+            img.onload=()=>{clearTimeout(t);r();};
+            img.onerror=()=>{clearTimeout(t);r();};
+          });
+          console.log('[saveAsImage] 이미지',i+1,'변환 완료, base64 길이:',dataUrl.length);
+        }else{
+          console.warn('[saveAsImage] 이미지',i+1,'변환 실패 — 빈 칸으로 진행');
+          // 변환 실패 시 빈 placeholder로 (hang 방지)
+          originalSrcs.set(img,src);
+          img.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxIiBoZWlnaHQ9IjEiPjwvc3ZnPg==';
+        }
+      }catch(e){
+        console.error('[saveAsImage] 이미지',i+1,'에러:',e);
       }
     }
-    // 이미지 로드 대기 — 각 이미지당 최대 6초
-    await Promise.all(imgs.map(img=>{
-      if(img.complete&&img.naturalHeight>0)return Promise.resolve();
-      return new Promise(resolve=>{
-        const t=setTimeout(resolve,6000);
-        const done=()=>{clearTimeout(t);img.onload=null;img.onerror=null;resolve();};
-        img.onload=done;img.onerror=done;
-      });
-    }));
+    console.log('[saveAsImage] 모든 이미지 처리 완료');
   }
 
   body.innerHTML='<div class="img-copy-loading">사진 변환 중...<br><span style="font-size:11px;color:var(--txt-3);margin-top:6px">최대 30초 소요</span></div>';
