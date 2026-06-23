@@ -756,24 +756,50 @@ window.saveAsImage=async()=>{
   }
   // 미리보기 모달 띄우기 + 캡처 중 표시
   _currentImageBlob=null;
-  const imgEl=$('img-copy-content');
-  imgEl.removeAttribute('src');
-  imgEl.style.display='none';
+  const body=document.querySelector('.img-copy-body');
   const hint=$('img-copy-hint');
   hint.className='img-copy-sub';
   hint.textContent='작업지시서 사진 만드는 중...';
-  // body에 로딩 표시
-  const body=document.querySelector('.img-copy-body');
-  body.innerHTML='<div class="img-copy-loading">캡처 중...</div>';
+  body.innerHTML='<div class="img-copy-loading">준비 중...</div>';
   $('img-copy-bg').classList.add('open');
-  // 잠시 기다림 (UI 업데이트)
   await new Promise(r=>setTimeout(r,50));
 
   const target=document.querySelector('.wo-modal');
-  if(!target){closeImageCopy({target:$('img-copy-bg')});return;}
+  if(!target){return;}
   // 캡처 시 안 보일 요소 임시 숨김
   const hideEls=target.querySelectorAll('.wo-modal-close, .wo-modal-actions, .wo-modal-imgzoom');
   hideEls.forEach(el=>el.style.visibility='hidden');
+
+  // 노션 이미지(S3)는 CORS 막힘 — 우리 도메인 프록시로 임시 교체
+  // file:// 미리보기나 claude.ai에선 프록시 호출 못 하므로 그 환경은 skip
+  const canProxy=(location.protocol==='https:'||location.protocol==='http:')&&
+                 !location.hostname.includes('claude')&&
+                 !location.hostname.includes('anthropic');
+  const imgs=Array.from(target.querySelectorAll('img'));
+  const originalSrcs=new Map();
+
+  if(canProxy){
+    body.innerHTML='<div class="img-copy-loading">이미지 다운로드 중...</div>';
+    for(const img of imgs){
+      const src=img.src;
+      if(src&&src.startsWith('http')&&!src.startsWith(location.origin)){
+        originalSrcs.set(img,src);
+        img.crossOrigin='anonymous';
+        img.src=`/api/img-proxy?url=${encodeURIComponent(src)}`;
+      }
+    }
+    // 이미지 로드 대기 — 각 이미지당 최대 6초
+    await Promise.all(imgs.map(img=>{
+      if(img.complete&&img.naturalHeight>0)return Promise.resolve();
+      return new Promise(resolve=>{
+        const t=setTimeout(resolve,6000);
+        const done=()=>{clearTimeout(t);img.onload=null;img.onerror=null;resolve();};
+        img.onload=done;img.onerror=done;
+      });
+    }));
+  }
+
+  body.innerHTML='<div class="img-copy-loading">사진 변환 중...</div>';
 
   try{
     const canvas=await html2canvas(target,{
@@ -781,17 +807,22 @@ window.saveAsImage=async()=>{
       scale:2,
       useCORS:true,
       logging:false,
+      imageTimeout:5000,
       windowWidth:target.scrollWidth,
       windowHeight:target.scrollHeight
     });
-    // 미리보기 이미지 표시
-    const dataUrl=canvas.toDataURL('image/png');
-    body.innerHTML=`<img id="img-copy-content" src="${dataUrl}" alt="작업지시서 미리보기">`;
+    // 미리보기 이미지 표시 (먼저 toDataURL — 빠른 표시)
+    let dataUrl;
+    try{ dataUrl=canvas.toDataURL('image/png'); }
+    catch(secErr){
+      throw new Error('이미지 보안 제한 (CORS). 노션 이미지 로딩 실패. 다시 시도해주세요.');
+    }
+    body.innerHTML=`<img src="${dataUrl}" alt="작업지시서 미리보기">`;
     // Blob 변환 후 자동 클립보드 복사
     canvas.toBlob(async blob=>{
       if(!blob){
         hint.className='img-copy-sub error';
-        hint.textContent='이미지 생성 실패';
+        hint.textContent='이미지 생성 실패 — 다시 시도해주세요';
         return;
       }
       _currentImageBlob=blob;
@@ -799,11 +830,16 @@ window.saveAsImage=async()=>{
     },'image/png');
   }catch(e){
     hint.className='img-copy-sub error';
-    hint.textContent='캡처 실패: '+e.message;
-    body.innerHTML='<div style="color:var(--red);padding:40px;text-align:center">캡처 실패 — '+e.message+'</div>';
+    hint.textContent='캡처 실패';
+    body.innerHTML=`<div style="color:var(--red);padding:40px;text-align:center;font-size:13px">캡처 실패<br><br><span style="font-size:11px;color:var(--txt-3)">${e.message}</span><br><br><button class="abtn" onclick="saveAsImage()">다시 시도</button></div>`;
     console.error('saveAsImage error:',e);
   }finally{
     hideEls.forEach(el=>el.style.visibility='');
+    // 이미지 src 원복
+    originalSrcs.forEach((src,img)=>{
+      img.crossOrigin=null;
+      img.src=src;
+    });
   }
 };
 
