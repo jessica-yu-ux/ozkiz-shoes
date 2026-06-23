@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>오즈키즈 슈즈 작업지시서</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
@@ -468,6 +469,10 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
       </div>
       <div class="wo-modal-actions">
         <span id="wm-status"></span>
+        <button class="abtn" onclick="saveAsImage()" title="카톡으로 보낼 수 있는 PNG 이미지로 저장">
+          <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          사진 저장
+        </button>
         <button class="abtn pri" onclick="printWO()">
           <svg viewBox="0 0 24 24" width="13" height="13" stroke="white" fill="none" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           PDF 저장
@@ -693,6 +698,52 @@ window.printWO=()=>{
   }
 };
 
+// 모달을 PNG 이미지로 저장 (카톡 등 사진 공유용)
+window.saveAsImage=async()=>{
+  if(!selId)return;
+  if(typeof html2canvas==='undefined'){
+    alert('이미지 저장 도구 로딩 중이에요. 1-2초 후 다시 시도해주세요.');
+    return;
+  }
+  const p=PRODS.find(x=>x.id===selId);
+  if(!p)return;
+  // 모달이 안 열려있으면 먼저 열기
+  if(!$('wo-modal-bg').classList.contains('open')){
+    openWOModal(selId);
+    await new Promise(r=>setTimeout(r,200));
+  }
+  const target=document.querySelector('.wo-modal');
+  if(!target){alert('모달을 찾을 수 없습니다.');return;}
+  // 캡처 시 안 보일 요소 임시 숨김
+  const hideEls=target.querySelectorAll('.wo-modal-close, .wo-modal-actions, .wo-modal-imgzoom');
+  hideEls.forEach(el=>el.style.visibility='hidden');
+  try{
+    const canvas=await html2canvas(target,{
+      backgroundColor:'#ffffff',
+      scale:2,
+      useCORS:true,
+      logging:false,
+      windowWidth:target.scrollWidth,
+      windowHeight:target.scrollHeight
+    });
+    canvas.toBlob(blob=>{
+      if(!blob){alert('이미지 생성 실패');return;}
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a');
+      a.href=url;
+      const safe=p.name.replace(/[\\/:*?"<>|]/g,'');
+      a.download=`작업지시서_${safe}.png`;
+      document.body.appendChild(a);a.click();a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),1000);
+    },'image/png');
+  }catch(e){
+    alert('사진 저장 실패: '+e.message);
+    console.error('saveAsImage error:',e);
+  }finally{
+    hideEls.forEach(el=>el.style.visibility='');
+  }
+};
+
 
 function renderWO(p){
   const{cs,sz,m}=mtx(p.ord);
@@ -840,8 +891,8 @@ window.openWOModal=id=>{
         <th>원산지</th><td>${p.region}</td>
       </tr>
       <tr>
-        <th>라스트</th><td>${hasLast?p.last:'<span style="color:var(--txt-3)">-</span>'}</td>
         <th>원단명</th><td>${hasFabric?p.fabric:'<span style="color:var(--txt-3)">-</span>'}</td>
+        <th>KC 인증서류</th><td>${p.kcFiles&&p.kcFiles.length?p.kcFiles.map(f=>`<a href="${f.url}" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:underline">📎 ${f.name}</a>`).join(' · '):'<span style="color:var(--txt-3)">파일 업로드 필요</span>'}</td>
       </tr>
       <tr>
         <th>발주차수</th><td>${rounds.join(', ')}</td>
@@ -854,10 +905,6 @@ window.openWOModal=id=>{
       <tr>
         <th>컬러 군</th><td>${cs.length?cs.join(', '):'-'}</td>
         <th>사이즈</th><td>${sz.length?sz.join(', '):'-'}</td>
-      </tr>
-      <tr>
-        <th>KC 진행</th><td>${p.kcStatus||'<span style="color:var(--txt-3)">-</span>'}</td>
-        <th>KC 인증서류</th><td>${p.kcFiles&&p.kcFiles.length?p.kcFiles.map(f=>`<a href="${f.url}" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:underline">📎 ${f.name}</a>`).join(' · '):'<span style="color:var(--txt-3)">파일 업로드 필요</span>'}</td>
       </tr>
     </table>`;
 
