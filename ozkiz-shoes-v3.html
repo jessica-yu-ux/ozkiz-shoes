@@ -137,12 +137,27 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
 .stat-value.accent{color:var(--accent)}
 .stat-value.green{color:var(--green)}
 .stat-value.amber{color:var(--amber)}
-.prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.prod-grid{display:flex;flex-direction:column;gap:28px}
 
-/* Product card — 정사각형 */
-.pc{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:border-color .15s,background .15s;display:flex;flex-direction:column}
-.pc:hover{border-color:var(--border-md);background:var(--card-hover)}
-.pc.act{border-color:var(--accent);border-width:1.5px}
+/* 상태별 그룹 — 진행 상태에 맞춰 자동 정리 */
+.status-group{display:flex;flex-direction:column;gap:12px}
+.status-group-head{display:flex;align-items:center;justify-content:space-between;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.status-group-title{font-size:13px;font-weight:700;color:var(--txt);display:flex;align-items:center;gap:9px;letter-spacing:-.01em}
+.status-group-title::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--txt-3);box-shadow:0 0 0 3px rgba(0,0,0,.04)}
+.status-group[data-st="생산요청"] .status-group-title::before{background:var(--amber);box-shadow:0 0 0 3px rgba(251,191,36,.15)}
+.status-group[data-st="생산중"] .status-group-title::before{background:var(--accent);box-shadow:0 0 0 3px rgba(236,72,153,.15)}
+.status-group[data-st="계속판매"] .status-group-title::before{background:var(--green);box-shadow:0 0 0 3px rgba(52,211,153,.15)}
+.status-group[data-st="대기"] .status-group-title::before{background:var(--txt-3);box-shadow:0 0 0 3px rgba(0,0,0,.05)}
+.status-group[data-st="완료"] .status-group-title::before{background:#A855F7;box-shadow:0 0 0 3px rgba(168,85,247,.15)}
+.status-group[data-st="진행취소"] .status-group-title::before{background:var(--red);box-shadow:0 0 0 3px rgba(248,113,113,.15)}
+.status-group-count{font-size:11px;color:var(--txt-3);font-weight:600;padding:3px 10px;background:var(--card);border:1px solid var(--border);border-radius:999px}
+.status-group-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+
+/* Product card — 트렌디한 그림자 + hover */
+.pc{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;cursor:pointer;transition:all .2s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.pc:hover{border-color:var(--border-md);background:var(--card-hover);transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,.06)}
+[data-theme="dark"] .pc:hover{box-shadow:0 10px 30px rgba(0,0,0,.3)}
+.pc.act{border-color:var(--accent);border-width:1.5px;box-shadow:0 0 0 3px rgba(236,72,153,.15),0 8px 24px rgba(236,72,153,.08)}
 .pc-img{width:100%;aspect-ratio:1/1;background:var(--bg);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .pc-img img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
 .pc:hover .pc-img img{transform:scale(1.04)}
@@ -173,8 +188,9 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
 .wo-btn:hover{background:var(--accent-dim);border-color:var(--accent);color:#FBCFE8}
 .wo-btn svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2}
 
-/* Status pills */
-.sp{font-size:10px;font-weight:600;padding:3px 9px;border-radius:999px;letter-spacing:.02em;border:1px solid transparent}
+/* Status pills — 색상 점이 있는 트렌디한 pill */
+.sp{font-size:10px;font-weight:700;padding:4px 10px 4px 8px;border-radius:999px;letter-spacing:.02em;border:1px solid transparent;display:inline-flex;align-items:center;gap:5px}
+.sp::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.85}
 .s계속판매{background:var(--green-dim);color:var(--green);border-color:rgba(52,211,153,.25)}
 .s생산중{background:var(--accent-dim);color:#FBCFE8;border-color:rgba(236,72,153,.3)}
 .s생산요청{background:var(--amber-dim);color:var(--amber);border-color:rgba(251,191,36,.25)}
@@ -686,41 +702,67 @@ function imgH(p,sm){
   return sm?`<div class="pc-ph">${sv}<span>이미지 준비중</span></div>`:`<div class="wo-ph">${sv}<p>노션 대표이미지를 등록하면<br>자동으로 표시됩니다</p></div>`;
 }
 
+// 상태별 정렬 순서 (긴급한 것부터)
+const STATUS_ORDER=['생산요청','생산중','계속판매','대기','완료','진행취소'];
+const STATUS_LABEL={'생산요청':'생산 요청','생산중':'생산 중','계속판매':'계속 판매','대기':'대기','완료':'완료','진행취소':'진행 취소'};
+
+function renderCard(p){
+  const qty=tQ(p.ord);
+  return `<div class="pc${selId===p.id?' act':''}" onclick="sel(${p.id})">
+    <div class="pc-img">${imgH(p,true)}
+      <div class="pc-status"><span class="sp s${p.status.replace(/ /g,'')}">${p.status}</span></div>
+      <div class="pc-expand" onclick="event.stopPropagation();openLB(${p.id})"><svg viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+    </div>
+    <div class="pc-body">
+      <div class="pc-top">
+        <div class="pc-name">${p.name}</div>
+        <div class="pc-style">${p.style}</div>
+      </div>
+      <div class="pc-meta-list">
+        <div class="pc-meta-row"><span class="pc-mk">입고일정</span><span class="pc-mv">${[...new Set(p.ord.map(r=>r.dd))].map(D).join(', ')}</span></div>
+        <div class="pc-meta-row"><span class="pc-mk">생산공장</span><span class="pc-mv">${p.vendor}</span></div>
+        <div class="pc-meta-row"><span class="pc-mk">원가</span><span class="pc-mv">${N(p.uc)}원</span></div>
+        <div class="pc-meta-row"><span class="pc-mk">시즌</span><span class="pc-mv">${p.season}</span></div>
+        <div class="pc-meta-row"><span class="pc-mk">년도</span><span class="pc-mv">${p.year}년</span></div>
+        <div class="pc-meta-row"><span class="pc-mk">카테고리</span><span class="pc-mv">${p.cat}</span></div>
+        <div class="pc-meta-row"><span class="pc-mk">원산지</span><span class="pc-mv">${p.region}</span></div>
+      </div>
+      <div class="pc-foot">
+        <div class="pc-qty">총 <b>${N(qty)}켤레</b></div>
+        <button class="wo-btn" onclick="event.stopPropagation();sel(${p.id})">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          작업지시서
+        </button>
+      </div>
+    </div>
+  </div>`;
+}
+
 function renderGrid(list){
   $('grid-ttl').textContent=`${list.length}개 스타일`;
-  if(!list.length){$('prod-grid').innerHTML=`<div class="empty"><svg viewBox="0 0 24 24" stroke-width="1.5" fill="none"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><p>조건에 맞는 제품이 없어요</p></div>`;return;}
-  const co=p=>[...new Set(p.ord.map(r=>r.c))];
-  $('prod-grid').innerHTML=list.map(p=>{
-    const cs=co(p);const qty=tQ(p.ord);
-    return`<div class="pc${selId===p.id?' act':''}" onclick="sel(${p.id})">
-      <div class="pc-img">${imgH(p,true)}
-        <div class="pc-status"><span class="sp s${p.status.replace(/ /g,'')}">${p.status}</span></div>
-        <div class="pc-expand" onclick="event.stopPropagation();openLB(${p.id})"><svg viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
-      </div>
-      <div class="pc-body">
-        <div class="pc-top">
-          <div class="pc-name">${p.name}</div>
-          <div class="pc-style">${p.style}</div>
+  if(!list.length){
+    $('prod-grid').innerHTML=`<div class="empty"><svg viewBox="0 0 24 24" stroke-width="1.5" fill="none"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><p>조건에 맞는 제품이 없어요</p></div>`;
+    return;
+  }
+  // 진행 상태별로 그룹화
+  const groups={};
+  for(const s of STATUS_ORDER)groups[s]=[];
+  for(const p of list){
+    const s=STATUS_ORDER.includes(p.status)?p.status:'대기';
+    groups[s].push(p);
+  }
+  // 그룹 순서대로 렌더 (비어있는 그룹은 스킵)
+  $('prod-grid').innerHTML=STATUS_ORDER
+    .filter(s=>groups[s].length>0)
+    .map(s=>`
+      <div class="status-group" data-st="${s}">
+        <div class="status-group-head">
+          <div class="status-group-title">${STATUS_LABEL[s]}</div>
+          <div class="status-group-count">${groups[s].length}건</div>
         </div>
-        <div class="pc-meta-list">
-          <div class="pc-meta-row"><span class="pc-mk">입고일정</span><span class="pc-mv">${[...new Set(p.ord.map(r=>r.dd))].map(D).join(', ')}</span></div>
-          <div class="pc-meta-row"><span class="pc-mk">생산공장</span><span class="pc-mv">${p.vendor}</span></div>
-          <div class="pc-meta-row"><span class="pc-mk">원가</span><span class="pc-mv">${N(p.uc)}원</span></div>
-          <div class="pc-meta-row"><span class="pc-mk">시즌</span><span class="pc-mv">${p.season}</span></div>
-          <div class="pc-meta-row"><span class="pc-mk">년도</span><span class="pc-mv">${p.year}년</span></div>
-          <div class="pc-meta-row"><span class="pc-mk">카테고리</span><span class="pc-mv">${p.cat}</span></div>
-          <div class="pc-meta-row"><span class="pc-mk">원산지</span><span class="pc-mv">${p.region}</span></div>
-        </div>
-        <div class="pc-foot">
-          <div class="pc-qty">총 <b>${N(qty)}켤레</b></div>
-          <button class="wo-btn" onclick="event.stopPropagation();sel(${p.id})">
-            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            작업지시서
-          </button>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
+        <div class="status-group-grid">${groups[s].map(renderCard).join('')}</div>
+      </div>`)
+    .join('');
 }
 
 window.sel=id=>{
