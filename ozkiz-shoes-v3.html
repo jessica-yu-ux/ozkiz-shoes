@@ -258,6 +258,40 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
 .cost-row{display:flex;justify-content:space-between}
 .cost-total{border-top:1px solid var(--border-md);margin-top:7px;padding-top:7px;display:flex;justify-content:space-between;font-size:16px;font-weight:700;color:var(--txt)}
 .cost-retail{display:flex;justify-content:space-between;font-size:14px;color:var(--green);font-weight:600;margin-top:4px}
+
+/* 원가 계산기 (인터랙티브) */
+.cost-calc{display:flex;flex-direction:column;gap:11px;padding:14px;background:var(--cost-bg);border:1px solid var(--border);border-radius:10px;font-size:12px;margin-top:8px}
+.cost-input-row{display:flex;flex-direction:column;gap:5px}
+.cost-input-row > .cir-label{font-size:10px;color:var(--txt-3);font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.cost-input-wrap{display:flex;align-items:center;gap:6px}
+.cost-input-wrap input{flex:1;padding:8px 11px;border:1px solid var(--border-md);border-radius:7px;background:var(--card);color:var(--txt);font-size:14px;font-weight:700;font-family:inherit;text-align:right}
+.cost-input-wrap input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(236,72,153,.12)}
+.cost-input-wrap .unit{font-size:12px;color:var(--txt-3);font-weight:600}
+.cost-radio-group{display:flex;flex-direction:column;gap:5px}
+.cost-radio-group label{display:flex;align-items:center;gap:6px;cursor:pointer;font-size:11px;color:var(--txt-2);padding:5px 8px;border:1px solid var(--border);border-radius:6px;transition:.12s}
+.cost-radio-group label:has(input:checked){border-color:var(--accent);background:var(--accent-dim);color:var(--accent);font-weight:600}
+.cost-radio-group input[type="radio"]{accent-color:var(--accent);margin:0}
+.cost-checkbox{display:flex;align-items:center;gap:6px;cursor:pointer;font-size:11px;color:var(--txt-2);padding:5px 8px;border:1px solid var(--border);border-radius:6px;transition:.12s}
+.cost-checkbox:has(input:checked){border-color:var(--accent);background:var(--accent-dim);color:var(--accent);font-weight:600}
+.cost-checkbox input{accent-color:var(--accent);margin:0}
+.cost-result{display:flex;flex-direction:column;gap:3px;padding:11px;background:var(--card);border-radius:8px;border:1px solid var(--border);font-size:11px}
+.calc-line{display:flex;justify-content:space-between;color:var(--txt-3);font-variant-numeric:tabular-nums}
+.calc-line.subtotal{color:var(--txt-2);font-weight:600;border-top:1px dashed var(--border);padding-top:5px;margin-top:3px}
+.calc-line.total{color:var(--accent);font-weight:700;font-size:14px;border-top:1.5px solid var(--accent);padding-top:6px;margin-top:4px}
+.calc-line.retail{color:var(--green);font-weight:800;font-size:14px}
+.calc-divider{height:1px;background:var(--border);margin:6px 0}
+.cost-save-btn{padding:9px 12px;border:none;background:linear-gradient(135deg,#FB7185,#EC4899);color:white;border-radius:8px;cursor:pointer;font-size:11px;font-weight:700;transition:.15s;font-family:inherit;letter-spacing:.02em}
+.cost-save-btn:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(236,72,153,.32)}
+.cost-hist-section{margin-top:6px;padding-top:11px;border-top:1px solid var(--border)}
+.cost-hist-title{font-size:10px;color:var(--txt-3);font-weight:700;margin-bottom:7px;letter-spacing:.06em;text-transform:uppercase}
+.cost-hist-item{display:flex;flex-direction:column;gap:2px;padding:6px 8px;font-size:10px;color:var(--txt-3);border-bottom:1px dashed var(--border);cursor:pointer;transition:.12s;border-radius:4px}
+.cost-hist-item:hover{background:var(--card-hover)}
+.cost-hist-item:last-child{border-bottom:none}
+.cost-hist-item .hist-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.cost-hist-item .hist-date{color:var(--accent);font-weight:700;font-size:10px}
+.cost-hist-item .hist-retail{color:var(--green);font-weight:700;font-size:11px}
+.cost-hist-item .hist-detail{font-size:9px;color:var(--txt-3);font-variant-numeric:tabular-nums}
+.cost-hist-empty{font-size:10px;color:var(--txt-3);text-align:center;padding:8px 0;font-style:italic}
 /* 오른쪽 — flex column, 전체 높이 자동 확장 */
 .wo-right{display:flex;flex-direction:column}
 .wo-matrix{padding:12px 16px 10px;display:flex;flex-direction:column;border-bottom:1px solid var(--border)}
@@ -657,6 +691,109 @@ const $=id=>document.getElementById(id);
 const N=n=>(n??0).toLocaleString('ko-KR');
 const D=d=>d?d.replace(/-/g,'.'):'-';
 const tQ=ord=>ord.reduce((s,r)=>s+r.q,0);
+
+// ─── 원가 계산기 + 히스토리 ───
+// 카테고리 기반 기본 부자재 금액
+function defaultSupplies(p){
+  const cat=(p.cat||'').toLowerCase();
+  if(cat.includes('부츠'))return 800;
+  return 550;  // 구두/슬립온 기본
+}
+// 원가/판매가 계산 (원산지 대한민국 기준)
+function calcCost(uv,supplies,hasLED){
+  uv=parseInt(uv)||0;
+  supplies=parseInt(supplies)||0;
+  const ledCost=hasLED?1650:0;
+  const sub=uv+supplies+ledCost;
+  const cost=Math.round(sub*1.1);
+  const retailRaw=cost*4;
+  const retail=Math.round(retailRaw/500)*500;  // 500원 단위 반올림
+  return {uv,supplies,ledCost,hasLED,sub,cost,retailRaw,retail};
+}
+// 히스토리 — localStorage에 제품별로
+const COST_HIST_KEY='ozkiz-cost-hist';
+function getCostHistAll(){
+  try{return JSON.parse(localStorage.getItem(COST_HIST_KEY)||'{}');}
+  catch(e){return {};}
+}
+function getCostHist(pid){return getCostHistAll()[pid]||[]}
+function getLastCost(p){
+  const h=getCostHist(p.notionId||String(p.id));
+  return h[h.length-1]||null;
+}
+window.updateCostCalc=()=>{
+  const uvEl=$('ci-uv');if(!uvEl)return;
+  const uv=parseInt(uvEl.value)||0;
+  const supRadio=document.querySelector('input[name="ci-supplies"]:checked');
+  const supplies=supRadio?parseInt(supRadio.value):0;
+  const hasLED=$('ci-led')?.checked||false;
+  const c=calcCost(uv,supplies,hasLED);
+  const resEl=$('cost-result');
+  if(!resEl)return;
+  resEl.innerHTML=`
+    <div class="calc-line"><span>업체 단가</span><span>${N(c.uv)}원</span></div>
+    <div class="calc-line"><span>+ 부자재</span><span>${N(c.supplies)}원</span></div>
+    ${hasLED?`<div class="calc-line"><span>+ LED 모듈</span><span>${N(c.ledCost)}원</span></div>`:''}
+    <div class="calc-line subtotal"><span>= 소계</span><span>${N(c.sub)}원</span></div>
+    <div class="calc-line total"><span>× 1.1 = <b>원가</b></span><span>${N(c.cost)}원</span></div>
+    <div class="calc-divider"></div>
+    <div class="calc-line"><span style="font-size:9px">판매가 = 원가 × 4 (500원 단위)</span></div>
+    <div class="calc-line"><span>${N(c.cost)} × 4 = ${N(c.retailRaw)}원</span></div>
+    <div class="calc-line retail"><span>판매가</span><span>${N(c.retail)}원</span></div>`;
+};
+window.saveCostHistory=()=>{
+  const p=PRODS.find(x=>x.id===selId);
+  if(!p)return;
+  const pid=p.notionId||String(p.id);
+  const uv=parseInt($('ci-uv').value)||0;
+  if(!uv){alert('업체 단가를 입력해주세요');return;}
+  const supRadio=document.querySelector('input[name="ci-supplies"]:checked');
+  const supplies=supRadio?parseInt(supRadio.value):0;
+  const hasLED=$('ci-led').checked;
+  const calc=calcCost(uv,supplies,hasLED);
+  const all=getCostHistAll();
+  if(!all[pid])all[pid]=[];
+  all[pid].push({
+    date:new Date().toISOString().slice(0,10),
+    time:new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'}),
+    ...calc
+  });
+  all[pid]=all[pid].slice(-20);  // 최대 20개
+  try{localStorage.setItem(COST_HIST_KEY,JSON.stringify(all));}
+  catch(e){alert('저장 실패: '+e.message);return;}
+  alert(`✓ 저장 완료\n\n원가: ${N(calc.cost)}원\n판매가: ${N(calc.retail)}원`);
+  renderCostHistory(p);
+};
+function renderCostHistory(p){
+  const pid=p.notionId||String(p.id);
+  const hist=getCostHist(pid);
+  const el=$('cost-hist-list');
+  if(!el)return;
+  if(hist.length===0){
+    el.innerHTML='<div class="cost-hist-empty">아직 저장된 계산 기록이 없어요</div>';
+    return;
+  }
+  el.innerHTML=hist.slice().reverse().map(h=>`
+    <div class="cost-hist-item" title="이 값으로 다시 채우기" onclick="loadCostHistory(${hist.indexOf(h)})">
+      <div class="hist-head">
+        <span class="hist-date">${h.date}${h.time?' '+h.time:''}</span>
+        <span class="hist-retail">판매가 ${N(h.retail)}원</span>
+      </div>
+      <div class="hist-detail">단가 ${N(h.uv)}원 · 부자재 ${N(h.supplies)}원${h.hasLED?' · LED ✓':''} → 원가 ${N(h.cost)}원</div>
+    </div>
+  `).join('');
+}
+window.loadCostHistory=(idx)=>{
+  const p=PRODS.find(x=>x.id===selId);
+  if(!p)return;
+  const hist=getCostHist(p.notionId||String(p.id));
+  const h=hist[idx];if(!h)return;
+  $('ci-uv').value=h.uv;
+  const r=document.querySelector(`input[name="ci-supplies"][value="${h.supplies}"]`);
+  if(r)r.checked=true;
+  $('ci-led').checked=!!h.hasLED;
+  updateCostCalc();
+};
 function mtx(ord){
   const cs=[...new Set(ord.map(r=>r.c))];
   const sz=[...new Set(ord.map(r=>r.s))].sort((a,b)=>a-b);
@@ -1148,16 +1285,41 @@ window.openWOModal=id=>{
     imgEl.innerHTML=`<div class="wo-ph"><svg viewBox="0 0 24 24" width="38" height="38" stroke="currentColor" fill="none" stroke-width="1"><path d="M3 17.5C3 15.57 4.57 14 6.5 14h11c1.93 0 3.5 1.57 3.5 3.5S19.43 21 17.5 21h-11C4.57 21 3 19.43 3 17.5z"/><path d="M2 11l4-7h12l4 7"/></svg><p>이미지 준비중</p></div>${zoom.outerHTML}`;
   }
 
-  // 좌측: 원가 계산만 (위치 유지)
+  // 좌측: 원가 계산기 (인터랙티브) + 히스토리
+  const lastCost=getLastCost(p);
+  const initUv=lastCost?.uv||p.uv||'';
+  const initSupplies=lastCost?.supplies||defaultSupplies(p);
+  const initLed=lastCost?lastCost.hasLED:false;
   $('wm-info').innerHTML=`
-    <div class="sec-t">원가 계산 <span style="font-size:8px;color:var(--red);background:var(--red-dim);padding:1px 6px;border-radius:4px">내부용</span></div>
-    <div class="cost-box">
-      <div class="cost-row"><span>업체 단가</span><span>${N(p.uv)}원</span></div>
-      <div class="cost-row"><span>택·박스 부자재</span><span>${N(p.us)}원</span></div>
-      ${p.ue?`<div class="cost-row"><span>기타 부자재</span><span>${N(p.ue)}원</span></div>`:''}
-      <div class="cost-total"><span>원가</span><span>${N(p.uc)}원</span></div>
-      ${p.rt?`<div class="cost-retail"><span>판매가</span><span>${N(p.rt)}원</span></div>`:''}
+    <div class="sec-t">원가 계산기 <span style="font-size:8px;color:var(--red);background:var(--red-dim);padding:1px 6px;border-radius:4px">내부용</span></div>
+    <div class="cost-calc">
+      <div class="cost-input-row">
+        <div class="cir-label">업체 단가</div>
+        <div class="cost-input-wrap">
+          <input type="number" id="ci-uv" value="${initUv}" placeholder="공장 견적가 입력" oninput="updateCostCalc()">
+          <span class="unit">원</span>
+        </div>
+      </div>
+      <div class="cost-input-row">
+        <div class="cir-label">부자재 (택·박스 등)</div>
+        <div class="cost-radio-group">
+          <label><input type="radio" name="ci-supplies" value="550" onchange="updateCostCalc()" ${initSupplies===550?'checked':''}>구두 / 슬립온 — 550원</label>
+          <label><input type="radio" name="ci-supplies" value="800" onchange="updateCostCalc()" ${initSupplies===800?'checked':''}>부츠 — 800원</label>
+        </div>
+      </div>
+      <div class="cost-input-row">
+        <div class="cir-label">LED 모듈</div>
+        <label class="cost-checkbox"><input type="checkbox" id="ci-led" onchange="updateCostCalc()" ${initLed?'checked':''}>LED 추가 (+1,650원)</label>
+      </div>
+      <div class="cost-result" id="cost-result"></div>
+      <button class="cost-save-btn" onclick="saveCostHistory()">💾 이 계산 저장</button>
+      <div class="cost-hist-section">
+        <div class="cost-hist-title">📅 계산 히스토리</div>
+        <div id="cost-hist-list"></div>
+      </div>
     </div>`;
+  // 모달이 그려진 직후 계산 + 히스토리 표시
+  setTimeout(()=>{updateCostCalc();renderCostHistory(p);},10);
 
   // 우측 위: 제품 정보 + 발주 정보를 엑셀 표 형식으로 (4열 grid)
   const hasLast=p.last&&p.last!=='-'&&p.last!=='';
