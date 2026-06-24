@@ -142,18 +142,24 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
 
 /* 상단 통계 카드 — 의류 사이트와 동일 분위기 */
 .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
-.stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 20px;transition:.15s}
-.stat-card:hover{border-color:var(--border-md);transform:translateY(-1px)}
-[data-theme="light"] .stat-card:hover{box-shadow:0 4px 12px rgba(0,0,0,.04)}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 20px;transition:all .15s cubic-bezier(.4,0,.2,1);cursor:pointer;position:relative;user-select:none}
+.stat-card:hover{border-color:rgba(236,72,153,.3);transform:translateY(-2px);box-shadow:0 6px 18px rgba(236,72,153,.1)}
+[data-theme="light"] .stat-card:hover{box-shadow:0 6px 18px rgba(236,72,153,.1)}
+.stat-card.active{border-color:var(--accent);border-width:1.5px;background:var(--accent-dim);box-shadow:0 0 0 3px rgba(236,72,153,.15),0 6px 18px rgba(236,72,153,.12)}
+.stat-card.active .stat-title{color:var(--accent);font-weight:700}
+.stat-card.active::after{content:'✓';position:absolute;top:8px;right:10px;font-size:11px;font-weight:800;color:var(--accent)}
 .stat-title{font-size:11px;color:var(--txt-3);margin-bottom:8px;font-weight:500;letter-spacing:.02em}
 .stat-value{font-size:26px;font-weight:700;color:var(--txt);letter-spacing:-.02em;line-height:1.1}
 .stat-value.accent{color:var(--accent)}
 .stat-value.green{color:var(--green)}
 .stat-value.amber{color:var(--amber)}
-.prod-grid{display:flex;flex-direction:column;gap:28px}
+.prod-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px;align-items:start}
 
-/* 상태별 그룹 — 진행 상태에 맞춰 자동 정리 */
-.status-group{display:flex;flex-direction:column;gap:12px}
+/* 단일 상태 필터 적용 시 — 한 컬럼 전체 차지 (그룹 1개만) */
+.prod-grid.single-mode{display:flex;flex-direction:column;gap:14px}
+
+/* 상태별 그룹 — 칸반 컬럼 형태 (가로 배치) */
+.status-group{display:flex;flex-direction:column;gap:10px;min-width:0}
 .status-group-head{display:flex;align-items:center;justify-content:space-between;padding-bottom:10px;border-bottom:1px solid var(--border)}
 .status-group-title{font-size:13px;font-weight:700;color:var(--txt);display:flex;align-items:center;gap:9px;letter-spacing:-.01em}
 .status-group-title::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--txt-3);box-shadow:0 0 0 3px rgba(0,0,0,.04)}
@@ -645,6 +651,7 @@ const FDEFS=[
 let PRODS=[];
 
 let F={vendor:'전체',region:'전체',year:'전체',cat:'전체',season:'전체',status:'전체'};
+let _statusFilter=null;  // 통계 카드 클릭으로 필터링되는 상태 (null = 전체)
 let selId=null;
 const $=id=>document.getElementById(id);
 const N=n=>(n??0).toLocaleString('ko-KR');
@@ -686,7 +693,8 @@ window.togFG=k=>{const el=$(`fg-${k}`);if(el)el.classList.toggle('open')};
 window.setF=(k,v)=>{F[k]=String(v);const el=$(`fg-${k}`);if(el&&v!=='전체')el.classList.add('open');renderFilters();render()};
 window.resetAll=()=>{Object.keys(F).forEach(k=>F[k]='전체');renderFilters();render()};
 
-function filt(){
+// 기본 필터 (사이드바 필터 + 검색만 적용) — 통계 카드 카운트용
+function filtBase(){
   const q=$('srch').value.trim().toLowerCase();
   return PRODS.filter(p=>{
     if(F.vendor!=='전체'&&p.vendor!==F.vendor)return false;
@@ -699,26 +707,38 @@ function filt(){
     return true;
   });
 }
+// 통계 카드 클릭 필터까지 포함
+function filt(){
+  return filtBase().filter(p=>!_statusFilter||p.status===_statusFilter);
+}
+
+// 통계 카드 클릭 → 해당 상태만 표시 ('all'이면 전체 복귀)
+window.filterByStatus=(status)=>{
+  _statusFilter=status==='all'?null:status;
+  render();
+  window.scrollTo({top:0,behavior:'smooth'});
+};
 
 function renderStats(list){
   const total=list.length;
   const c={'생산중':0,'생산요청':0,'계속판매':0,'대기':0,'완료':0,'진행취소':0};
   for(const p of list){if(c[p.status]!==undefined)c[p.status]++;}
   const el=$('stats-row');if(!el)return;
+  const cur=_statusFilter||'all';
   el.innerHTML=`
-    <div class="stat-card">
+    <div class="stat-card${cur==='all'?' active':''}" onclick="filterByStatus('all')" title="전체 슈즈 보기 (필터 해제)">
       <div class="stat-title">전체 슈즈</div>
       <div class="stat-value">${total}건</div>
     </div>
-    <div class="stat-card">
+    <div class="stat-card${cur==='생산중'?' active':''}" onclick="filterByStatus('생산중')" title="생산중 제품만 보기">
       <div class="stat-title">생산중</div>
       <div class="stat-value accent">${c['생산중']}건</div>
     </div>
-    <div class="stat-card">
+    <div class="stat-card${cur==='생산요청'?' active':''}" onclick="filterByStatus('생산요청')" title="생산요청 제품만 보기">
       <div class="stat-title">생산요청</div>
       <div class="stat-value amber">${c['생산요청']}건</div>
     </div>
-    <div class="stat-card">
+    <div class="stat-card${cur==='계속판매'?' active':''}" onclick="filterByStatus('계속판매')" title="계속판매 제품만 보기">
       <div class="stat-title">계속판매</div>
       <div class="stat-value green">${c['계속판매']}건</div>
     </div>`;
@@ -1245,8 +1265,16 @@ window.closeLB=e=>{if(!e||e.target===$('lb'))$('lb').classList.remove('open')};
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('lb').classList.remove('open');$('wo-modal-bg').classList.remove('open');document.body.style.overflow='';}});
 
 function render(){
-  const list=filt();renderStats(list);renderGrid(list);
-  // wo-wrap (메인 페이지 작업지시서)은 모달로 대체됨 — 더 이상 그리지 않음 (성능 + 안전)
+  const base=filtBase();
+  renderStats(base);
+  const list=_statusFilter?base.filter(p=>p.status===_statusFilter):base;
+  renderGrid(list);
+  // 단일 상태 필터 시: 칸반 모드 OFF (한 컬럼 전체 차지)
+  const grid=$('prod-grid');
+  if(grid){
+    if(_statusFilter)grid.classList.add('single-mode');
+    else grid.classList.remove('single-mode');
+  }
 }
 
 // 검색 input 디바운스 — 매 키 입력마다 200개 카드 다시 그리는 끊김 방지
