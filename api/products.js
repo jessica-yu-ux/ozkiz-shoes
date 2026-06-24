@@ -19,7 +19,7 @@ const PRODUCT_PROPS_NEEDED = [
   '제품명', '품번', '브랜드', '생산공장', '원산지', '개발년도',
   '복종', '시즌', '진행상태', '라스트', '제품유형', '성별', 'MOQ',
   '대표이미지', '원가', '판매가', '입고일', '업체 단가',
-  '의류/슈즈/잡화',
+  '의류/슈즈/잡화', '담당자',
   '원단명', '부자재 구매', 'KC진행', 'KC 시험성적서',
   '생산지시 특이사항', '히스토리'
 ];
@@ -291,6 +291,7 @@ function mapProduct(page, myOrders, idx) {
     gender:  p['성별']?.select?.name || null,
     moq:     p['MOQ']?.number || null,
     img:     getImg(p['대표이미지']),
+    manager: (p['담당자']?.people || [])[0]?.name || '',
     uv:      p['업체 단가']?.number || 0,
     uc:      p['원가']?.number || 0,
     rt:      p['판매가']?.number || 0,

@@ -512,6 +512,44 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
 .wo-modal-rem{padding:14px 20px;border-bottom:1px solid var(--border);background:var(--rem-bg)}
 .wo-modal-hist{padding:14px 20px}
 
+/* ─── 새 작업지시서 포맷 (의류 사이트와 동일 분위기) ─── */
+.wo-modal.wo-doc{width:min(96vw,1280px);height:auto;max-height:95vh;display:flex;flex-direction:column;overflow:hidden;background:var(--card)}
+.wo-doc-actions{display:flex;gap:8px;justify-content:flex-end;align-items:center;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--card);flex-shrink:0}
+.wd-page{background:white;color:#111;padding:18px 22px 22px;overflow-y:auto;flex:1;min-height:0}
+.wd-title{text-align:center;font-size:24px;font-weight:800;letter-spacing:0.5em;color:#111;padding:6px 0 16px;font-family:inherit}
+.wd-meta-tbl{width:100%;border-collapse:collapse;font-size:11px;table-layout:fixed}
+.wd-meta-tbl th,.wd-meta-tbl td{border:1px solid #666;padding:7px 9px;text-align:center;vertical-align:middle;color:#111;word-break:keep-all}
+.wd-meta-tbl th{background:#e8e8e8;font-weight:700;color:#333;font-size:11px}
+.wd-meta-tbl td{font-weight:700;font-size:12px}
+.wd-main{display:grid;grid-template-columns:1.1fr 1.3fr 0.95fr;gap:0;margin-top:-1px}
+.wd-col{border-left:1px solid #666;border-bottom:1px solid #666;display:flex;flex-direction:column;background:white;min-width:0}
+.wd-col:last-child{border-right:1px solid #666}
+.wd-img{flex:1;background:white;min-height:380px;display:flex;align-items:center;justify-content:center;overflow:hidden;border-bottom:1px solid #666;padding:8px;cursor:pointer}
+.wd-img img{max-width:100%;max-height:100%;object-fit:contain;display:block}
+.wd-img-ph{color:#999;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:8px}
+.wd-img-ph svg{width:36px;height:36px;stroke:#ccc;fill:none;stroke-width:1}
+.wd-warn{display:flex;flex-direction:column}
+.wd-warn-t{background:#e8e8e8;padding:6px 10px;font-size:11px;font-weight:700;border-bottom:1px solid #666;color:#333}
+.wd-warn-c{padding:9px 11px;font-size:11px;color:#DC2626;font-weight:600;line-height:1.6;min-height:60px;white-space:pre-line}
+.wd-qty-box,.wd-spec-box{display:flex;flex-direction:column}
+.wd-section-t{background:#e8e8e8;padding:6px 10px;font-size:11px;font-weight:700;border-bottom:1px solid #666;color:#333;text-align:center}
+.wd-qty-tbl{width:100%;border-collapse:collapse;font-size:11px}
+.wd-qty-tbl th,.wd-qty-tbl td{border:1px solid #888;padding:5px 6px;text-align:center;color:#111}
+.wd-qty-tbl th{background:#f5f5f5;font-weight:700;font-size:10px}
+.wd-qty-tbl td.rh{text-align:center;font-weight:700;background:#fafafa}
+.wd-qty-tbl td.tot{background:#fafafa;font-weight:700;color:var(--accent)}
+.wd-qty-tbl tr.sum td{background:#fafafa;font-weight:700}
+.wd-qty-tbl tr.sum td.tot{background:#ffeef5}
+.wd-spec-tbl{width:100%;border-collapse:collapse;font-size:11px}
+.wd-spec-tbl tr{border-bottom:1px solid #aaa}
+.wd-spec-tbl tr:last-child{border-bottom:none}
+.wd-spec-tbl td{padding:8px 10px;text-align:center;color:#111;vertical-align:middle}
+.wd-spec-tbl td:first-child{background:#e8e8e8;font-weight:700;color:#333;width:45%;border-right:1px solid #888;font-size:11px}
+.wd-spec-tbl td:last-child{font-weight:600}
+.wd-spec-tbl td.muted{color:#999;font-weight:400;font-style:italic}
+/* 원가 계산기 (내부용 — 인쇄/캡처 자동 제외) */
+.wo-doc-cost{padding:14px 22px 18px;border-top:2px dashed var(--border-md);background:var(--cost-bg);flex-shrink:0;max-height:48vh;overflow-y:auto}
+
 /* 작업지시서 정보 표 — 엑셀 형식 */
 .wo-modal-info-tbl{padding:14px 18px;border-bottom:1px solid var(--border)}
 .wo-modal-supplies{padding:12px 18px;border-bottom:1px solid var(--border)}
@@ -560,44 +598,76 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
 <body>
 
 
-<!-- 작업지시서 모달 -->
+<!-- 작업지시서 모달 (새 포맷 — 의류 사이트와 동일 분위기) -->
 <div class="wo-modal-bg" id="wo-modal-bg" onclick="closeWOModal(event)">
-  <div class="wo-modal" id="wo-modal">
-    <div class="wo-modal-head">
-      <div>
-        <div class="wo-modal-title" id="wm-title"></div>
-        <div class="wo-modal-sub" id="wm-sub"></div>
-      </div>
-      <div class="wo-modal-actions">
-        <span id="wm-status"></span>
-        <button class="abtn" onclick="saveAsImage()" title="카톡으로 보낼 사진 — 클립보드 자동 복사">
-          <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          사진 복사
-        </button>
-        <button class="abtn pri" onclick="printWO()">
-          <svg viewBox="0 0 24 24" width="13" height="13" stroke="white" fill="none" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          PDF 저장
-        </button>
-        <button class="wo-modal-close" onclick="closeWOModal()">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-        </button>
-      </div>
+  <div class="wo-modal wo-doc" id="wo-modal">
+    <!-- 액션 버튼 (모달 상단, 인쇄/캡처 대상 밖) -->
+    <div class="wo-doc-actions">
+      <button class="abtn" onclick="saveAsImage()" title="카톡으로 보낼 사진 — 원가 계산기 제외, 클립보드 자동 복사">
+        <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        사진 복사
+      </button>
+      <button class="abtn pri" onclick="printWO()" title="업체 발송용 PDF — 원가 계산기 제외">
+        <svg viewBox="0 0 24 24" width="13" height="13" stroke="white" fill="none" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        PDF 저장
+      </button>
+      <button class="wo-modal-close" onclick="closeWOModal()" title="닫기">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
     </div>
-    <div class="wo-modal-body">
-      <div class="wo-modal-left">
-        <div class="wo-modal-imgbox" id="wm-img" onclick="openLBfromModal()">
-          <div class="wo-modal-imgzoom"><svg viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>크게 보기</div>
+
+    <!-- 인쇄/캡처 대상 영역 -->
+    <div class="wd-page" id="wd-page">
+      <div class="wd-title">작 업 지 시 서</div>
+
+      <!-- 메타 정보 표 -->
+      <table class="wd-meta-tbl">
+        <thead>
+          <tr>
+            <th>STYLE NO</th>
+            <th>상품명</th>
+            <th>작업처</th>
+            <th>차수</th>
+            <th>담당</th>
+            <th>실장</th>
+            <th>업체 단가</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td id="wd-style"></td>
+            <td id="wd-name"></td>
+            <td id="wd-vendor"></td>
+            <td id="wd-round"></td>
+            <td id="wd-manager"></td>
+            <td id="wd-deputy"></td>
+            <td id="wd-uv"></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- 본문 3단: 좌(이미지+주의) / 중(발주수량표) / 우(제품사양) -->
+      <div class="wd-main">
+        <div class="wd-col wd-img-box">
+          <div class="wd-img" id="wd-img" onclick="openLBfromModal()"></div>
+          <div class="wd-warn">
+            <div class="wd-warn-t">주의 사항</div>
+            <div class="wd-warn-c" id="wd-warn-c"></div>
+          </div>
         </div>
-        <div class="wo-modal-info" id="wm-info"></div>
-      </div>
-      <div class="wo-modal-right">
-        <div class="wo-modal-info-tbl" id="wm-info-tbl"></div>
-        <div class="wo-modal-supplies" id="wm-supplies"></div>
-        <div class="wo-modal-mtx" id="wm-mtx"></div>
-        <div class="wo-modal-rem" id="wm-rem"></div>
-        <div class="wo-modal-hist" id="wm-hist"></div>
+        <div class="wd-col wd-qty-box">
+          <div class="wd-section-t">발주 수량표</div>
+          <div id="wd-qty"></div>
+        </div>
+        <div class="wd-col wd-spec-box">
+          <div class="wd-section-t">제품 사양</div>
+          <table class="wd-spec-tbl" id="wd-spec"></table>
+        </div>
       </div>
     </div>
+
+    <!-- 원가 계산기 (내부용 — 인쇄/캡처 자동 제외) -->
+    <div id="wm-info" class="wo-doc-cost"></div>
   </div>
 </div>
 
@@ -1306,24 +1376,63 @@ window.openWOModal=id=>{
   const qty=tQ(p.ord);
   const ct=sz.map(s=>cs.reduce((sum,c)=>sum+(m[c]?.[s]||0),0));
   const grand=ct.reduce((a,b)=>a+b,0);
-  const today=new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'});
-  const bar=c=>`<span class="clr-bar" style="background:${CHX[c]||'#888'}"></span>`;
+  const firstOrd=(p.ord&&p.ord[0])||{};
 
-  // 헤더 — 제목은 "작업지시서" 고정, 부제 제거
-  $('wm-title').textContent='작업지시서';
-  $('wm-sub').innerHTML='';
-  $('wm-status').innerHTML=`<span class="sp s${p.status.replace(/ /g,'')}">${p.status}</span>`;
+  // ── 메타 정보 표 (한 줄) ──
+  $('wd-style').textContent=p.style||'-';
+  $('wd-name').textContent=p.name||'-';
+  $('wd-vendor').textContent=p.vendor||'-';
+  $('wd-round').textContent=rounds.join(', ')||'-';
+  $('wd-manager').textContent=p.manager||'-';
+  $('wd-deputy').textContent='-';  // 실장 — 비워둠
+  $('wd-uv').textContent=p.uv?N(p.uv)+'원':'-';
 
-  // 이미지
-  const imgEl=$('wm-img');
-  const zoom=imgEl.querySelector('.wo-modal-imgzoom');
-  if(p.img){
-    imgEl.innerHTML=`<img src="${p.img}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover">${zoom.outerHTML}`;
-  } else {
-    imgEl.innerHTML=`<div class="wo-ph"><svg viewBox="0 0 24 24" width="38" height="38" stroke="currentColor" fill="none" stroke-width="1"><path d="M3 17.5C3 15.57 4.57 14 6.5 14h11c1.93 0 3.5 1.57 3.5 3.5S19.43 21 17.5 21h-11C4.57 21 3 19.43 3 17.5z"/><path d="M2 11l4-7h12l4 7"/></svg><p>이미지 준비중</p></div>${zoom.outerHTML}`;
-  }
+  // ── 좌측: 이미지 ──
+  $('wd-img').innerHTML=p.img
+    ?`<img src="${p.img}" loading="lazy" decoding="async" alt="${p.name}">`
+    :`<div class="wd-img-ph"><svg viewBox="0 0 24 24"><path d="M3 17.5C3 15.57 4.57 14 6.5 14h11c1.93 0 3.5 1.57 3.5 3.5S19.43 21 17.5 21h-11C4.57 21 3 19.43 3 17.5z"/><path d="M2 11l4-7h12l4 7"/></svg><div>이미지 준비중</div></div>`;
 
-  // 좌측: 원가 계산기 (인터랙티브) + 히스토리
+  // ── 주의 사항 (생산지시 특이사항) ──
+  $('wd-warn-c').textContent=(p.rem||[]).length>0
+    ?p.rem.map(r=>r).join('\n')
+    :'';
+
+  // ── 중앙: 발주 수량표 ──
+  $('wd-qty').innerHTML=(cs.length>0&&sz.length>0)?`
+    <table class="wd-qty-tbl">
+      <thead><tr><th>COLOR</th>${sz.map(s=>`<th>${s}</th>`).join('')}<th>계</th></tr></thead>
+      <tbody>
+        ${cs.map(c=>{
+          const vs=sz.map(s=>m[c]?.[s]||0);
+          const t=vs.reduce((a,b)=>a+b,0);
+          return `<tr><td class="rh">${c}</td>${vs.map(v=>v===0?'<td>-</td>':'<td>'+v+'</td>').join('')}<td class="tot">${N(t)}</td></tr>`;
+        }).join('')}
+        <tr class="sum"><td class="rh">계</td>${ct.map(v=>`<td>${N(v)}</td>`).join('')}<td class="tot">${N(grand)}</td></tr>
+      </tbody>
+    </table>`
+    :`<div style="padding:40px 12px;text-align:center;color:#aaa;font-size:11px">발주 데이터 없음</div>`;
+
+  // ── 우측: 제품 사양 ──
+  const kcLine=p.kcFiles&&p.kcFiles.length>0
+    ?p.kcFiles.map(f=>`<a href="${f.url}" target="_blank" rel="noopener" style="color:#DB2777;text-decoration:underline">📎 ${f.name}</a>`).join('<br>')
+    :(p.kcStatus||'');
+  $('wd-spec').innerHTML=`
+    <tr><td>외피</td><td>${p.fabric?p.fabric:'<span class="muted">(원단명)</span>'}</td></tr>
+    <tr><td>내피</td><td>샘플동일</td></tr>
+    <tr><td>로고 위치</td><td>인솔에 불박</td></tr>
+    <tr><td>가격택</td><td>1 EA</td></tr>
+    <tr><td>바코드 택</td><td>1 EA</td></tr>
+    <tr><td>간지</td><td>1 EA</td></tr>
+    <tr><td>인박스</td><td>1 EA</td></tr>
+    <tr><td>택끈</td><td>1 EA</td></tr>
+    <tr><td>품질보증택</td><td>1 EA</td></tr>
+    <tr><td>별봉</td><td>1 EA</td></tr>
+    <tr><td>별봉</td><td>1 EA</td></tr>
+    <tr><td>부자재</td><td>${(p.supplies&&p.supplies.length>0)?p.supplies.map(s=>s.url?'<a href="'+s.url+'" target="_blank" style="color:#DB2777;text-decoration:underline">'+s.text+' 🔗</a>':s.text).join('<br>'):'오즈키즈 제공 없음'}</td></tr>
+    ${kcLine?`<tr><td>KC 인증</td><td style="font-size:10px">${kcLine}</td></tr>`:''}
+  `;
+
+  // ── 원가 계산기 (내부용 — 캡처/인쇄 자동 제외) ──
   const lastCost=getLastCost(p);
   const initUv=lastCost?.uv||p.uv||'';
   const initSupplies=lastCost?.supplies||defaultSupplies(p);
@@ -1356,88 +1465,7 @@ window.openWOModal=id=>{
         <div id="cost-hist-list"></div>
       </div>
     </div>`;
-  // 모달이 그려진 직후 계산 + 히스토리 표시
   setTimeout(()=>{updateCostCalc();renderCostHistory(p);},10);
-
-  // 우측 위: 제품 정보 + 발주 정보를 엑셀 표 형식으로 (4열 grid)
-  const hasLast=p.last&&p.last!=='-'&&p.last!=='';
-  const hasFabric=p.fabric&&p.fabric!=='';
-  const hasLastFab=hasLast||hasFabric;
-  const hasKC=(p.kcStatus&&p.kcStatus!=='')||(p.kcFiles&&p.kcFiles.length>0);
-  const firstOrd=(p.ord&&p.ord[0])||{};
-  $('wm-info-tbl').innerHTML=`
-    <table class="info-tbl">
-      <tr>
-        <th>품번</th><td>${p.style}</td>
-        <th>제품명</th><td>${p.name}</td>
-      </tr>
-      <tr>
-        <th>카테고리</th><td>${p.cat}${p.gender?' · '+p.gender:''}</td>
-        <th>시즌</th><td>${p.year}년 ${p.season}</td>
-      </tr>
-      <tr>
-        <th>생산공장</th><td>${p.vendor}</td>
-        <th>원산지</th><td>${p.region}</td>
-      </tr>
-      <tr>
-        <th>원단명</th><td>${hasFabric?p.fabric:'<span style="color:var(--txt-3)">-</span>'}</td>
-        <th>KC 인증서류</th><td>${p.kcFiles&&p.kcFiles.length?p.kcFiles.map(f=>`<a href="${f.url}" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:underline">📎 ${f.name}</a>`).join(' · '):'<span style="color:var(--txt-3)">파일 업로드 필요</span>'}</td>
-      </tr>
-      <tr>
-        <th>발주차수</th><td>${rounds.join(', ')}</td>
-        <th>발주일</th><td>${firstOrd.od?D(firstOrd.od):'-'}</td>
-      </tr>
-      <tr>
-        <th>총 수량</th><td style="color:var(--accent);font-weight:700">${N(qty)}켤레</td>
-        <th>업체 단가</th><td>${p.uv?N(p.uv)+'원':'<span style="color:var(--txt-3)">-</span>'}</td>
-      </tr>
-      <tr>
-        <th>컬러 군</th><td>${cs.length?cs.join(', '):'-'}</td>
-        <th>사이즈</th><td>${sz.length?sz.join(', '):'-'}</td>
-      </tr>
-    </table>`;
-
-  // 우측: 부자재 구매 항목 (있을 때만 표시)
-  const hasSupplies=p.supplies&&p.supplies.length>0;
-  const supEl=$('wm-supplies');
-  if(hasSupplies){
-    supEl.style.display='';
-    supEl.innerHTML=`
-      <div class="sec-t" style="margin-bottom:7px">부자재 구매 항목</div>
-      <ul class="supplies-list">${p.supplies.map(s=>s.url
-        ?`<li><a href="${s.url}" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:underline;display:inline-flex;align-items:center;gap:4px">${s.text}<span style="font-size:10px;opacity:.7">🔗</span></a></li>`
-        :`<li>${s.text}</li>`).join('')}</ul>`;
-  }else{
-    supEl.style.display='none';
-    supEl.innerHTML='';
-  }
-
-  // 수량표
-  const mrows=cs.map(c=>{
-    const vs=sz.map(s=>m[c]?.[s]||0);
-    const ct2=vs.reduce((a,b)=>a+b,0);
-    const cells=vs.map(v=>v===0?`<td style="color:var(--txt-3);opacity:.4">—</td>`:`<td>${v}</td>`).join('');
-    return`<tr><td class="rh"><div class="dw">${bar(c)}<span>${c}</span></div></td>${cells}<td class="tot">${N(ct2)}</td></tr>`;
-  }).join('');
-  $('wm-mtx').innerHTML=`
-    <div class="mtx-hdr">
-      <div class="mtx-lbl">컬러 × 사이즈 발주 수량표</div>
-      <div class="mtx-chips"><span class="mtx-chip">총 ${N(grand)}켤레</span><span class="mtx-chip">${cs.length}색상</span><span class="mtx-chip">${sz.length}사이즈</span></div>
-    </div>
-    <div class="mtx-wrap"><table class="mtx">
-      <thead><tr><th class="lh">컬러 / 사이즈</th>${sz.map(s=>`<th>${s}</th>`).join('')}<th>합계</th></tr></thead>
-      <tbody>${mrows}<tr class="trow"><td class="rh" style="font-weight:700">합계</td>${ct.map(v=>`<td>${N(v)}</td>`).join('')}<td class="tot">${N(grand)}</td></tr></tbody>
-    </table></div>`;
-
-  // 특이사항
-  $('wm-rem').innerHTML=`
-    <div class="rem-t">생산 지시 특이사항</div>
-    <ul class="rem-list">${p.rem.map(r=>`<li>${r}</li>`).join('')}</ul>`;
-
-  // 히스토리
-  $('wm-hist').innerHTML=`
-    <div class="hist-t">제품 히스토리</div>
-    ${p.hist.map(h=>`<div class="hrow"><span class="hd">${D(h.d)}</span><span class="ht">${h.t}</span><span class="hb">${h.b}</span></div>`).join('')}`;
 
   $('wo-modal-bg').classList.add('open');
   document.body.style.overflow='hidden';
@@ -1565,7 +1593,7 @@ const SAMPLE_DATA=[
 function normalizeProduct(p){
   const r=Object.assign({
     vendor:'-',region:'-',cat:'-',season:'-',last:'',fabric:'',
-    type:'-',brand:'오즈키즈',moq:null,gender:null,
+    type:'-',brand:'오즈키즈',moq:null,gender:null,manager:'',
     uv:0,us:0,ue:0,ur:1,uc:0,rt:0,ed:'',kcStatus:'',
     rem:[],hist:[],ord:[],kcFiles:[],supplies:[]
   },p);
