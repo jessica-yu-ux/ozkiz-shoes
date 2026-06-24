@@ -513,10 +513,11 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
 .wo-modal-hist{padding:14px 20px}
 
 /* ─── 새 작업지시서 포맷 (의류 사이트와 동일 분위기) ─── */
-.wo-modal.wo-doc{width:min(96vw,1280px);height:auto;max-height:95vh;display:flex;flex-direction:column;overflow:hidden;background:var(--card)}
-.wo-doc-actions{display:flex;gap:8px;justify-content:flex-end;align-items:center;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--card);flex-shrink:0}
-.wd-page{background:white;color:#111;padding:18px 22px 22px;overflow-y:auto;flex:1;min-height:0}
-.wd-title{text-align:center;font-size:24px;font-weight:800;letter-spacing:0.5em;color:#111;padding:6px 0 16px;font-family:inherit}
+.wo-modal.wo-doc{width:min(98vw,1480px);height:auto;max-height:96vh;display:flex;flex-direction:column;overflow:hidden;background:var(--card)}
+.wo-doc-actions{display:flex;gap:8px;justify-content:flex-end;align-items:center;padding:9px 14px;border-bottom:1px solid var(--border);background:var(--card);flex-shrink:0}
+.wo-doc-body{display:grid;grid-template-columns:330px 1fr;flex:1;min-height:0;overflow:hidden}
+.wd-page{background:white;color:#111;padding:14px 18px 16px;overflow-y:auto;min-height:0}
+.wd-title{text-align:center;font-size:22px;font-weight:800;letter-spacing:0.5em;color:#111;padding:4px 0 12px;font-family:inherit}
 .wd-meta-tbl{width:100%;border-collapse:collapse;font-size:11px;table-layout:fixed}
 .wd-meta-tbl th,.wd-meta-tbl td{border:1px solid #666;padding:7px 9px;text-align:center;vertical-align:middle;color:#111;word-break:keep-all}
 .wd-meta-tbl th{background:#e8e8e8;font-weight:700;color:#333;font-size:11px}
@@ -524,13 +525,13 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
 .wd-main{display:grid;grid-template-columns:1.1fr 1.3fr 0.95fr;gap:0;margin-top:-1px}
 .wd-col{border-left:1px solid #666;border-bottom:1px solid #666;display:flex;flex-direction:column;background:white;min-width:0}
 .wd-col:last-child{border-right:1px solid #666}
-.wd-img{flex:1;background:white;min-height:380px;display:flex;align-items:center;justify-content:center;overflow:hidden;border-bottom:1px solid #666;padding:8px;cursor:pointer}
+.wd-img{flex:1;background:white;min-height:320px;display:flex;align-items:center;justify-content:center;overflow:hidden;border-bottom:1px solid #666;padding:8px;cursor:pointer}
 .wd-img img{max-width:100%;max-height:100%;object-fit:contain;display:block}
 .wd-img-ph{color:#999;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:8px}
 .wd-img-ph svg{width:36px;height:36px;stroke:#ccc;fill:none;stroke-width:1}
 .wd-warn{display:flex;flex-direction:column}
 .wd-warn-t{background:#e8e8e8;padding:6px 10px;font-size:11px;font-weight:700;border-bottom:1px solid #666;color:#333}
-.wd-warn-c{padding:9px 11px;font-size:11px;color:#DC2626;font-weight:600;line-height:1.6;min-height:60px;white-space:pre-line}
+.wd-warn-c{padding:8px 10px;font-size:11px;color:#DC2626;font-weight:600;line-height:1.5;min-height:48px;white-space:pre-line}
 .wd-qty-box,.wd-spec-box{display:flex;flex-direction:column}
 .wd-section-t{background:#e8e8e8;padding:6px 10px;font-size:11px;font-weight:700;border-bottom:1px solid #666;color:#333;text-align:center}
 .wd-qty-tbl{width:100%;border-collapse:collapse;font-size:11px}
@@ -547,8 +548,10 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
 .wd-spec-tbl td:first-child{background:#e8e8e8;font-weight:700;color:#333;width:45%;border-right:1px solid #888;font-size:11px}
 .wd-spec-tbl td:last-child{font-weight:600}
 .wd-spec-tbl td.muted{color:#999;font-weight:400;font-style:italic}
-/* 원가 계산기 (내부용 — 인쇄/캡처 자동 제외) */
-.wo-doc-cost{padding:14px 22px 18px;border-top:2px dashed var(--border-md);background:var(--cost-bg);flex-shrink:0;max-height:48vh;overflow-y:auto}
+/* 원가 계산기 (좌측, 내부용 — 인쇄/캡처 자동 제외) */
+.wo-doc-cost{padding:14px 16px;border-right:2px dashed var(--border-md);background:var(--cost-bg);overflow-y:auto;min-height:0}
+.wo-doc-cost::-webkit-scrollbar{width:5px}
+.wo-doc-cost::-webkit-scrollbar-thumb{background:var(--border-md);border-radius:3px}
 
 /* 작업지시서 정보 표 — 엑셀 형식 */
 .wo-modal-info-tbl{padding:14px 18px;border-bottom:1px solid var(--border)}
@@ -616,58 +619,61 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
       </button>
     </div>
 
-    <!-- 인쇄/캡처 대상 영역 -->
-    <div class="wd-page" id="wd-page">
-      <div class="wd-title">작 업 지 시 서</div>
+    <!-- 본문: 좌(원가 계산기) + 우(작업지시서) -->
+    <div class="wo-doc-body">
+      <!-- 좌측: 원가 계산기 (내부용 — 인쇄/캡처 자동 제외) -->
+      <div id="wm-info" class="wo-doc-cost"></div>
 
-      <!-- 메타 정보 표 -->
-      <table class="wd-meta-tbl">
-        <thead>
-          <tr>
-            <th>STYLE NO</th>
-            <th>상품명</th>
-            <th>작업처</th>
-            <th>차수</th>
-            <th>담당</th>
-            <th>실장</th>
-            <th>업체 단가</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td id="wd-style"></td>
-            <td id="wd-name"></td>
-            <td id="wd-vendor"></td>
-            <td id="wd-round"></td>
-            <td id="wd-manager"></td>
-            <td id="wd-deputy"></td>
-            <td id="wd-uv"></td>
-          </tr>
-        </tbody>
-      </table>
+      <!-- 우측: 인쇄/캡처 대상 = 작업지시서 -->
+      <div class="wd-page" id="wd-page">
+        <div class="wd-title">작 업 지 시 서</div>
 
-      <!-- 본문 3단: 좌(이미지+주의) / 중(발주수량표) / 우(제품사양) -->
-      <div class="wd-main">
-        <div class="wd-col wd-img-box">
-          <div class="wd-img" id="wd-img" onclick="openLBfromModal()"></div>
-          <div class="wd-warn">
-            <div class="wd-warn-t">주의 사항</div>
-            <div class="wd-warn-c" id="wd-warn-c"></div>
+        <!-- 메타 정보 표 -->
+        <table class="wd-meta-tbl">
+          <thead>
+            <tr>
+              <th>STYLE NO</th>
+              <th>상품명</th>
+              <th>작업처</th>
+              <th>차수</th>
+              <th>담당</th>
+              <th>실장</th>
+              <th>업체 단가</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td id="wd-style"></td>
+              <td id="wd-name"></td>
+              <td id="wd-vendor"></td>
+              <td id="wd-round"></td>
+              <td id="wd-manager"></td>
+              <td id="wd-deputy"></td>
+              <td id="wd-uv"></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- 본문 3단: 좌(이미지+주의) / 중(발주수량표) / 우(제품사양) -->
+        <div class="wd-main">
+          <div class="wd-col wd-img-box">
+            <div class="wd-img" id="wd-img" onclick="openLBfromModal()"></div>
+            <div class="wd-warn">
+              <div class="wd-warn-t">주의 사항</div>
+              <div class="wd-warn-c" id="wd-warn-c"></div>
+            </div>
           </div>
-        </div>
-        <div class="wd-col wd-qty-box">
-          <div class="wd-section-t">발주 수량표</div>
-          <div id="wd-qty"></div>
-        </div>
-        <div class="wd-col wd-spec-box">
-          <div class="wd-section-t">제품 사양</div>
-          <table class="wd-spec-tbl" id="wd-spec"></table>
+          <div class="wd-col wd-qty-box">
+            <div class="wd-section-t">발주 수량표</div>
+            <div id="wd-qty"></div>
+          </div>
+          <div class="wd-col wd-spec-box">
+            <div class="wd-section-t">제품 사양</div>
+            <table class="wd-spec-tbl" id="wd-spec"></table>
+          </div>
         </div>
       </div>
     </div>
-
-    <!-- 원가 계산기 (내부용 — 인쇄/캡처 자동 제외) -->
-    <div id="wm-info" class="wo-doc-cost"></div>
   </div>
 </div>
 
@@ -1112,15 +1118,12 @@ window.saveAsImage=async()=>{
   $('img-copy-bg').classList.add('open');
   await new Promise(r=>setTimeout(r,50));
 
-  const target=document.querySelector('.wo-modal');
+  // 캡처 대상 = #wd-page (작업지시서 영역만). 좌측 원가 계산기는 자동 제외.
+  const target=document.getElementById('wd-page');
   if(!target){return;}
-  // 캡처 시 안 보일 요소 임시 숨김 (visibility — 공간 유지)
+  // 안전망 — 안에 있는 액션/줌 버튼이 있을 경우 임시 숨김
   const hideEls=target.querySelectorAll('.wo-modal-close, .wo-modal-actions, .wo-modal-imgzoom');
   hideEls.forEach(el=>el.style.visibility='hidden');
-  // 원가 계산기 (내부용) — 업체 발송용 캡처에서 완전 제거
-  const wmInfo=target.querySelector('#wm-info');
-  const wmInfoDisplay=wmInfo?wmInfo.style.display:'';
-  if(wmInfo)wmInfo.style.display='none';
 
   // 노션 이미지(S3)는 CORS 막힘 — base64로 완전 변환해서 html2canvas에 박음
   // file:// 미리보기나 claude.ai에선 프록시 호출 못 하므로 그 환경은 skip
@@ -1213,8 +1216,6 @@ window.saveAsImage=async()=>{
     console.error('[saveAsImage] 에러:',e);
   }finally{
     hideEls.forEach(el=>el.style.visibility='');
-    // 원가 계산기 영역 원복
-    if(wmInfo)wmInfo.style.display=wmInfoDisplay;
     // 이미지 src 원복
     originalSrcs.forEach((src,img)=>{
       img.crossOrigin=null;
