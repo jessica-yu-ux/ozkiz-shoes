@@ -542,6 +542,14 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
 .img-copy-actions{padding:13px 20px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end}
 .img-copy-actions .abtn{padding:8px 16px;font-size:12px}
 
+/* 토스트 알림 — 우측 하단에 잠시 떠올랐다 사라짐 */
+.ozk-toast{position:fixed;bottom:24px;right:24px;background:var(--card);border:1.5px solid var(--border);padding:13px 20px;border-radius:12px;font-size:13px;font-weight:600;color:var(--txt);box-shadow:0 12px 32px rgba(0,0,0,.12);z-index:9999;opacity:0;transform:translateY(20px);transition:all .3s cubic-bezier(.4,0,.2,1);pointer-events:none;display:flex;align-items:center;gap:10px;max-width:380px}
+.ozk-toast.show{opacity:1;transform:translateY(0)}
+.ozk-toast.success{border-color:var(--green);color:var(--green);background:var(--green-dim)}
+.ozk-toast.error{border-color:var(--red);color:var(--red);background:var(--red-dim)}
+.ozk-toast.info{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+.ozk-toast.loading::before{content:'';width:14px;height:14px;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;animation:spin 0.7s linear infinite;flex-shrink:0}
+
 ::-webkit-scrollbar{width:4px;height:4px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border-md);border-radius:3px}
@@ -763,8 +771,8 @@ window.saveCostHistory=()=>{
   });
   all[pid]=all[pid].slice(-20);  // 최대 20개
   try{localStorage.setItem(COST_HIST_KEY,JSON.stringify(all));}
-  catch(e){alert('저장 실패: '+e.message);return;}
-  alert(`✓ 저장 완료\n\n원가: ${N(calc.cost)}원\n판매가: ${N(calc.retail)}원`);
+  catch(e){showToast('저장 실패: '+e.message,'error');return;}
+  showToast(`✓ 저장 완료 — 원가 ${N(calc.cost)}원 · 판매가 ${N(calc.retail)}원`,'success',3000);
   renderCostHistory(p);
 };
 function renderCostHistory(p){
@@ -801,7 +809,8 @@ window.deleteCostHistory=(idx)=>{
   all[pid].splice(idx,1);
   if(all[pid].length===0)delete all[pid];
   try{localStorage.setItem(COST_HIST_KEY,JSON.stringify(all));}
-  catch(e){alert('삭제 실패: '+e.message);return;}
+  catch(e){showToast('삭제 실패: '+e.message,'error');return;}
+  showToast('✓ 기록 삭제됨','info',1800);
   renderCostHistory(p);
 };
 window.loadCostHistory=(idx)=>{
@@ -1467,14 +1476,47 @@ window.debouncedRender=()=>{
   _srchTimer=setTimeout(render,180);
 };
 
+// 토스트 알림 표시 — type: 'info' | 'success' | 'error' | 'loading'
+window.showToast=(msg,type='info',duration=2500)=>{
+  let t=document.getElementById('ozk-toast');
+  if(!t){
+    t=document.createElement('div');
+    t.id='ozk-toast';
+    t.className='ozk-toast';
+    document.body.appendChild(t);
+  }
+  t.className='ozk-toast '+type;
+  t.textContent=msg;
+  // reflow trick
+  void t.offsetWidth;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  if(duration>0){
+    t._timer=setTimeout(()=>t.classList.remove('show'),duration);
+  }
+  return t;
+};
+window.hideToast=()=>{
+  const t=document.getElementById('ozk-toast');
+  if(t)t.classList.remove('show');
+};
+
 // 강제 새로고침: localStorage + 브라우저 캐시 + 서버 인메모리 캐시 모두 무효화
 window.forceRefresh=async()=>{
-  try{localStorage.removeItem(OZK_CACHE_KEY);}catch(e){}
   const btn=$('refresh-btn');
   if(btn){btn.disabled=true;btn.textContent='⏳';}
+  showToast('노션 데이터 새로고침 중...','loading',0);  // 자동 사라짐 X
+  try{localStorage.removeItem(OZK_CACHE_KEY);}catch(e){}
   try{
-    await fetch('/api/products?revalidate=1',{cache:'no-store',headers:{'Cache-Control':'no-cache'}});
-  }catch(e){}
+    const r=await fetch('/api/products?revalidate=1',{cache:'no-store',headers:{'Cache-Control':'no-cache'}});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+  }catch(e){
+    showToast('새로고침 실패: '+e.message,'error',3500);
+    if(btn){btn.disabled=false;btn.textContent='↻';}
+    return;
+  }
+  showToast('✓ 새로고침 완료! 페이지 다시 불러옵니다','success',1200);
+  await new Promise(r=>setTimeout(r,900));  // 토스트 잠깐 보이게
   // 강제 fresh navigation — URL에 timestamp 붙여서 브라우저 캐시 우회
   const url=new URL(location.href);
   url.searchParams.set('_t',Date.now());
