@@ -186,10 +186,10 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
 /* 가로 행에선 status pill, expand 버튼 숨김 — 그룹 헤더로 상태 파악 가능 */
 .pc-expand{display:none}
 .pc-status{display:none}
-.pc-body{padding:0;flex:1;display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1.4fr) auto;align-items:center;gap:14px}
+.pc-body{padding:0;flex:1;display:grid;grid-template-columns:minmax(0,2.4fr) minmax(0,1fr) auto;align-items:center;gap:14px}
 .pc-top{display:flex;flex-direction:column;gap:2px;min-width:0}
-.pc-name{font-size:13px;font-weight:700;color:var(--txt);letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
-.pc-style{font-size:10px;color:var(--txt-3);letter-spacing:.02em}
+.pc-name{font-size:13px;font-weight:700;color:var(--txt);letter-spacing:-.01em;line-height:1.3;word-break:keep-all;overflow-wrap:break-word}
+.pc-style{font-size:10px;color:var(--txt-3);letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pc-tags{display:flex;flex-wrap:wrap;gap:3px}
 .tag{font-size:10px;padding:2px 7px;border-radius:999px;background:rgba(255,255,255,.05);color:var(--txt-3);border:1px solid var(--border)}
 .pc-cols{display:flex;align-items:center;gap:5px}
@@ -377,6 +377,8 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
     background: #fff !important; overflow: visible !important;
   }
   .wo-modal-close, .wo-modal-actions .abtn, .wo-modal-imgzoom { display: none !important; }
+  /* 인쇄(PDF 저장) 시 원가 계산기 (내부용) 완전 제거 — 업체 발송용 */
+  #wm-info { display: none !important; }
 
   .wo-modal-head {
     padding: 10px 16px !important;
@@ -496,9 +498,9 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
 .wo-modal-actions{display:flex;gap:8px;align-items:center}
 .wo-modal-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border-md);background:transparent;color:var(--txt-3);cursor:pointer;display:grid;place-items:center;transition:.12s;flex-shrink:0}
 .wo-modal-close:hover{background:var(--red-dim);color:var(--red);border-color:rgba(248,113,113,.3)}
-.wo-modal-body{display:grid;grid-template-columns:400px 1fr;flex:1;overflow:hidden}
+.wo-modal-body{display:grid;grid-template-columns:480px 1fr;flex:1;overflow:hidden}
 .wo-modal-left{border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto}
-.wo-modal-imgbox{height:380px;background:var(--bg);position:relative;overflow:hidden;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.wo-modal-imgbox{height:460px;background:var(--bg);position:relative;overflow:hidden;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .wo-modal-imgbox img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
 .wo-modal-imgbox:hover img{transform:scale(1.03)}
 .wo-modal-imgzoom{position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.2);border-radius:7px;padding:5px 11px;font-size:11px;color:white;display:flex;align-items:center;gap:5px;opacity:0;transition:.15s}
@@ -1042,9 +1044,13 @@ window.saveAsImage=async()=>{
 
   const target=document.querySelector('.wo-modal');
   if(!target){return;}
-  // 캡처 시 안 보일 요소 임시 숨김
+  // 캡처 시 안 보일 요소 임시 숨김 (visibility — 공간 유지)
   const hideEls=target.querySelectorAll('.wo-modal-close, .wo-modal-actions, .wo-modal-imgzoom');
   hideEls.forEach(el=>el.style.visibility='hidden');
+  // 원가 계산기 (내부용) — 업체 발송용 캡처에서 완전 제거
+  const wmInfo=target.querySelector('#wm-info');
+  const wmInfoDisplay=wmInfo?wmInfo.style.display:'';
+  if(wmInfo)wmInfo.style.display='none';
 
   // 노션 이미지(S3)는 CORS 막힘 — base64로 완전 변환해서 html2canvas에 박음
   // file:// 미리보기나 claude.ai에선 프록시 호출 못 하므로 그 환경은 skip
@@ -1137,6 +1143,8 @@ window.saveAsImage=async()=>{
     console.error('[saveAsImage] 에러:',e);
   }finally{
     hideEls.forEach(el=>el.style.visibility='');
+    // 원가 계산기 영역 원복
+    if(wmInfo)wmInfo.style.display=wmInfoDisplay;
     // 이미지 src 원복
     originalSrcs.forEach((src,img)=>{
       img.crossOrigin=null;
