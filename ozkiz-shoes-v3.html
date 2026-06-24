@@ -284,10 +284,13 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
 .cost-save-btn:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(236,72,153,.32)}
 .cost-hist-section{margin-top:6px;padding-top:11px;border-top:1px solid var(--border)}
 .cost-hist-title{font-size:10px;color:var(--txt-3);font-weight:700;margin-bottom:7px;letter-spacing:.06em;text-transform:uppercase}
-.cost-hist-item{display:flex;flex-direction:column;gap:2px;padding:6px 8px;font-size:10px;color:var(--txt-3);border-bottom:1px dashed var(--border);cursor:pointer;transition:.12s;border-radius:4px}
+.cost-hist-item{display:flex;align-items:center;gap:6px;padding:5px 6px;font-size:10px;color:var(--txt-3);border-bottom:1px dashed var(--border);transition:.12s;border-radius:5px}
 .cost-hist-item:hover{background:var(--card-hover)}
 .cost-hist-item:last-child{border-bottom:none}
+.cost-hist-item .hist-main{flex:1;cursor:pointer;display:flex;flex-direction:column;gap:2px;min-width:0}
 .cost-hist-item .hist-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.hist-del-btn{width:22px;height:22px;border:1px solid var(--border);background:transparent;border-radius:5px;cursor:pointer;font-size:14px;color:var(--txt-3);flex-shrink:0;line-height:1;padding:0;display:grid;place-items:center;font-weight:700;transition:.12s;font-family:inherit}
+.hist-del-btn:hover{background:var(--red-dim);color:var(--red);border-color:rgba(248,113,113,.4)}
 .cost-hist-item .hist-date{color:var(--accent);font-weight:700;font-size:10px}
 .cost-hist-item .hist-retail{color:var(--green);font-weight:700;font-size:11px}
 .cost-hist-item .hist-detail{font-size:9px;color:var(--txt-3);font-variant-numeric:tabular-nums}
@@ -633,7 +636,7 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
     <div class="sb-category">
       <div class="sb-section-label">CATEGORY</div>
       <div class="sb-cat-grid">
-        <button class="sb-cat-btn" onclick="alert('의류 작업지시서 — 연동 예정\n(의류 사이트 URL 알려주면 바로 연결해줄게)')" title="의류 사이트로 이동">
+        <button class="sb-cat-btn" onclick="window.open('https://loreen-order-project.vercel.app/','_blank','noopener')" title="의류 작업지시서로 이동 (새 창에서 열림)">
           <div class="sb-cat-icon">👗</div>
           <div class="sb-cat-name">의류</div>
         </button>
@@ -707,7 +710,7 @@ function calcCost(uv,supplies,hasLED){
   const sub=uv+supplies+ledCost;
   const cost=Math.round(sub*1.1);
   const retailRaw=cost*4;
-  const retail=Math.round(retailRaw/500)*500;  // 500원 단위 반올림
+  const retail=Math.round(retailRaw/1000)*1000;  // 1000원 단위 반올림
   return {uv,supplies,ledCost,hasLED,sub,cost,retailRaw,retail};
 }
 // 히스토리 — localStorage에 제품별로
@@ -737,7 +740,7 @@ window.updateCostCalc=()=>{
     <div class="calc-line subtotal"><span>= 소계</span><span>${N(c.sub)}원</span></div>
     <div class="calc-line total"><span>× 1.1 = <b>원가</b></span><span>${N(c.cost)}원</span></div>
     <div class="calc-divider"></div>
-    <div class="calc-line"><span style="font-size:9px">판매가 = 원가 × 4 (500원 단위)</span></div>
+    <div class="calc-line"><span style="font-size:9px">판매가 = 원가 × 4 (1,000원 단위 반올림)</span></div>
     <div class="calc-line"><span>${N(c.cost)} × 4 = ${N(c.retailRaw)}원</span></div>
     <div class="calc-line retail"><span>판매가</span><span>${N(c.retail)}원</span></div>`;
 };
@@ -773,16 +776,34 @@ function renderCostHistory(p){
     el.innerHTML='<div class="cost-hist-empty">아직 저장된 계산 기록이 없어요</div>';
     return;
   }
-  el.innerHTML=hist.slice().reverse().map(h=>`
-    <div class="cost-hist-item" title="이 값으로 다시 채우기" onclick="loadCostHistory(${hist.indexOf(h)})">
-      <div class="hist-head">
-        <span class="hist-date">${h.date}${h.time?' '+h.time:''}</span>
-        <span class="hist-retail">판매가 ${N(h.retail)}원</span>
+  el.innerHTML=hist.slice().reverse().map((h,revIdx)=>{
+    const idx=hist.length-1-revIdx;  // 원본 배열 인덱스
+    return `
+    <div class="cost-hist-item">
+      <div class="hist-main" title="이 값으로 다시 채우기" onclick="loadCostHistory(${idx})">
+        <div class="hist-head">
+          <span class="hist-date">${h.date}${h.time?' '+h.time:''}</span>
+          <span class="hist-retail">판매가 ${N(h.retail)}원</span>
+        </div>
+        <div class="hist-detail">단가 ${N(h.uv)}원 · 부자재 ${N(h.supplies)}원${h.hasLED?' · LED ✓':''} → 원가 ${N(h.cost)}원</div>
       </div>
-      <div class="hist-detail">단가 ${N(h.uv)}원 · 부자재 ${N(h.supplies)}원${h.hasLED?' · LED ✓':''} → 원가 ${N(h.cost)}원</div>
+      <button class="hist-del-btn" onclick="deleteCostHistory(${idx})" title="이 기록 삭제">×</button>
     </div>
-  `).join('');
+  `;}).join('');
 }
+window.deleteCostHistory=(idx)=>{
+  if(!confirm('정말 지우시겠습니까?'))return;
+  const p=PRODS.find(x=>x.id===selId);
+  if(!p)return;
+  const pid=p.notionId||String(p.id);
+  const all=getCostHistAll();
+  if(!all[pid])return;
+  all[pid].splice(idx,1);
+  if(all[pid].length===0)delete all[pid];
+  try{localStorage.setItem(COST_HIST_KEY,JSON.stringify(all));}
+  catch(e){alert('삭제 실패: '+e.message);return;}
+  renderCostHistory(p);
+};
 window.loadCostHistory=(idx)=>{
   const p=PRODS.find(x=>x.id===selId);
   if(!p)return;
