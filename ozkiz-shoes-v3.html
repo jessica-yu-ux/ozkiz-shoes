@@ -521,21 +521,41 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
 .wd-meta-tbl th,.wd-meta-tbl td{border:1px solid #666;padding:6px 5px;text-align:center;vertical-align:middle;color:#111;word-break:keep-all;width:calc(100%/9)}
 .wd-meta-tbl th{background:#e8e8e8;font-weight:700;color:#333;font-size:10px}
 .wd-meta-tbl td{font-weight:700;font-size:11px}
-/* 본문 3단 — 메타 9컬럼과 정확히 정렬 (각 1/3 = 3/9) */
-.wd-main{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;margin-top:0}
-.wd-col{border-left:1px solid #666;border-bottom:1px solid #666;display:flex;flex-direction:column;background:white;min-width:0}
-.wd-col:last-child{border-right:1px solid #666}
+/* 본문 레이아웃 — 이미지(1fr) + 중앙·우측 공유 그리드(2fr) */
+.wd-main{display:grid;grid-template-columns:1fr 2fr;gap:0;margin-top:0;border-left:1px solid #666;border-right:1px solid #666;border-bottom:1px solid #666}
+.wd-mg-img{border-right:1px solid #666;display:flex;flex-direction:column;background:white;min-width:0}
 .wd-img{flex:1;background:white;min-height:320px;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:8px;cursor:pointer}
 .wd-img img{max-width:100%;max-height:100%;object-fit:contain;display:block}
 .wd-img-ph{color:#999;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:8px}
 .wd-img-ph svg{width:36px;height:36px;stroke:#ccc;fill:none;stroke-width:1}
-.wd-warn{display:flex;flex-direction:column;border-top:1px solid #666}
+/* 중앙+우측 공유 그리드 — 각 행 높이를 자동 맞춤해서 섹션 타이틀 정렬 */
+.wd-mg-inner{display:grid;grid-template-columns:1fr 1fr}
+/* 홀수 자식(col2) 오른쪽 구분선 */
+.wd-mg-inner>:nth-child(odd){border-right:1px solid #666}
+/* 섹션 타이틀(발주수량·부자재·주의사항) 하단 구분선 */
+.wd-mg-inner>.wd-section-t,.wd-mg-inner>.wd-warn-t{border-bottom:1px solid #666}
+/* 콘텐츠 행(발주수량 내용·부자재 내용) 하단 구분선 */
+.wd-mg-inner>.wd-mgr2,.wd-mg-inner>.wd-mgr4{border-bottom:1px solid #666}
+/* 우측 단일 스펙 행 (간지·품질보증택) 하단 구분선 */
+.wd-spec-1row{display:flex;border-bottom:1px solid #666;height:100%}
+.wd-spec-1row .s1-l{background:#e8e8e8;font-weight:700;color:#333;font-size:11px;width:45%;border-right:1px solid #666;padding:6px 9px;text-align:center;display:flex;align-items:center;justify-content:center}
+.wd-spec-1row .s1-v{font-weight:600;font-size:11px;flex:1;padding:6px 9px;text-align:center;color:#111;display:flex;align-items:center;justify-content:center;background:white}
+/* 우측 서브 스펙 테이블 */
+.wd-spec-sub{width:100%;border-collapse:collapse;font-size:11px}
+.wd-spec-sub tr{border-bottom:1px solid #666}
+.wd-spec-sub tr:last-child{border-bottom:none}
+.wd-spec-sub td{padding:6px 9px;text-align:center;color:#111;vertical-align:middle;line-height:1.3}
+.wd-spec-sub td:first-child{background:#e8e8e8;font-weight:700;color:#333;width:45%;border-right:1px solid #666;font-size:11px}
+.wd-spec-sub td:last-child{font-weight:600}
+.wd-spec-sub td.muted{color:#999;font-weight:400;font-style:italic}
+/* 주의사항 */
 .wd-warn-t{background:#e8e8e8;padding:3px 10px;font-size:10px;font-weight:700;border-bottom:1px solid #666;color:#333;text-align:center}
-.wd-warn-c{padding:3px 8px;font-size:7px;color:#DC2626;font-weight:600;line-height:1.3;min-height:0;flex:0 0 auto}
-.wd-qty-box,.wd-spec-box,.wd-center-box{display:flex;flex-direction:column}
+.wd-warn-c{padding:3px 8px;font-size:7px;color:#DC2626;font-weight:600;line-height:1.3}
+/* 발주수량 테이블 — 섹션 타이틀과 겹치는 상단 테두리 제거 */
+.wd-qty-tbl thead tr:first-child th{border-top:0}
 
-/* 중앙 부자재 영역 (수량표 아래) — 제목 위 / 내용 아래 */
-.wd-sub-supplies{display:flex;flex-direction:column;border-top:1px solid #666;flex-shrink:0}
+/* 중앙 부자재 영역 */
+.wd-sub-supplies{display:flex;flex-direction:column;flex-shrink:0}
 .wd-sub-supplies-c{padding:9px 10px;min-height:48px;display:flex;align-items:center;justify-content:center;background:white;font-size:10.5px;color:#333;text-align:center;line-height:1.5;flex-wrap:wrap;gap:4px;word-break:keep-all}
 .wd-sub-supplies-c img{max-width:100%;max-height:80px;object-fit:contain}
 .wd-sub-supplies-c .muted{color:#999;font-style:italic}
@@ -734,24 +754,30 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
 
         <!-- 본문 3단: 좌(이미지) / 중(수량표 + 부자재 + 주의) / 우(제품사양) -->
         <div class="wd-main">
-          <div class="wd-col wd-img-box">
+          <!-- Col 1: 이미지 -->
+          <div class="wd-mg-img">
             <div class="wd-img" id="wd-img" onclick="openLBfromModal()"></div>
           </div>
-          <div class="wd-col wd-center-box">
+          <!-- Col 2+3: 공유 그리드 (6쌍 × 2열) -->
+          <div class="wd-mg-inner">
+            <!-- Row 1: 섹션 타이틀 -->
             <div class="wd-section-t">발주 수량</div>
-            <div id="wd-qty"></div>
-            <div class="wd-sub-supplies">
-              <div class="wd-section-t">오즈키즈 제공 부자재</div>
-              <div class="wd-sub-supplies-c" id="wd-supplies-img"></div>
-            </div>
-            <div class="wd-warn">
-              <div class="wd-warn-t">주의 사항</div>
-              <div class="wd-warn-c" id="wd-warn-c"></div>
-            </div>
-          </div>
-          <div class="wd-col wd-spec-box">
             <div class="wd-section-t">제품 사양</div>
-            <table class="wd-spec-tbl" id="wd-spec"></table>
+            <!-- Row 2: 발주수량표 + 스펙 행 1-5 (외피~바코드택) -->
+            <div class="wd-mgr2" id="wd-qty"></div>
+            <div class="wd-mgr2" id="wd-spec-a"></div>
+            <!-- Row 3: 부자재 타이틀 + 간지 행 -->
+            <div class="wd-section-t">오즈키즈 제공 부자재</div>
+            <div id="wd-spec-b"></div>
+            <!-- Row 4: 부자재 내용 + 스펙 행 7-8 (인박스·택끈) -->
+            <div class="wd-sub-supplies-c wd-mgr4" id="wd-supplies-img"></div>
+            <div class="wd-mgr4" id="wd-spec-c"></div>
+            <!-- Row 5: 주의사항 타이틀 + 품질보증택 행 -->
+            <div class="wd-warn-t">주의 사항</div>
+            <div id="wd-spec-d"></div>
+            <!-- Row 6: 주의사항 내용 + 스펙 행 10-11 (별봉·LED) -->
+            <div class="wd-warn-c" id="wd-warn-c"></div>
+            <div id="wd-spec-e"></div>
           </div>
         </div>
 
@@ -1516,21 +1542,30 @@ window.openWOModal=id=>{
        :s.text).join(' · ')
     :'<span class="muted">제공 없음</span>';
 
-  // ── 우측: 제품 사양 (LED — 상품명에 'LED' 포함 여부로 판단) ──
+  // ── 우측: 제품 사양 — 3개 구역으로 분리 (간지·품질보증택 행이 섹션 타이틀과 같은 행에 위치) ──
   const hasLED=p.name&&p.name.toUpperCase().includes('LED');
-  $('wd-spec').innerHTML=`
+  // 스펙 행 1-5: 외피~바코드택
+  $('wd-spec-a').innerHTML=`<table class="wd-spec-sub">
     <tr><td>외피</td><td>${p.fabric?p.fabric:'<span class="muted">(원단명)</span>'}</td></tr>
     <tr><td>내피</td><td>샘플동일</td></tr>
     <tr><td>로고 위치</td><td>인솔에 불박</td></tr>
     <tr><td>가격택</td><td>1 EA</td></tr>
     <tr><td>바코드 택</td><td>1 EA</td></tr>
-    <tr><td>간지</td><td>1 EA</td></tr>
+  </table>`;
+  // 간지 단독 행 (부자재 섹션 타이틀과 같은 그리드 행)
+  $('wd-spec-b').innerHTML=`<div class="wd-spec-1row"><div class="s1-l">간지</div><div class="s1-v">1 EA</div></div>`;
+  // 스펙 행 7-8: 인박스·택끈
+  $('wd-spec-c').innerHTML=`<table class="wd-spec-sub">
     <tr><td>인박스</td><td>1 EA</td></tr>
     <tr><td>택끈</td><td>1 EA</td></tr>
-    <tr><td>품질보증택</td><td>1 EA</td></tr>
+  </table>`;
+  // 품질보증택 단독 행 (주의사항 섹션 타이틀과 같은 그리드 행)
+  $('wd-spec-d').innerHTML=`<div class="wd-spec-1row"><div class="s1-l">품질보증택</div><div class="s1-v">1 EA</div></div>`;
+  // 스펙 행 10-11: 별봉·LED
+  $('wd-spec-e').innerHTML=`<table class="wd-spec-sub">
     <tr><td>별봉</td><td>1 EA</td></tr>
     <tr><td>${hasLED?'LED <span style="font-size:9px;color:#666">(+1,650)</span>':'LED'}</td><td${hasLED?'':' class="muted"'}>${hasLED?'1 EA':'제공없음'}</td></tr>
-  `;
+  </table>`;
 
   // ── 원가 계산기 (내부용 — 캡처/인쇄 자동 제외) ──
   const lastCost=getLastCost(p);
