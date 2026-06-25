@@ -513,7 +513,7 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
 .wo-modal-hist{padding:14px 20px}
 
 /* ─── 새 작업지시서 포맷 (의류 사이트와 동일 분위기) ─── */
-.wo-modal.wo-doc{width:min(98vw,1480px);height:auto;max-height:96vh;display:flex;flex-direction:column;overflow:hidden;background:var(--card)}
+.wo-modal.wo-doc{width:min(96vw,1280px);height:auto;max-height:96vh;display:flex;flex-direction:column;overflow:hidden;background:var(--card)}
 .wo-doc-actions{display:flex;gap:8px;justify-content:flex-end;align-items:center;padding:9px 14px;border-bottom:1px solid var(--border);background:var(--card);flex-shrink:0}
 .wo-doc-body{display:grid;grid-template-columns:330px 1fr;flex:1;min-height:0;overflow:hidden}
 .wd-page{background:white;color:#111;padding:14px 18px 16px;overflow-y:auto;min-height:0}
@@ -522,8 +522,8 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
 .wd-meta-tbl th,.wd-meta-tbl td{border:1px solid #666;padding:6px 5px;text-align:center;vertical-align:middle;color:#111;word-break:keep-all}
 .wd-meta-tbl th{background:#e8e8e8;font-weight:700;color:#333;font-size:10px}
 .wd-meta-tbl td{font-weight:700;font-size:11px}
-.wd-main{display:grid;grid-template-columns:0.9fr 1.5fr 1fr;gap:0;margin-top:-1px}
-.wd-col{border-left:1px solid #666;border-bottom:1px solid #666;display:flex;flex-direction:column;background:white;min-width:0}
+.wd-main{display:grid;grid-template-columns:1.3fr 1.3fr 0.7fr;gap:0;margin-top:0}
+.wd-col{border-top:1px solid #666;border-left:1px solid #666;border-bottom:1px solid #666;display:flex;flex-direction:column;background:white;min-width:0}
 .wd-col:last-child{border-right:1px solid #666}
 .wd-img{flex:1;background:white;min-height:320px;display:flex;align-items:center;justify-content:center;overflow:hidden;border-bottom:1px solid #666;padding:8px;cursor:pointer}
 .wd-img img{max-width:100%;max-height:100%;object-fit:contain;display:block}
@@ -641,32 +641,32 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
       <div class="wd-page" id="wd-page">
         <div class="wd-title">작 업 지 시 서</div>
 
-        <!-- 메타 정보 표 (9 컬럼) -->
+        <!-- 메타 정보 표 (9 컬럼) — 사용자 지정 순서 -->
         <table class="wd-meta-tbl">
           <thead>
             <tr>
               <th>STYLE NO</th>
               <th>상품명</th>
-              <th>작업처</th>
               <th>차수</th>
+              <th>작업처</th>
+              <th>담당</th>
+              <th>실장</th>
               <th>발주일</th>
               <th>입고 예정일</th>
               <th>업체단가</th>
-              <th>담당</th>
-              <th>실장</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td id="wd-style"></td>
               <td id="wd-name"></td>
-              <td id="wd-vendor"></td>
               <td id="wd-round"></td>
+              <td id="wd-vendor"></td>
+              <td id="wd-manager"></td>
+              <td id="wd-deputy"></td>
               <td id="wd-order-date"></td>
               <td id="wd-arrival-date"></td>
               <td id="wd-uv"></td>
-              <td id="wd-manager"></td>
-              <td id="wd-deputy"></td>
             </tr>
           </tbody>
         </table>
