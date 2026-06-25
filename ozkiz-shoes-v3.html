@@ -522,17 +522,17 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
 .wd-meta-tbl th,.wd-meta-tbl td{border:1px solid #666;padding:6px 5px;text-align:center;vertical-align:middle;color:#111;word-break:keep-all;width:11.111%}
 .wd-meta-tbl th{background:#e8e8e8;font-weight:700;color:#333;font-size:10px}
 .wd-meta-tbl td{font-weight:700;font-size:11px}
-/* 본문 3단 — 메타 9컬럼 균등 분배(1/9)에 맞춰 3컬럼씩 묶음 (각 3/9 = 1fr) */
-.wd-main{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;margin-top:0}
-.wd-col{border-top:1px solid #666;border-left:1px solid #666;border-bottom:1px solid #666;display:flex;flex-direction:column;background:white;min-width:0}
+/* 본문 3단 — 이미지/부자재/사양, 중앙 열을 넓게 */
+.wd-main{display:grid;grid-template-columns:1fr 1.35fr 0.85fr;gap:0;margin-top:0}
+.wd-col{border-left:1px solid #666;border-bottom:1px solid #666;display:flex;flex-direction:column;background:white;min-width:0}
 .wd-col:last-child{border-right:1px solid #666}
-.wd-img{flex:1;background:white;min-height:320px;display:flex;align-items:center;justify-content:center;overflow:hidden;border-bottom:1px solid #666;padding:8px;cursor:pointer}
+.wd-img{flex:1;background:white;min-height:320px;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:8px;cursor:pointer}
 .wd-img img{max-width:100%;max-height:100%;object-fit:contain;display:block}
 .wd-img-ph{color:#999;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:8px}
 .wd-img-ph svg{width:36px;height:36px;stroke:#ccc;fill:none;stroke-width:1}
 .wd-warn{display:flex;flex-direction:column;border-top:1px solid #666}
-.wd-warn-t{background:#e8e8e8;padding:6px 10px;font-size:11px;font-weight:700;border-bottom:1px solid #666;color:#333;text-align:center}
-.wd-warn-c{padding:6px 10px;font-size:9px;color:#DC2626;font-weight:600;line-height:1.45;min-height:0;flex:0 0 auto}
+.wd-warn-t{background:#e8e8e8;padding:3px 10px;font-size:10px;font-weight:700;border-bottom:1px solid #666;color:#333;text-align:center}
+.wd-warn-c{padding:3px 8px;font-size:7px;color:#DC2626;font-weight:600;line-height:1.3;min-height:0;flex:0 0 auto}
 .wd-qty-box,.wd-spec-box,.wd-center-box{display:flex;flex-direction:column}
 
 /* 중앙 부자재 영역 (수량표 아래) — 제목 위 / 내용 아래 */
@@ -549,10 +549,10 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
 .wd-qty-tbl tr.sum td{background:#fafafa;font-weight:700}
 .wd-qty-tbl tr.sum td.tot{background:#ffeef5}
 .wd-spec-tbl{width:100%;border-collapse:collapse;font-size:11px;height:100%}
-.wd-spec-tbl tr{border-bottom:1px solid #aaa}
+.wd-spec-tbl tr{border-bottom:1px solid #666}
 .wd-spec-tbl tr:last-child{border-bottom:none}
 .wd-spec-tbl td{padding:6px 9px;text-align:center;color:#111;vertical-align:middle;line-height:1.3}
-.wd-spec-tbl td:first-child{background:#e8e8e8;font-weight:700;color:#333;width:45%;border-right:1px solid #888;font-size:11px}
+.wd-spec-tbl td:first-child{background:#e8e8e8;font-weight:700;color:#333;width:45%;border-right:1px solid #666;font-size:11px}
 .wd-spec-tbl td:last-child{font-weight:600}
 .wd-spec-tbl td.muted{color:#999;font-weight:400;font-style:italic}
 /* OZKIZ 푸터 로고 (작업지시서 맨 아래 — 제목과 같은 크기) */
