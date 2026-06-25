@@ -517,7 +517,7 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
 .wo-doc-body{display:grid;grid-template-columns:330px 1fr;flex:1;min-height:0;overflow:hidden}
 .wd-page{background:white;color:#111;padding:14px 18px 16px;overflow-y:auto;min-height:0}
 .wd-title{text-align:center;font-size:22px;font-weight:800;letter-spacing:0.5em;color:#111;padding:4px 0 12px;font-family:inherit}
-.wd-meta-tbl{width:100%;border-collapse:collapse;font-size:10px;table-layout:fixed}
+.wd-meta-tbl{width:100%;border-collapse:collapse;font-size:10px;table-layout:fixed;border-left:1px solid #666;border-right:1px solid #666}
 .wd-meta-tbl th,.wd-meta-tbl td{border:1px solid #666;padding:6px 5px;text-align:center;vertical-align:middle;color:#111;word-break:keep-all;width:calc(100%/9)}
 .wd-meta-tbl th{background:#e8e8e8;font-weight:700;color:#333;font-size:10px}
 .wd-meta-tbl td{font-weight:700;font-size:11px}
@@ -548,6 +548,7 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
 .wd-spec-sub td:first-child{background:#e8e8e8;font-weight:700;color:#333;width:45%;border-right:1px solid #666;font-size:11px}
 .wd-spec-sub td:last-child{font-weight:600}
 .wd-spec-sub td.muted{color:#999;font-weight:400;font-style:italic}
+.wd-spec-br{border-bottom:1px solid #666}
 /* 주의사항 */
 .wd-warn-t{background:#e8e8e8;padding:3px 10px;font-size:10px;font-weight:700;border-bottom:1px solid #666;color:#333;text-align:center}
 .wd-warn-c{padding:3px 8px;font-size:7px;color:#DC2626;font-weight:600;line-height:1.3}
@@ -768,13 +769,13 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
             <div class="wd-mgr2" id="wd-spec-a"></div>
             <!-- Row 3: 부자재 타이틀 + 간지 행 -->
             <div class="wd-section-t">오즈키즈 제공 부자재</div>
-            <div id="wd-spec-b"></div>
+            <div class="wd-spec-br" id="wd-spec-b"></div>
             <!-- Row 4: 부자재 내용 + 스펙 행 7-8 (인박스·택끈) -->
             <div class="wd-sub-supplies-c wd-mgr4" id="wd-supplies-img"></div>
             <div class="wd-mgr4" id="wd-spec-c"></div>
             <!-- Row 5: 주의사항 타이틀 + 품질보증택 행 -->
             <div class="wd-warn-t">주의 사항</div>
-            <div id="wd-spec-d"></div>
+            <div class="wd-spec-br" id="wd-spec-d"></div>
             <!-- Row 6: 주의사항 내용 + 스펙 행 10-11 (별봉·LED) -->
             <div class="wd-warn-c" id="wd-warn-c"></div>
             <div id="wd-spec-e"></div>
@@ -1553,14 +1554,14 @@ window.openWOModal=id=>{
     <tr><td>바코드 택</td><td>1 EA</td></tr>
   </table>`;
   // 간지 단독 행 (부자재 섹션 타이틀과 같은 그리드 행)
-  $('wd-spec-b').innerHTML=`<div class="wd-spec-1row"><div class="s1-l">간지</div><div class="s1-v">1 EA</div></div>`;
+  $('wd-spec-b').innerHTML=`<table class="wd-spec-sub"><tr><td>간지</td><td>1 EA</td></tr></table>`;
   // 스펙 행 7-8: 인박스·택끈
   $('wd-spec-c').innerHTML=`<table class="wd-spec-sub">
     <tr><td>인박스</td><td>1 EA</td></tr>
     <tr><td>택끈</td><td>1 EA</td></tr>
   </table>`;
   // 품질보증택 단독 행 (주의사항 섹션 타이틀과 같은 그리드 행)
-  $('wd-spec-d').innerHTML=`<div class="wd-spec-1row"><div class="s1-l">품질보증택</div><div class="s1-v">1 EA</div></div>`;
+  $('wd-spec-d').innerHTML=`<table class="wd-spec-sub"><tr><td>품질보증택</td><td>1 EA</td></tr></table>`;
   // 스펙 행 10-11: 별봉·LED
   $('wd-spec-e').innerHTML=`<table class="wd-spec-sub">
     <tr><td>별봉</td><td>1 EA</td></tr>
