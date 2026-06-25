@@ -519,10 +519,11 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
 .wd-page{background:white;color:#111;padding:14px 18px 16px;overflow-y:auto;min-height:0}
 .wd-title{text-align:center;font-size:22px;font-weight:800;letter-spacing:0.5em;color:#111;padding:4px 0 12px;font-family:inherit}
 .wd-meta-tbl{width:100%;border-collapse:collapse;font-size:10px;table-layout:fixed}
-.wd-meta-tbl th,.wd-meta-tbl td{border:1px solid #666;padding:6px 5px;text-align:center;vertical-align:middle;color:#111;word-break:keep-all}
+.wd-meta-tbl th,.wd-meta-tbl td{border:1px solid #666;padding:6px 5px;text-align:center;vertical-align:middle;color:#111;word-break:keep-all;width:11.111%}
 .wd-meta-tbl th{background:#e8e8e8;font-weight:700;color:#333;font-size:10px}
 .wd-meta-tbl td{font-weight:700;font-size:11px}
-.wd-main{display:grid;grid-template-columns:1.3fr 1.3fr 0.7fr;gap:0;margin-top:0}
+/* 본문 3단 — 메타 9컬럼 균등 분배(1/9)에 맞춰 3컬럼씩 묶음 (각 3/9 = 1fr) */
+.wd-main{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;margin-top:0}
 .wd-col{border-top:1px solid #666;border-left:1px solid #666;border-bottom:1px solid #666;display:flex;flex-direction:column;background:white;min-width:0}
 .wd-col:last-child{border-right:1px solid #666}
 .wd-img{flex:1;background:white;min-height:320px;display:flex;align-items:center;justify-content:center;overflow:hidden;border-bottom:1px solid #666;padding:8px;cursor:pointer}
@@ -531,15 +532,14 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
 .wd-img-ph svg{width:36px;height:36px;stroke:#ccc;fill:none;stroke-width:1}
 .wd-warn{display:flex;flex-direction:column;border-top:1px solid #666}
 .wd-warn-t{background:#e8e8e8;padding:6px 10px;font-size:11px;font-weight:700;border-bottom:1px solid #666;color:#333;text-align:center}
-.wd-warn-c{padding:8px 11px;font-size:9.5px;color:#DC2626;font-weight:600;line-height:1.55;min-height:0;flex:0 0 auto}
+.wd-warn-c{padding:6px 10px;font-size:9px;color:#DC2626;font-weight:600;line-height:1.45;min-height:0;flex:0 0 auto}
 .wd-qty-box,.wd-spec-box,.wd-center-box{display:flex;flex-direction:column}
 
-/* 중앙 부자재 영역 (수량표 아래) */
-.wd-sub-supplies{display:grid;grid-template-columns:0.5fr 1fr;border-top:1px solid #666;flex-shrink:0}
-.wd-sub-supplies-l{background:#e8e8e8;padding:14px 8px;font-size:11px;font-weight:700;color:#333;text-align:center;border-right:1px solid #666;display:flex;align-items:center;justify-content:center;line-height:1.4}
-.wd-sub-supplies-r{padding:10px;min-height:64px;display:flex;align-items:center;justify-content:center;background:white;font-size:10.5px;color:#333;text-align:center;line-height:1.5;flex-wrap:wrap;gap:4px;word-break:keep-all}
-.wd-sub-supplies-r img{max-width:100%;max-height:80px;object-fit:contain}
-.wd-sub-supplies-r .muted{color:#999;font-style:italic}
+/* 중앙 부자재 영역 (수량표 아래) — 제목 위 / 내용 아래 */
+.wd-sub-supplies{display:flex;flex-direction:column;border-top:1px solid #666;flex-shrink:0}
+.wd-sub-supplies-c{padding:9px 10px;min-height:48px;display:flex;align-items:center;justify-content:center;background:white;font-size:10.5px;color:#333;text-align:center;line-height:1.5;flex-wrap:wrap;gap:4px;word-break:keep-all}
+.wd-sub-supplies-c img{max-width:100%;max-height:80px;object-fit:contain}
+.wd-sub-supplies-c .muted{color:#999;font-style:italic}
 .wd-section-t{background:#e8e8e8;padding:6px 10px;font-size:11px;font-weight:700;border-bottom:1px solid #666;color:#333;text-align:center}
 .wd-qty-tbl{width:100%;border-collapse:collapse;font-size:11px}
 .wd-qty-tbl th,.wd-qty-tbl td{border:1px solid #888;padding:5px 6px;text-align:center;color:#111}
@@ -548,16 +548,13 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
 .wd-qty-tbl td.tot{background:#fafafa;font-weight:700;color:var(--accent)}
 .wd-qty-tbl tr.sum td{background:#fafafa;font-weight:700}
 .wd-qty-tbl tr.sum td.tot{background:#ffeef5}
-.wd-spec-tbl{width:100%;border-collapse:collapse;font-size:11px}
+.wd-spec-tbl{width:100%;border-collapse:collapse;font-size:11px;height:100%}
 .wd-spec-tbl tr{border-bottom:1px solid #aaa}
 .wd-spec-tbl tr:last-child{border-bottom:none}
-.wd-spec-tbl td{padding:8px 10px;text-align:center;color:#111;vertical-align:middle}
+.wd-spec-tbl td{padding:6px 9px;text-align:center;color:#111;vertical-align:middle;line-height:1.3}
 .wd-spec-tbl td:first-child{background:#e8e8e8;font-weight:700;color:#333;width:45%;border-right:1px solid #888;font-size:11px}
 .wd-spec-tbl td:last-child{font-weight:600}
 .wd-spec-tbl td.muted{color:#999;font-weight:400;font-style:italic}
-/* LED 행 강조 — 발주 수량표의 '계' 박스 컬러와 동일 */
-.wd-spec-tbl tr.led td,
-.wd-spec-tbl tr.led td:first-child{background:#ffeef5!important;color:var(--accent)!important;font-weight:800}
 /* OZKIZ 푸터 로고 (작업지시서 맨 아래 — 제목과 같은 크기) */
 .wd-footer{text-align:center;padding:14px 0 4px;margin-top:8px}
 .wd-logo{display:inline-block;font-size:22px;font-weight:900;color:#E11D48;letter-spacing:-0.02em;font-family:'Arial Black',-apple-system,'Helvetica Neue',Arial,sans-serif;line-height:1;position:relative}
@@ -683,8 +680,8 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
             <div class="wd-section-t">발주 수량</div>
             <div id="wd-qty"></div>
             <div class="wd-sub-supplies">
-              <div class="wd-sub-supplies-l">오즈키즈 제공<br>부자재</div>
-              <div class="wd-sub-supplies-r" id="wd-supplies-img"></div>
+              <div class="wd-section-t">오즈키즈 제공 부자재</div>
+              <div class="wd-sub-supplies-c" id="wd-supplies-img"></div>
             </div>
             <div class="wd-warn">
               <div class="wd-warn-t">주의 사항</div>
@@ -1471,7 +1468,7 @@ window.openWOModal=id=>{
     <tr><td>택끈</td><td>1 EA</td></tr>
     <tr><td>품질보증택</td><td>1 EA</td></tr>
     <tr><td>별봉</td><td>1 EA</td></tr>
-    <tr class="led"><td>LED <span style="font-size:9px">(+1,650)</span></td><td>1 EA</td></tr>
+    <tr><td>LED <span style="font-size:9px;color:#666">(+1,650)</span></td><td>1 EA</td></tr>
   `;
 
   // ── 원가 계산기 (내부용 — 캡처/인쇄 자동 제외) ──
