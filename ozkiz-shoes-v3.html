@@ -518,21 +518,28 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
 .wo-doc-body{display:grid;grid-template-columns:330px 1fr;flex:1;min-height:0;overflow:hidden}
 .wd-page{background:white;color:#111;padding:14px 18px 16px;overflow-y:auto;min-height:0}
 .wd-title{text-align:center;font-size:22px;font-weight:800;letter-spacing:0.5em;color:#111;padding:4px 0 12px;font-family:inherit}
-.wd-meta-tbl{width:100%;border-collapse:collapse;font-size:11px;table-layout:fixed}
-.wd-meta-tbl th,.wd-meta-tbl td{border:1px solid #666;padding:7px 9px;text-align:center;vertical-align:middle;color:#111;word-break:keep-all}
-.wd-meta-tbl th{background:#e8e8e8;font-weight:700;color:#333;font-size:11px}
-.wd-meta-tbl td{font-weight:700;font-size:12px}
-.wd-main{display:grid;grid-template-columns:1.1fr 1.3fr 0.95fr;gap:0;margin-top:-1px}
+.wd-meta-tbl{width:100%;border-collapse:collapse;font-size:10px;table-layout:fixed}
+.wd-meta-tbl th,.wd-meta-tbl td{border:1px solid #666;padding:6px 5px;text-align:center;vertical-align:middle;color:#111;word-break:keep-all}
+.wd-meta-tbl th{background:#e8e8e8;font-weight:700;color:#333;font-size:10px}
+.wd-meta-tbl td{font-weight:700;font-size:11px}
+.wd-main{display:grid;grid-template-columns:0.9fr 1.5fr 1fr;gap:0;margin-top:-1px}
 .wd-col{border-left:1px solid #666;border-bottom:1px solid #666;display:flex;flex-direction:column;background:white;min-width:0}
 .wd-col:last-child{border-right:1px solid #666}
 .wd-img{flex:1;background:white;min-height:320px;display:flex;align-items:center;justify-content:center;overflow:hidden;border-bottom:1px solid #666;padding:8px;cursor:pointer}
 .wd-img img{max-width:100%;max-height:100%;object-fit:contain;display:block}
 .wd-img-ph{color:#999;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:8px}
 .wd-img-ph svg{width:36px;height:36px;stroke:#ccc;fill:none;stroke-width:1}
-.wd-warn{display:flex;flex-direction:column}
-.wd-warn-t{background:#e8e8e8;padding:6px 10px;font-size:11px;font-weight:700;border-bottom:1px solid #666;color:#333}
-.wd-warn-c{padding:8px 10px;font-size:11px;color:#DC2626;font-weight:600;line-height:1.5;min-height:48px;white-space:pre-line}
-.wd-qty-box,.wd-spec-box{display:flex;flex-direction:column}
+.wd-warn{display:flex;flex-direction:column;border-top:1px solid #666}
+.wd-warn-t{background:#e8e8e8;padding:6px 10px;font-size:11px;font-weight:700;border-bottom:1px solid #666;color:#333;text-align:center}
+.wd-warn-c{padding:8px 10px;font-size:11px;color:#DC2626;font-weight:600;line-height:1.5;min-height:48px;white-space:pre-line;flex:1}
+.wd-qty-box,.wd-spec-box,.wd-center-box{display:flex;flex-direction:column}
+
+/* 중앙 부자재 영역 (수량표 아래) */
+.wd-sub-supplies{display:grid;grid-template-columns:0.5fr 1fr;border-top:1px solid #666;flex-shrink:0}
+.wd-sub-supplies-l{background:#e8e8e8;padding:14px 8px;font-size:11px;font-weight:700;color:#333;text-align:center;border-right:1px solid #666;display:flex;align-items:center;justify-content:center;line-height:1.4}
+.wd-sub-supplies-r{padding:10px;min-height:64px;display:flex;align-items:center;justify-content:center;background:white;font-size:10.5px;color:#333;text-align:center;line-height:1.5;flex-wrap:wrap;gap:4px;word-break:keep-all}
+.wd-sub-supplies-r img{max-width:100%;max-height:80px;object-fit:contain}
+.wd-sub-supplies-r .muted{color:#999;font-style:italic}
 .wd-section-t{background:#e8e8e8;padding:6px 10px;font-size:11px;font-weight:700;border-bottom:1px solid #666;color:#333;text-align:center}
 .wd-qty-tbl{width:100%;border-collapse:collapse;font-size:11px}
 .wd-qty-tbl th,.wd-qty-tbl td{border:1px solid #888;padding:5px 6px;text-align:center;color:#111}
@@ -548,6 +555,12 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
 .wd-spec-tbl td:first-child{background:#e8e8e8;font-weight:700;color:#333;width:45%;border-right:1px solid #888;font-size:11px}
 .wd-spec-tbl td:last-child{font-weight:600}
 .wd-spec-tbl td.muted{color:#999;font-weight:400;font-style:italic}
+/* OZKIZ 푸터 로고 (작업지시서 맨 아래) */
+.wd-footer{text-align:center;padding:18px 0 6px;margin-top:14px}
+.wd-logo{display:inline-block;font-size:32px;font-weight:900;color:#E11D48;letter-spacing:-0.04em;font-family:'Arial Black',-apple-system,'Helvetica Neue',Arial,sans-serif;line-height:1;position:relative}
+.wd-logo-i{position:relative;display:inline-block}
+.wd-logo-star{position:absolute;top:-0.55em;left:50%;transform:translateX(-50%);font-size:0.42em;color:#E11D48;line-height:1}
+
 /* 원가 계산기 (좌측, 내부용 — 인쇄/캡처 자동 제외) */
 .wo-doc-cost{padding:14px 16px;border-right:2px dashed var(--border-md);background:var(--cost-bg);overflow-y:auto;min-height:0}
 .wo-doc-cost::-webkit-scrollbar{width:5px}
@@ -628,7 +641,7 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
       <div class="wd-page" id="wd-page">
         <div class="wd-title">작 업 지 시 서</div>
 
-        <!-- 메타 정보 표 -->
+        <!-- 메타 정보 표 (9 컬럼) -->
         <table class="wd-meta-tbl">
           <thead>
             <tr>
@@ -636,9 +649,11 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
               <th>상품명</th>
               <th>작업처</th>
               <th>차수</th>
+              <th>발주일</th>
+              <th>입고 예정일</th>
+              <th>업체단가</th>
               <th>담당</th>
               <th>실장</th>
-              <th>업체 단가</th>
             </tr>
           </thead>
           <tbody>
@@ -647,30 +662,43 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
               <td id="wd-name"></td>
               <td id="wd-vendor"></td>
               <td id="wd-round"></td>
+              <td id="wd-order-date"></td>
+              <td id="wd-arrival-date"></td>
+              <td id="wd-uv"></td>
               <td id="wd-manager"></td>
               <td id="wd-deputy"></td>
-              <td id="wd-uv"></td>
             </tr>
           </tbody>
         </table>
 
-        <!-- 본문 3단: 좌(이미지+주의) / 중(발주수량표) / 우(제품사양) -->
+        <!-- 본문 3단: 좌(이미지) / 중(수량표 + 부자재 + 주의) / 우(제품사양) -->
         <div class="wd-main">
           <div class="wd-col wd-img-box">
             <div class="wd-img" id="wd-img" onclick="openLBfromModal()"></div>
+          </div>
+          <div class="wd-col wd-center-box">
+            <div class="wd-section-t">발주 수량</div>
+            <div id="wd-qty"></div>
+            <div class="wd-sub-supplies">
+              <div class="wd-sub-supplies-l">오즈키즈 제공<br>부자재</div>
+              <div class="wd-sub-supplies-r" id="wd-supplies-img"></div>
+            </div>
             <div class="wd-warn">
               <div class="wd-warn-t">주의 사항</div>
               <div class="wd-warn-c" id="wd-warn-c"></div>
             </div>
           </div>
-          <div class="wd-col wd-qty-box">
-            <div class="wd-section-t">발주 수량표</div>
-            <div id="wd-qty"></div>
-          </div>
           <div class="wd-col wd-spec-box">
             <div class="wd-section-t">제품 사양</div>
             <table class="wd-spec-tbl" id="wd-spec"></table>
           </div>
+        </div>
+
+        <!-- 푸터 — OZKIZ 로고 -->
+        <div class="wd-footer">
+          <span class="wd-logo">
+            OZK<span class="wd-logo-i">i<span class="wd-logo-star">★</span></span>Z
+          </span>
         </div>
       </div>
     </div>
@@ -1379,14 +1407,16 @@ window.openWOModal=id=>{
   const grand=ct.reduce((a,b)=>a+b,0);
   const firstOrd=(p.ord&&p.ord[0])||{};
 
-  // ── 메타 정보 표 (한 줄) ──
+  // ── 메타 정보 표 (9 컬럼) ──
   $('wd-style').textContent=p.style||'-';
   $('wd-name').textContent=p.name||'-';
   $('wd-vendor').textContent=p.vendor||'-';
   $('wd-round').textContent=rounds.join(', ')||'-';
+  $('wd-order-date').textContent=firstOrd.od?D(firstOrd.od):'-';
+  $('wd-arrival-date').textContent=firstOrd.dd?D(firstOrd.dd):'-';
+  $('wd-uv').textContent=p.uv?N(p.uv)+'원':'-';
   $('wd-manager').textContent=p.manager||'-';
   $('wd-deputy').textContent='-';  // 실장 — 비워둠
-  $('wd-uv').textContent=p.uv?N(p.uv)+'원':'-';
 
   // ── 좌측: 이미지 ──
   $('wd-img').innerHTML=p.img
@@ -1413,10 +1443,14 @@ window.openWOModal=id=>{
     </table>`
     :`<div style="padding:40px 12px;text-align:center;color:#aaa;font-size:11px">발주 데이터 없음</div>`;
 
-  // ── 우측: 제품 사양 ──
-  const kcLine=p.kcFiles&&p.kcFiles.length>0
-    ?p.kcFiles.map(f=>`<a href="${f.url}" target="_blank" rel="noopener" style="color:#DB2777;text-decoration:underline">📎 ${f.name}</a>`).join('<br>')
-    :(p.kcStatus||'');
+  // ── 중앙 하단: 오즈키즈 제공 부자재 ──
+  $('wd-supplies-img').innerHTML=(p.supplies&&p.supplies.length>0)
+    ?p.supplies.map(s=>s.url
+       ?`<a href="${s.url}" target="_blank" rel="noopener" style="color:#DB2777;text-decoration:underline">${s.text} 🔗</a>`
+       :s.text).join(' · ')
+    :'<span class="muted">제공 없음</span>';
+
+  // ── 우측: 제품 사양 (LED 추가) ──
   $('wd-spec').innerHTML=`
     <tr><td>외피</td><td>${p.fabric?p.fabric:'<span class="muted">(원단명)</span>'}</td></tr>
     <tr><td>내피</td><td>샘플동일</td></tr>
@@ -1428,9 +1462,7 @@ window.openWOModal=id=>{
     <tr><td>택끈</td><td>1 EA</td></tr>
     <tr><td>품질보증택</td><td>1 EA</td></tr>
     <tr><td>별봉</td><td>1 EA</td></tr>
-    <tr><td>별봉</td><td>1 EA</td></tr>
-    <tr><td>부자재</td><td>${(p.supplies&&p.supplies.length>0)?p.supplies.map(s=>s.url?'<a href="'+s.url+'" target="_blank" style="color:#DB2777;text-decoration:underline">'+s.text+' 🔗</a>':s.text).join('<br>'):'오즈키즈 제공 없음'}</td></tr>
-    ${kcLine?`<tr><td>KC 인증</td><td style="font-size:10px">${kcLine}</td></tr>`:''}
+    <tr><td>LED <span style="font-size:9px;color:#666">(+1,650)</span></td><td>1 EA</td></tr>
   `;
 
   // ── 원가 계산기 (내부용 — 캡처/인쇄 자동 제외) ──
