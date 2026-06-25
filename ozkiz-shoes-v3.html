@@ -531,7 +531,7 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
 .wd-img-ph svg{width:36px;height:36px;stroke:#ccc;fill:none;stroke-width:1}
 .wd-warn{display:flex;flex-direction:column;border-top:1px solid #666}
 .wd-warn-t{background:#e8e8e8;padding:6px 10px;font-size:11px;font-weight:700;border-bottom:1px solid #666;color:#333;text-align:center}
-.wd-warn-c{padding:8px 10px;font-size:11px;color:#DC2626;font-weight:600;line-height:1.5;min-height:48px;white-space:pre-line;flex:1}
+.wd-warn-c{padding:8px 11px;font-size:9.5px;color:#DC2626;font-weight:600;line-height:1.55;min-height:0;flex:0 0 auto}
 .wd-qty-box,.wd-spec-box,.wd-center-box{display:flex;flex-direction:column}
 
 /* 중앙 부자재 영역 (수량표 아래) */
@@ -555,11 +555,14 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
 .wd-spec-tbl td:first-child{background:#e8e8e8;font-weight:700;color:#333;width:45%;border-right:1px solid #888;font-size:11px}
 .wd-spec-tbl td:last-child{font-weight:600}
 .wd-spec-tbl td.muted{color:#999;font-weight:400;font-style:italic}
-/* OZKIZ 푸터 로고 (작업지시서 맨 아래) */
-.wd-footer{text-align:center;padding:18px 0 6px;margin-top:14px}
-.wd-logo{display:inline-block;font-size:32px;font-weight:900;color:#E11D48;letter-spacing:-0.04em;font-family:'Arial Black',-apple-system,'Helvetica Neue',Arial,sans-serif;line-height:1;position:relative}
+/* LED 행 강조 — 발주 수량표의 '계' 박스 컬러와 동일 */
+.wd-spec-tbl tr.led td,
+.wd-spec-tbl tr.led td:first-child{background:#ffeef5!important;color:var(--accent)!important;font-weight:800}
+/* OZKIZ 푸터 로고 (작업지시서 맨 아래 — 제목과 같은 크기) */
+.wd-footer{text-align:center;padding:14px 0 4px;margin-top:8px}
+.wd-logo{display:inline-block;font-size:22px;font-weight:900;color:#E11D48;letter-spacing:-0.02em;font-family:'Arial Black',-apple-system,'Helvetica Neue',Arial,sans-serif;line-height:1;position:relative}
 .wd-logo-i{position:relative;display:inline-block}
-.wd-logo-star{position:absolute;top:-0.55em;left:50%;transform:translateX(-50%);font-size:0.42em;color:#E11D48;line-height:1}
+.wd-logo-star{position:absolute;top:-0.5em;left:50%;transform:translateX(-50%);font-size:0.4em;color:#E11D48;line-height:1}
 
 /* 원가 계산기 (좌측, 내부용 — 인쇄/캡처 자동 제외) */
 .wo-doc-cost{padding:14px 16px;border-right:2px dashed var(--border-md);background:var(--cost-bg);overflow-y:auto;min-height:0}
@@ -1423,10 +1426,16 @@ window.openWOModal=id=>{
     ?`<img src="${p.img}" loading="lazy" decoding="async" alt="${p.name}">`
     :`<div class="wd-img-ph"><svg viewBox="0 0 24 24"><path d="M3 17.5C3 15.57 4.57 14 6.5 14h11c1.93 0 3.5 1.57 3.5 3.5S19.43 21 17.5 21h-11C4.57 21 3 19.43 3 17.5z"/><path d="M2 11l4-7h12l4 7"/></svg><div>이미지 준비중</div></div>`;
 
-  // ── 주의 사항 (생산지시 특이사항) ──
-  $('wd-warn-c').textContent=(p.rem||[]).length>0
-    ?p.rem.map(r=>r).join('\n')
-    :'';
+  // ── 주의 사항 (생산지시 특이사항 — 없으면 디폴트 5개) ──
+  const DEFAULT_WARN=[
+    '장식 떨어지지 않도록 튼튼하게 고정해주세요',
+    '글리터 원단, 가루 떨어지지 않도록 신경써서 작업해주세요',
+    'LED 좌우 센서 불량건 없는지 확인 후 포장 진행 해주세요',
+    '접합 부위에 본드 자국이 노출이 되지 않도록 깨끗이 마감 될 수 있도록 해주세요',
+    '아동 착용 제품으로, 마감 및 위험 부분이 없도록 깨끗이 마감 될 수 있게해주세요'
+  ];
+  const warnList=(p.rem&&p.rem.length>0)?p.rem:DEFAULT_WARN;
+  $('wd-warn-c').innerHTML=warnList.map(r=>`- ${r}`).join('<br>');
 
   // ── 중앙: 발주 수량표 ──
   $('wd-qty').innerHTML=(cs.length>0&&sz.length>0)?`
@@ -1462,7 +1471,7 @@ window.openWOModal=id=>{
     <tr><td>택끈</td><td>1 EA</td></tr>
     <tr><td>품질보증택</td><td>1 EA</td></tr>
     <tr><td>별봉</td><td>1 EA</td></tr>
-    <tr><td>LED <span style="font-size:9px;color:#666">(+1,650)</span></td><td>1 EA</td></tr>
+    <tr class="led"><td>LED <span style="font-size:9px">(+1,650)</span></td><td>1 EA</td></tr>
   `;
 
   // ── 원가 계산기 (내부용 — 캡처/인쇄 자동 제외) ──
