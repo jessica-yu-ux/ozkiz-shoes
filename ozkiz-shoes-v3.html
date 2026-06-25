@@ -339,7 +339,7 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
 @media print {
   @page { size: A4 landscape; margin: 10mm; }
 
-  .sidebar, .grid-wrap, .lb, #wo-wrap { display: none !important; }
+  .dsh-shell, .lb { display: none !important; }
 
   :root, [data-theme="dark"], [data-theme="light"] {
     --bg: #fff !important; --surface: #fff !important; --card: #fff !important;
@@ -353,14 +353,13 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
     --blue: #1D4ED8 !important; --blue-dim: #EFF6FF !important;
     --cost-bg: #F5F4F0 !important; --rem-bg: #FFFBEB !important; --mtx-head: #F5F5F5 !important;
   }
-  html, body, .shell, .content {
+  html, body {
     width: auto !important; height: auto !important;
     overflow: visible !important;
     background: #fff !important; color: #111 !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
-  .shell { display: block !important; }
   .content { display: block !important; padding: 0 !important; }
 
   /* 모달 배경 + 본체를 페이지 전체로 펼침 */
@@ -614,6 +613,63 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
 ::-webkit-scrollbar{width:4px;height:4px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border-md);border-radius:3px}
+
+/* ─── 대시보드 레이아웃 ─── */
+.dsh-shell{max-width:780px;margin:0 auto;padding:28px 20px 40px;min-height:100vh}
+.dsh-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:22px}
+.dsh-title{font-size:24px;font-weight:800;color:var(--txt);letter-spacing:-.03em}
+.dsh-sub{font-size:12px;color:var(--txt-3);margin-top:4px}
+.dsh-header-right{display:flex;align-items:center;gap:10px}
+.dsh-sync{font-size:12px;color:var(--txt-3)}
+.dsh-refresh{background:var(--card);border:1px solid var(--border-md);border-radius:10px;padding:7px 14px;font-size:12px;font-weight:600;color:var(--txt-2);cursor:pointer;display:flex;align-items:center;gap:6px;font-family:inherit;transition:.15s}
+.dsh-refresh:hover{border-color:var(--border-hi);color:var(--txt)}
+.dsh-refresh svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* 새 발주 알림 */
+.dsh-alert{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px 18px;margin-bottom:14px}
+.dsh-alert-head{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.dsh-alert-label{font-size:14px;font-weight:700;color:var(--txt)}
+.dsh-alert-period{font-size:11px;color:var(--txt-3);background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:1px 8px}
+.dsh-alert-badge{background:var(--accent);color:white;font-size:11px;font-weight:700;border-radius:20px;padding:2px 9px;min-width:22px;text-align:center}
+.dsh-alert-live{margin-left:auto;font-size:11px;color:var(--green);display:flex;align-items:center;gap:5px;font-weight:600}
+.dsh-alert-live::before{content:'';display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);animation:dsh-pulse 2s infinite}
+@keyframes dsh-pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.dsh-alert-sub{font-size:11px;font-weight:700;color:var(--txt-3);margin-bottom:4px;letter-spacing:.04em}
+.dsh-alert-item{display:flex;align-items:center;padding:9px 0;border-top:1px solid var(--border);gap:10px}
+.dsh-alert-img{width:38px;height:38px;border-radius:10px;overflow:hidden;background:var(--surface);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:20px}
+.dsh-alert-img img{width:100%;height:100%;object-fit:cover}
+.dsh-alert-name{flex:1;font-size:13px;font-weight:600;color:var(--txt);min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dsh-alert-round{font-size:10px;font-weight:700;background:var(--accent-dim);color:var(--accent);border-radius:6px;padding:2px 7px;flex-shrink:0}
+.dsh-alert-days{font-size:11px;color:var(--txt-3);flex-shrink:0}
+.dsh-alert-empty{font-size:13px;color:var(--txt-3);text-align:center;padding:14px 0}
+
+/* 통계 카드 */
+.dsh-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.dsh-stat{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px}
+.dsh-stat-icon{width:34px;height:34px;border-radius:10px;background:var(--accent-dim);display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+.dsh-stat-icon svg{width:16px;height:16px;stroke:var(--accent);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.dsh-stat-val{font-size:24px;font-weight:800;color:var(--txt);letter-spacing:-.03em;line-height:1}
+.dsh-stat-label{font-size:11px;color:var(--txt-3);margin-top:5px}
+
+/* 제품 리스트 */
+.dsh-list{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.dsh-list-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border)}
+.dsh-list-title{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:var(--txt)}
+.dsh-list-cnt{font-size:13px;color:var(--txt-3);font-weight:400}
+.dsh-list-total{font-size:13px;font-weight:700;color:var(--accent)}
+.dsh-item{display:flex;align-items:center;padding:12px 18px;border-bottom:1px solid var(--border);gap:12px;cursor:pointer;transition:background .12s}
+.dsh-item:last-child{border-bottom:none}
+.dsh-item:hover{background:var(--card-hover)}
+.dsh-item-img{width:46px;height:46px;border-radius:10px;overflow:hidden;background:var(--surface);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px}
+.dsh-item-img img{width:100%;height:100%;object-fit:cover}
+.dsh-item-info{flex:1;min-width:0}
+.dsh-item-name{font-size:14px;font-weight:700;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dsh-item-meta{font-size:11px;color:var(--txt-3);margin-top:3px;display:flex;align-items:center;gap:6px}
+.dsh-item-round{background:var(--amber-dim);color:var(--amber);font-size:10px;font-weight:700;border-radius:5px;padding:1px 6px;flex-shrink:0}
+.dsh-item-qty{font-size:12px;color:var(--txt-2);font-weight:600}
+.dsh-wo-btn{background:var(--accent);color:white;border:none;border-radius:8px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;transition:.15s;flex-shrink:0}
+.dsh-wo-btn:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.dsh-empty{padding:48px 20px;text-align:center;color:var(--txt-3);font-size:13px}
 </style>
 </head>
 <body>
@@ -741,55 +797,70 @@ html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;background:va
   </div>
 </div>
 
-<div class="shell">
-  <aside class="sidebar">
-    <div class="sb-top">
-      <div class="sb-brand">
-        <div class="sb-brand-mark">
-          <svg viewBox="0 0 24 24" fill="white"><path d="M3 17.5C3 15.57 4.57 14 6.5 14h11c1.93 0 3.5 1.57 3.5 3.5S19.43 21 17.5 21h-11C4.57 21 3 19.43 3 17.5z"/><path d="M2 11l4-7h12l4 7" stroke="white" stroke-width="1.5" fill="none"/></svg>
-        </div>
-        <div class="sb-brand-name">OZKIZ</div>
-        <div class="sb-brand-sub">제품디자인팀</div>
-      </div>
+<div class="dsh-shell">
+  <!-- 헤더 -->
+  <div class="dsh-header">
+    <div>
+      <div class="dsh-title">발주 관리</div>
+      <div class="dsh-sub">진행 중인 슈즈 발주 현황</div>
     </div>
-    <div class="sb-category">
-      <div class="sb-section-label">CATEGORY</div>
-      <div class="sb-cat-grid">
-        <button class="sb-cat-btn" onclick="window.open('https://loreen-order-project.vercel.app/','_blank','noopener')" title="의류 작업지시서로 이동 (새 창에서 열림)">
-          <div class="sb-cat-icon">👗</div>
-          <div class="sb-cat-name">의류</div>
-        </button>
-        <button class="sb-cat-btn active" title="슈즈 (현재 보드)">
-          <div class="sb-cat-icon">👟</div>
-          <div class="sb-cat-name">슈즈</div>
-        </button>
-      </div>
-    </div>
-    <div class="sb-tools">
-      <div class="notion-tag"><span class="notion-dot"></span>노션 연동중</div>
-      <button id="refresh-btn" class="theme-btn" onclick="forceRefresh()" title="노션 데이터 강제 새로고침" style="font-size:13px">↻</button>
-      <button class="theme-btn" onclick="toggleTheme()" title="라이트 / 다크 전환">
-        <svg class="icon-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-        <svg class="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    <div class="dsh-header-right">
+      <span class="dsh-sync" id="sync-time"></span>
+      <button class="dsh-refresh" id="refresh-btn" onclick="forceRefresh()">
+        <svg viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+        새로고침
       </button>
     </div>
-    <div class="sb-search">
-      <div class="s-wrap">
-        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        <input id="srch" type="text" placeholder="스타일명 검색..." oninput="debouncedRender()">
-      </div>
-    </div>
-    <div class="sb-filters" id="sb-filters"></div>
-    <button class="sb-reset" id="reset-btn" onclick="resetAll()">필터 초기화</button>
-  </aside>
+  </div>
 
-  <div class="content">
-    <div class="grid-wrap">
-      <div class="stats-row" id="stats-row"></div>
-      <div class="grid-hdr"><div class="grid-ttl" id="grid-ttl"></div></div>
-      <div class="prod-grid" id="prod-grid"></div>
+  <!-- 새 발주 알림 -->
+  <div class="dsh-alert">
+    <div class="dsh-alert-head">
+      <span>🔔</span>
+      <span class="dsh-alert-label">새 발주 알림</span>
+      <span class="dsh-alert-period">최근 7일</span>
+      <span class="dsh-alert-badge" id="alert-badge">0</span>
+      <span class="dsh-alert-live">실시간</span>
     </div>
-    <div id="wo-wrap"></div>
+    <div id="alert-list"></div>
+  </div>
+
+  <!-- 통계 -->
+  <div class="dsh-stats">
+    <div class="dsh-stat">
+      <div class="dsh-stat-icon">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      </div>
+      <div class="dsh-stat-val" id="stat-count">--</div>
+      <div class="dsh-stat-label">생산요청 총 건수</div>
+    </div>
+    <div class="dsh-stat">
+      <div class="dsh-stat-icon">
+        <svg viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      </div>
+      <div class="dsh-stat-val" id="stat-qty">--</div>
+      <div class="dsh-stat-label">총 발주 수량</div>
+    </div>
+    <div class="dsh-stat">
+      <div class="dsh-stat-icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <div class="dsh-stat-val" id="stat-time">--</div>
+      <div class="dsh-stat-label">마지막 업데이트</div>
+    </div>
+  </div>
+
+  <!-- 슈즈 생산요청 리스트 -->
+  <div class="dsh-list">
+    <div class="dsh-list-hdr">
+      <div class="dsh-list-title">
+        <span>👟</span>
+        <span>슈즈 생산요청</span>
+        <span class="dsh-list-cnt" id="list-count">-- 건</span>
+      </div>
+      <div class="dsh-list-total" id="list-qty">-- 장</div>
+    </div>
+    <div id="prod-list"></div>
   </div>
 </div>
 
@@ -949,24 +1020,7 @@ window.toggleTheme=()=>{
 };
 (()=>{const s=localStorage.getItem('oz-theme');if(s)document.documentElement.dataset.theme=s;})();
 
-function renderFilters(){
-  const uq=k=>['전체',...new Set(PRODS.map(p=>String(p[k])))];
-  const any=Object.values(F).some(v=>v!=='전체');
-  $('sb-filters').innerHTML=FDEFS.map(({k,lbl,ico})=>{
-    const vals=uq(k);const isOn=F[k]!=='전체';
-    return`<div class="fg${isOn?' open':''}" id="fg-${k}">
-      <div class="fg-head" onclick="togFG('${k}')">
-        <span class="fg-lbl"><svg class="fg-ico" viewBox="0 0 24 24" stroke-width="2" fill="none">${ico}</svg>${lbl}<span class="fg-badge${isOn?' show':''}">${isOn?F[k]:''}</span></span>
-        <svg class="fg-arr" viewBox="0 0 24 24" fill="none"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="fg-body"><div class="fg-inner"><div class="chips">${vals.map(v=>{
-        const on=F[k]===String(v);const sc=k==='season'&&v!=='전체'?(SC[v]||''):'';
-        return`<span class="chip${on?' on':''}${sc?' '+sc:''}" onclick="setF('${k}','${v}')">${v}</span>`;
-      }).join('')}</div></div></div>
-    </div>`;
-  }).join('');
-  $('reset-btn').className='sb-reset'+(any?' on':'');
-}
+function renderFilters(){} // 사이드바 제거됨
 window.togFG=k=>{const el=$(`fg-${k}`);if(el)el.classList.toggle('open')};
 window.setF=(k,v)=>{F[k]=String(v);const el=$(`fg-${k}`);if(el&&v!=='전체')el.classList.add('open');renderFilters();render()};
 window.resetAll=()=>{Object.keys(F).forEach(k=>F[k]='전체');renderFilters();render()};
@@ -1538,16 +1592,78 @@ window.openLB=id=>{
 window.closeLB=e=>{if(!e||e.target===$('lb'))$('lb').classList.remove('open')};
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('lb').classList.remove('open');$('wo-modal-bg').classList.remove('open');document.body.style.overflow='';}});
 
-function render(){
-  const base=filtBase();
-  renderStats(base);
-  const list=_statusFilter?base.filter(p=>p.status===_statusFilter):base;
-  renderGrid(list);
-  // 단일 상태 필터 시: 칸반 모드 OFF (한 컬럼 전체 차지)
-  const grid=$('prod-grid');
-  if(grid){
-    if(_statusFilter)grid.classList.add('single-mode');
-    else grid.classList.remove('single-mode');
+function render(){ renderDashboard(); }
+
+function renderDashboard(){
+  const reqItems=PRODS.filter(p=>p.status==='생산요청');
+  const today=new Date();today.setHours(0,0,0,0);
+  const weekAgo=new Date(today);weekAgo.setDate(weekAgo.getDate()-7);
+  const g=id=>document.getElementById(id);
+
+  // 통계
+  const totalQty=reqItems.reduce((s,p)=>s+tQ(p.ord),0);
+  if(g('stat-count'))g('stat-count').textContent=reqItems.length+'건';
+  if(g('stat-qty'))g('stat-qty').textContent=N(totalQty)+'장';
+  const now=new Date();
+  const h=now.getHours(),mn=String(now.getMinutes()).padStart(2,'0');
+  const timeStr=(h<12?'오전':'오후')+' '+(h%12||12)+':'+mn;
+  if(g('stat-time'))g('stat-time').textContent=timeStr;
+  if(g('sync-time'))g('sync-time').textContent=timeStr+' 동기화';
+
+  // 새 발주 알림 (7일 이내 발주일 있는 제품)
+  const newItems=PRODS.filter(p=>p.ord&&p.ord.some(o=>{
+    if(!o.od)return false;
+    const d=new Date(o.od);d.setHours(0,0,0,0);return d>=weekAgo;
+  }));
+  if(g('alert-badge'))g('alert-badge').textContent=newItems.length;
+  const aList=g('alert-list');
+  if(aList){
+    if(newItems.length===0){
+      aList.innerHTML='<div class="dsh-alert-empty">최근 7일간 새 발주가 없습니다</div>';
+    }else{
+      aList.innerHTML='<div class="dsh-alert-sub">슈즈 '+newItems.length+'건</div>'+
+        newItems.map(p=>{
+          const sorted=[...p.ord].sort((a,b)=>(b.od||'').localeCompare(a.od||''));
+          const latestOd=sorted[0]&&sorted[0].od?new Date(sorted[0].od):null;
+          if(latestOd)latestOd.setHours(0,0,0,0);
+          const daysAgo=latestOd?Math.floor((today-latestOd)/86400000):0;
+          const rounds=[...new Set(p.ord.map(o=>o.r))].join(', ');
+          const imgH=p.img?`<img src="${p.img}" loading="lazy" onerror="this.parentElement.textContent='👟'">`:'👟';
+          return`<div class="dsh-alert-item">
+            <div class="dsh-alert-img">${imgH}</div>
+            <span class="dsh-alert-name">${p.name}</span>
+            <span class="dsh-alert-round">${rounds||'1차'}</span>
+            <span class="dsh-alert-days">${daysAgo===0?'오늘':daysAgo+'일 전'}</span>
+          </div>`;
+        }).join('');
+    }
+  }
+
+  // 생산요청 리스트
+  if(g('list-count'))g('list-count').textContent=reqItems.length+'건';
+  if(g('list-qty'))g('list-qty').textContent=N(totalQty)+'장';
+  const pList=g('prod-list');
+  if(pList){
+    if(reqItems.length===0){
+      pList.innerHTML='<div class="dsh-empty">생산요청 건수가 없습니다</div>';
+    }else{
+      pList.innerHTML=reqItems.map(p=>{
+        const qty=tQ(p.ord);
+        const rounds=[...new Set(p.ord.map(o=>o.r))].join(', ');
+        const imgH=p.img?`<img src="${p.img}" loading="lazy" alt="${p.name}" onerror="this.parentElement.textContent='👟'">`:'👟';
+        return`<div class="dsh-item" onclick="sel(${p.id})">
+          <div class="dsh-item-img">${imgH}</div>
+          <div class="dsh-item-info">
+            <div class="dsh-item-name">${p.name}</div>
+            <div class="dsh-item-meta">
+              <span class="dsh-item-round">${rounds||'1차'}</span>
+              <span class="dsh-item-qty">${N(qty)}장</span>
+            </div>
+          </div>
+          <button class="dsh-wo-btn" onclick="event.stopPropagation();sel(${p.id})">작업지시서</button>
+        </div>`;
+      }).join('');
+    }
   }
 }
 
